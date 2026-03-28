@@ -2,49 +2,68 @@
   <!-- Hero Section with CTA Buttons -->
   <app-hero-banner></app-hero-banner>
 
-  <!-- Feature Cards (3 items) -->
-  <section class="features-section">
+  <!-- Categories Showcase - Main Focus -->
+  <section class="categories-section" *ngIf="categories().length > 0; else noCategories">
     <div class="container">
-      <div class="features-header">
-        <h2>Why Choose Us? 🌟</h2>
-        <p>Discover what makes our handmade marketplace special</p>
+      <div class="categories-header">
+        <h2>Shop by Category 🛍️</h2>
+        <p>Explore our diverse marketplace and find exactly what you're looking for</p>
       </div>
 
-      <div class="features-grid">
-        <app-card class="feature-card">
-          <div class="feature-content">
-            <div class="feature-icon">🏆</div>
-            <h3>Quality Guaranteed</h3>
-            <p>Every product is carefully inspected for the highest quality standards</p>
-            <app-button variant="secondary" size="small">Learn More</app-button>
-          </div>
-        </app-card>
-
-        <app-card class="feature-card">
-          <div class="feature-content">
-            <div class="feature-icon">🚚</div>
-            <h3>Free Shipping</h3>
-            <p>Free shipping on orders over $50 with fast and secure delivery</p>
-            <app-button variant="secondary" size="small">Shop Now</app-button>
-          </div>
-        </app-card>
-
-        <app-card class="feature-card">
-          <div class="feature-content">
-            <div class="feature-icon">💬</div>
-            <h3>24/7 Support</h3>
-            <p>Our friendly team is here to help with any questions you have</p>
-            <app-button variant="secondary" size="small">Contact Us</app-button>
-          </div>
-        </app-card>
+      <div class="categories-grid">
+        @for (category of categories(); track $index) {
+          <app-card 
+            class="category-card" 
+            role="button"
+            tabindex="0"
+            [attr.aria-label]="'Shop ' + category + ' category with ' + getCategoryCount(category) + ' items'"
+            (click)="navigateToCategory(category)"
+            (keydown)="onCategoryKeyDown($event, category)">
+            <div class="category-content">
+              <div class="category-icon" aria-hidden="true">{{ getCategoryEmoji(category) }}</div>
+              <h3>{{ category }}</h3>
+              <p>{{ getCategoryCount(category) }} items available</p>
+              <app-button>Shop {{ category }}</app-button>
+            </div>
+          </app-card>
+        }
       </div>
     </div>
   </section>
 
-  <!-- Product Showcase with View Details -->
-  <app-product-showcase
-    title="✨ Featured Treasures"
-    subtitle="Handpicked items just for you"
-    [products]="featuredProducts()">
-  </app-product-showcase>
+  <ng-template #noCategories>
+    <section class="categories-section">
+      <div class="container">
+        <div class="categories-header">
+          <h2>Shop by Category 🛍️</h2>
+          <p>Loading categories...</p>
+        </div>
+      </div>
+    </section>
+  </ng-template>
+
+  <!-- Feature Cards -->
+  <section class="features-section">
+    <div class="container">
+      <div class="features-header">
+        <h2>Why Choose Our Marketplace? 🌟</h2>
+        <p>Experience the best in quality, service, and selection</p>
+      </div>
+
+      <div class="features-grid">
+        @for (feature of features; track feature.title) {
+          <app-card class="feature-card">
+            <div class="feature-content">
+              <div class="feature-icon" aria-hidden="true">{{ feature.icon }}</div>
+              <h3>{{ feature.title }}</h3>
+              <p>{{ feature.description }}</p>
+              <app-button variant="secondary" size="small" [routerLink]="feature.link">
+                {{ feature.linkText }}
+              </app-button>
+            </div>
+          </app-card>
+        }
+      </div>
+    </div>
+  </section>
 </div>

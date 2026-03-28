@@ -26,6 +26,11 @@
 
     <!-- Actions -->
     <div class="navbar__actions">
+      <!-- Wishlist -->
+      <a routerLink="/wishlist" class="navbar__action" (click)="closeMenu()" aria-label="Wishlist">
+        <span class="navbar__action-icon">❤️</span>
+      </a>
+
       <!-- Cart -->
       <a routerLink="/cart" class="navbar__action" (click)="closeMenu()" aria-label="Shopping cart">
         <span class="navbar__action-icon">🛒</span>
@@ -84,6 +89,10 @@
         Contact
       </a>
       <div class="navbar__mobile-divider"></div>
+      <a routerLink="/wishlist" class="navbar__mobile-link" (click)="closeMenu()">
+        <span class="navbar__mobile-link-icon">❤️</span>
+        Wishlist
+      </a>
       <a routerLink="/cart" class="navbar__mobile-link" (click)="closeMenu()">
         <span class="navbar__mobile-link-icon">🛒</span>
         Cart

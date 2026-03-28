@@ -1,11 +1,7 @@
 import { Injectable, signal } from '@angular/core';
+import { Product } from './products.service';
 
-export interface WishlistItem {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  emoji: string;
+export interface WishlistItem extends Product {
   addedAt: Date;
 }
 
@@ -19,10 +15,11 @@ export class WishlistService {
     return this.wishlist;
   }
 
-  addToWishlist(item: WishlistItem) {
+  addToWishlist(item: Product) {
     const currentWishlist = this.wishlist();
     if (!currentWishlist.find(w => w.id === item.id)) {
-      this.wishlist.set([...currentWishlist, { ...item, addedAt: new Date() }]);
+      const wishlistItem: WishlistItem = { ...item, addedAt: new Date() };
+      this.wishlist.set([...currentWishlist, wishlistItem]);
     }
   }
 

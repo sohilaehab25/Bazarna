@@ -1,11 +1,18 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { HeroBannerComponent } from '../../shared/components/hero-banner/hero-banner.component';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { ProductShowcaseComponent } from '../../shared/components/product-showcase/product-showcase.component';
 import { ProductsService } from '../../shared/services/products.service';
+
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+  link: string;
+  linkText: string;
+}
 
 @Component({
   selector: 'app-home',
@@ -15,14 +22,78 @@ import { ProductsService } from '../../shared/services/products.service';
     RouterLink,
     HeroBannerComponent,
     CardComponent,
-    ButtonComponent,
-    ProductShowcaseComponent
+    ButtonComponent
   ],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent {
   private productsService = inject(ProductsService);
+  private router = inject(Router);
 
-  featuredProducts = this.productsService.getProducts();
+  categories = this.productsService.getCategories();
+  
+  // Pre-compute category counts for performance
+  categoryCounts = computed(() => {
+    const counts: Record<string, number> = {};
+    this.categories().forEach(category => {
+      counts[category] = this.productsService.getProductsByCategory(category)().length;
+    });
+    return counts;
+  });
+
+  features: Feature[] = [
+    {
+      icon: '🏆',
+      title: 'Quality Guaranteed',
+      description: 'Every product is carefully inspected for the highest quality standards',
+      link: '/products',
+      linkText: 'Browse Products'
+    },
+    {
+      icon: '🚚',
+      title: 'Free Shipping',
+      description: 'Free shipping on orders over $50 with fast and secure delivery',
+      link: '/products',
+      linkText: 'Start Shopping'
+    },
+    {
+      icon: '💬',
+      title: '24/7 Support',
+      description: 'Our friendly team is here to help with any questions you have',
+      link: '/contact',
+      linkText: 'Contact Us'
+    }
+  ];
+
+  navigateToCategory(category: string): void {
+    this.router.navigate(['/products'], { queryParams: { category } });
+  }
+
+  getCategoryEmoji(category: string): string {
+    const emojiMap: Record<string, string> = {
+      'Accessories': '🧣',
+      'Home': '🏠',
+      'Decor': '🏡', // Changed to avoid duplicate
+      'Groceries': '🥕',
+      'Cheese': '🧀',
+      'Sauces': '🍯',
+      'Kitchen': '☕',
+      'Jewelry': '💎', // Changed to diamond for distinction
+      'Art': '🎨'
+    };
+    return emojiMap[category] || '📦';
+  }
+
+  getCategoryCount(category: string): number {
+    return this.categoryCounts()[category] || 0;
+  }
+
+  onCategoryKeyDown(event: KeyboardEvent, category: string): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.navigateToCategory(category);
+    }
+  }
 }

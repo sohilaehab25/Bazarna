@@ -1,5 +1,5 @@
 <div class="products">
-  <h1>Our Products</h1>
+  <h1>{{ pageTitle() }}</h1>
   <div class="products-grid">
     @for (product of products(); track product.id) {
       <app-product-card
@@ -59,11 +59,14 @@
             </div>
 
             <div class="product-details__actions">
-              <button class="btn btn--primary product-details__add-to-cart">
+              <button class="btn btn--primary product-details__add-to-cart" (click)="addToCart(product)">
                 Add to Cart
               </button>
-              <button class="btn btn--secondary product-details__wishlist">
-                Add to Wishlist
+              <button
+                class="btn btn--secondary product-details__wishlist"
+                (click)="addToWishlist(product)"
+                [class.product-details__wishlist--active]="isInWishlist(product.id)">
+                {{ isInWishlist(product.id) ? '❤️ In Wishlist' : '🤍 Add to Wishlist' }}
               </button>
             </div>
           </div>

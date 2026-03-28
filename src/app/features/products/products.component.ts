@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { ProductsService } from '../../shared/services/products.service';
@@ -18,10 +19,29 @@ export class ProductsComponent {
   private productsService = inject(ProductsService);
   private wishlistService = inject(WishlistService);
   private cartService = inject(CartService);
+  private route = inject(ActivatedRoute);
 
-  products = this.productsService.getProducts();
+  allProducts = this.productsService.getProducts();
   isModalOpen = signal(false);
   selectedProduct = signal<Product | null>(null);
+
+  // Get category from query params
+  category = computed(() => this.route.snapshot.queryParams['category']);
+
+  // Filter products based on category
+  products = computed(() => {
+    const cat = this.category();
+    if (cat) {
+      return this.allProducts().filter(p => p.category === cat);
+    }
+    return this.allProducts();
+  });
+
+  // Get page title based on category
+  pageTitle = computed(() => {
+    const cat = this.category();
+    return cat ? `${cat} Products` : 'All Products';
+  });
 
   openModal(product: Product): void {
     this.selectedProduct.set(product);
