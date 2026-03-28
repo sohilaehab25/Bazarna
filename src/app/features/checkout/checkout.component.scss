@@ -1,0 +1,131 @@
+.checkout {
+  h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--primary-color);
+  }
+
+  .checkout-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .order-summary {
+    .order-items {
+      margin: 20px 0;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--secondary-color);
+      opacity: 0.8;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &__emoji {
+        font-size: 1.5rem;
+        margin-right: 10px;
+      }
+
+      &__name {
+        flex: 1;
+      }
+
+      &__quantity {
+        color: var(--secondary-color);
+        margin: 0 10px;
+      }
+
+      &__price {
+        font-weight: 500;
+        color: var(--text-color);
+      }
+    }
+
+    .order-total {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid var(--secondary-color);
+      text-align: right;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+    }
+  }
+
+  .checkout-form {
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--text-color);
+        font-weight: 500;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid var(--secondary-color);
+        border-radius: var(--border-radius);
+        background-color: var(--background-alt);
+        color: var(--text-color);
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+
+        &:focus {
+          outline: none;
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 3px rgba(255, 182, 193, 0.2);
+        }
+
+        &::placeholder {
+          color: var(--text-color);
+          opacity: 0.6;
+        }
+      }
+    }
+
+    .shipping-form,
+    .payment-form {
+      margin-bottom: 20px;
+    }
+  }
+
+  .checkout-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .checkout {
+    .checkout-content {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .checkout-actions {
+      flex-direction: column;
+
+      app-button {
+        width: 100%;
+      }
+    }
+  }
+}

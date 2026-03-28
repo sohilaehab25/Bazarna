@@ -1,0 +1,39 @@
+<!-- Modal Overlay -->
+<div
+  class="modal-overlay"
+  [class.modal-overlay--visible]="isVisible()"
+  [class.modal-overlay--animating]="isAnimating()"
+  (click)="onOverlayClick($event)"
+  *ngIf="isVisible()">
+
+  <!-- Modal Container -->
+  <div
+    class="modal-container"
+    [class]="'modal-container--' + size()"
+    [class.modal-container--animating]="isAnimating()"
+    (click)="onModalContentClick($event)">
+
+    <!-- Modal Header -->
+    <div class="modal-header" *ngIf="title() || showCloseButton()">
+      <h2 class="modal-title" *ngIf="title()">{{ title() }}</h2>
+      <button
+        class="modal-close-btn"
+        (click)="close()"
+        *ngIf="showCloseButton()"
+        aria-label="Close modal">
+        ✕
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Modal Footer (optional) -->
+    <div class="modal-footer" *ngIf="hasFooterContent()">
+      <ng-content select="[modal-footer]"></ng-content>
+    </div>
+
+  </div>
+</div>

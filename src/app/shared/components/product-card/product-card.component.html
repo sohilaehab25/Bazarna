@@ -1,0 +1,25 @@
+<app-card>
+  <div class="product">
+    <div class="product__header">
+      <span class="product__emoji">{{ product().emoji }}</span>
+      <button
+        class="wishlist-btn"
+        [class.wishlist-btn--active]="isInWishlist()"
+        (click)="toggleWishlist()"
+        aria-label="Add to wishlist">
+        {{ isInWishlist() ? '💝' : '🤍' }}
+      </button>
+    </div>
+    <h3 class="product__name">{{ product().name }}</h3>
+    <p class="product__description">{{ product().description }}</p>
+    <p class="product__price">{{ product().price | currency }}</p>
+    <div class="product__actions">
+      <app-button (onClick)="viewDetails()">
+        View Details 👁️
+      </app-button>
+      <app-button variant="secondary" (onClick)="addToCart()">
+        Add to Cart 🛒
+      </app-button>
+    </div>
+  </div>
+</app-card>

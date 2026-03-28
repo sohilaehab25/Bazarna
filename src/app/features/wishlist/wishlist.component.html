@@ -1,0 +1,37 @@
+<div class="wishlist">
+  <h1>My Wishlist 💝</h1>
+
+  <div class="wishlist-content">
+    <div class="wishlist-empty" *ngIf="wishlistItems().length === 0">
+      <app-card>
+        <div class="empty-wishlist">
+          <div class="empty-icon">💝</div>
+          <h2>Your wishlist is empty</h2>
+          <p>Start adding items you love to your wishlist!</p>
+          <app-button routerLink="/menu">
+            Browse Products 🛍️
+          </app-button>
+        </div>
+      </app-card>
+    </div>
+
+    <div class="wishlist-grid" *ngIf="wishlistItems().length > 0">
+      <app-card *ngFor="let item of wishlistItems(); trackBy: trackById">
+        <div class="wishlist-item">
+          <div class="item-emoji">{{ item.emoji }}</div>
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.description }}</p>
+          <p class="item-price">{{ item.price | currency }}</p>
+          <div class="item-actions">
+            <app-button (onClick)="addToCart(item)">
+              Add to Cart 🛒
+            </app-button>
+            <app-button variant="secondary" (onClick)="removeFromWishlist(item.id)">
+              Remove ❌
+            </app-button>
+          </div>
+        </div>
+      </app-card>
+    </div>
+  </div>
+</div>

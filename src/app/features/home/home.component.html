@@ -1,0 +1,50 @@
+<div class="home">
+  <!-- Hero Section with CTA Buttons -->
+  <app-hero-banner></app-hero-banner>
+
+  <!-- Feature Cards (3 items) -->
+  <section class="features-section">
+    <div class="container">
+      <div class="features-header">
+        <h2>Why Choose Us? 🌟</h2>
+        <p>Discover what makes our handmade marketplace special</p>
+      </div>
+
+      <div class="features-grid">
+        <app-card class="feature-card">
+          <div class="feature-content">
+            <div class="feature-icon">🏆</div>
+            <h3>Quality Guaranteed</h3>
+            <p>Every product is carefully inspected for the highest quality standards</p>
+            <app-button variant="secondary" size="small">Learn More</app-button>
+          </div>
+        </app-card>
+
+        <app-card class="feature-card">
+          <div class="feature-content">
+            <div class="feature-icon">🚚</div>
+            <h3>Free Shipping</h3>
+            <p>Free shipping on orders over $50 with fast and secure delivery</p>
+            <app-button variant="secondary" size="small">Shop Now</app-button>
+          </div>
+        </app-card>
+
+        <app-card class="feature-card">
+          <div class="feature-content">
+            <div class="feature-icon">💬</div>
+            <h3>24/7 Support</h3>
+            <p>Our friendly team is here to help with any questions you have</p>
+            <app-button variant="secondary" size="small">Contact Us</app-button>
+          </div>
+        </app-card>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Showcase with View Details -->
+  <app-product-showcase
+    title="✨ Featured Treasures"
+    subtitle="Handpicked items just for you"
+    [products]="featuredProducts()">
+  </app-product-showcase>
+</div>

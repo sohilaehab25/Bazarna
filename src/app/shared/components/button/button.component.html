@@ -1,0 +1,13 @@
+<button
+  [type]="type()"
+  [disabled]="disabled()"
+  (click)="onClick.emit()"
+  class="btn"
+  [class.btn--primary]="variant() === 'primary'"
+  [class.btn--secondary]="variant() === 'secondary'"
+  [class.btn--icon]="hasIcon()">
+  @if (icon()) {
+    <span class="btn__icon">{{ icon() }}</span>
+  }
+  <ng-content></ng-content>
+</button>

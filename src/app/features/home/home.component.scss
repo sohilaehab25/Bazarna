@@ -1,0 +1,122 @@
+.home {
+  // Minimal styles since components handle their own styling
+  display: flex;
+  flex-direction: column;
+  gap: 0; // Components handle their own spacing
+}
+
+.features-section {
+  padding: 20px;
+  background: var(--color-background-alt);
+}
+
+.features-header {
+  text-align: center;
+  margin-bottom: 20px;
+
+  h2 {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.feature-card {
+  height: 100%;
+  transition: transform var(--transition-fast);
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+.feature-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;;
+  gap: 20px;
+
+  .feature-icon {
+    font-size: var(--font-size-3xl);
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+    margin: 0 0 20px 0;
+  }
+
+  p {
+    font-size: var(--font-size-base);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+    flex: 1;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .features-section {
+    padding: 20px 0;
+  }
+
+  .features-header {
+    margin-bottom: 20px;
+
+    h2 {
+      font-size: var(--font-size-xl);
+    }
+
+    p {
+      font-size: var(--font-size-base);
+    }
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .feature-content {
+    padding: 20px;
+
+    .feature-icon {
+      font-size: var(--font-size-2xl);
+    }
+
+    h3 {
+      font-size: var(--font-size-lg);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .features-section {
+    padding: 20px 0;
+  }
+
+  .features-grid {
+    margin-top: 20px;
+  }
+}

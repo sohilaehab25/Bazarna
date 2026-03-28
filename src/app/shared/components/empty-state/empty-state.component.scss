@@ -1,0 +1,20 @@
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+
+  &__icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+  }
+
+  &__title {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+  }
+
+  &__message {
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 30px;
+  }
+}

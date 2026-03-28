@@ -1,0 +1,64 @@
+.product {
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+
+  &__emoji {
+    font-size: 2rem;
+  }
+
+  &__name {
+    margin: 0;
+    color: var(--primary-color);
+  }
+
+  &__description {
+    color: var(--text-color);
+    margin: 10px 0;
+  }
+
+  &__price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    margin: 15px 0 20px 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: var(--spacing-3);
+    flex-wrap: wrap;
+
+    app-button {
+      flex: 1;
+      min-width: 120px;
+    }
+  }
+
+  .wishlist-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: var(--transition);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: rgba(255, 182, 193, 0.1);
+      transform: scale(1.1);
+    }
+
+    &--active {
+      color: var(--primary-color);
+    }
+  }
+}

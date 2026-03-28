@@ -1,0 +1,94 @@
+.about {
+  .hero {
+    text-align: center;
+    margin-bottom: 60px;
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: var(--primary-color);
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: var(--text-color);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+
+  .story {
+    margin-bottom: 60px;
+
+    app-card {
+      text-align: center;
+
+      h2 {
+        color: var(--primary-color);
+        margin-bottom: 20px;
+      }
+
+      p {
+        color: var(--text-color);
+        opacity: 0.8;
+        line-height: 1.6;
+        margin-bottom: 15px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  }
+
+  .values {
+    margin-bottom: 60px;
+
+    h2 {
+      text-align: center;
+      color: var(--primary-color);
+      margin-bottom: 40px;
+    }
+  }
+
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+  }
+
+  .value {
+    text-align: center;
+
+    &__icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    h3 {
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: var(--text-color);
+      opacity: 0.8;
+    }
+  }
+
+  .cta {
+    app-card {
+      text-align: center;
+
+      h2 {
+        color: var(--primary-color);
+        margin-bottom: 15px;
+      }
+
+      p {
+        color: var(--text-color);
+        opacity: 0.8;
+        margin-bottom: 30px;
+      }
+    }
+  }
+}

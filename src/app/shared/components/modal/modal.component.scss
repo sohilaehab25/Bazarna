@@ -1,0 +1,246 @@
+// Modal Overlay
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-index-modal);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-slow);
+
+  &--visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &--animating {
+    .modal-container {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+// Modal Container
+.modal-container {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-2xl);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: all var(--transition-slow);
+  display: flex;
+  flex-direction: column;
+
+  // Size variants
+  &--small {
+    width: 400px;
+    max-width: 90vw;
+  }
+
+  &--medium {
+    width: 600px;
+    max-width: 90vw;
+    min-height: 300px;
+  }
+
+  &--large {
+    width: 800px;
+    max-width: 95vw;
+  }
+
+  &--fullscreen {
+    width: 95vw;
+    height: 95vh;
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  &--animating {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Modal Header
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-5);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-background-light);
+
+  .modal-title {
+    margin: 0;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+  }
+}
+
+// Modal Close Button
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: var(--font-size-xl);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  padding: var(--spacing-2);
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+
+  &:hover {
+    background-color: var(--color-background-alt);
+    color: var(--color-text-primary);
+  }
+
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+// Modal Body
+.modal-body {
+  padding: var(--spacing-6);
+  overflow-y: auto;
+  flex: 1;
+
+  // Ensure content doesn't get cut off
+  & > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// Modal Footer
+.modal-footer {
+  padding: var(--spacing-5);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-background-light);
+  display: flex;
+  gap: var(--spacing-3);
+  justify-content: flex-end;
+  align-items: center;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .modal-container {
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: var(--spacing-4);
+
+    &--fullscreen {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      margin: 0;
+      border-radius: 0;
+    }
+  }
+
+  .modal-header {
+    padding: var(--spacing-4);
+
+    .modal-title {
+      font-size: var(--font-size-xl);
+    }
+  }
+
+  .modal-body {
+    padding: var(--spacing-4);
+  }
+
+  .modal-footer {
+    padding: var(--spacing-4);
+    flex-direction: column;
+
+    & > * {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-container {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    margin: 0;
+    border-radius: 0;
+    height: 100vh;
+    max-height: 100vh;
+  }
+
+  .modal-overlay {
+    padding: 0;
+  }
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal-container {
+    transition: none;
+  }
+
+  .modal-container {
+    transform: none !important;
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+
+  .modal-container {
+    border: 2px solid var(--color-text-primary);
+  }
+
+  .modal-close-btn {
+    border: 1px solid var(--color-text-primary);
+  }
+}
+
+// Focus management
+.modal-container:focus {
+  outline: none;
+}
+
+// Animation keyframes (if needed for more complex animations)
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalScaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

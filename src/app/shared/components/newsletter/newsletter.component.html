@@ -1,0 +1,23 @@
+<div class="newsletter">
+  <app-card>
+    <div class="newsletter-content">
+      <div class="newsletter-icon">📧</div>
+      <h3>Stay in Touch</h3>
+      <p>Subscribe to our newsletter for exclusive deals, new arrivals, and crafting tips!</p>
+      <form class="newsletter-form">
+        <app-input
+          type="email"
+          placeholder="Enter your email"
+          icon="✉️"
+          #emailInput>
+        </app-input>
+        <app-button type="button" (onClick)="subscribe(emailInput.value)">
+          Subscribe 💕
+        </app-button>
+      </form>
+      <p class="newsletter-disclaimer">
+        We respect your privacy. Unsubscribe at any time.
+      </p>
+    </div>
+  </app-card>
+</div>

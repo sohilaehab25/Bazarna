@@ -1,0 +1,109 @@
+.recently-viewed {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, var(--color-background-light) 0%, var(--color-background) 100%);
+  border-radius: var(--border-radius-large);
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+
+    h2 {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      color: var(--color-text-primary);
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: var(--color-text-secondary);
+      margin: 0;
+    }
+  }
+
+  .recent-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+
+    .recent-item {
+      background: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      transition: all var(--transition-fast);
+      box-shadow: var(--shadow-soft);
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-medium);
+        border-color: var(--color-primary);
+      }
+
+      .product-content {
+        text-align: center;
+
+        .product-emoji {
+          font-size: 3rem;
+          margin-bottom: 1rem;
+          display: block;
+        }
+
+        h4 {
+          font-family: var(--font-heading);
+          font-size: 1.2rem;
+          color: var(--color-text-primary);
+          margin-bottom: 0.5rem;
+          font-weight: 600;
+        }
+
+        .product-price {
+          font-size: 1.1rem;
+          color: var(--color-primary);
+          font-weight: 700;
+          margin-bottom: 1rem;
+        }
+      }
+    }
+  }
+
+  .view-all {
+    text-align: center;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .recently-viewed {
+    padding: 3rem 0;
+
+    .section-header {
+      margin-bottom: 2rem;
+
+      h2 {
+        font-size: 2rem;
+      }
+    }
+
+    .recent-products {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .recently-viewed {
+    .recent-products {
+      grid-template-columns: 1fr;
+    }
+  }
+}

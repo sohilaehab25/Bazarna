@@ -1,0 +1,111 @@
+<nav class="navbar" [class.navbar--sticky]="true">
+  <div class="navbar__container">
+    <!-- Logo -->
+    <div class="navbar__brand">
+      <a routerLink="/" class="navbar__logo" (click)="closeMenu()">
+        <span class="navbar__logo-icon">☕</span>
+        <span class="navbar__logo-text">Sweety Cafe</span>
+      </a>
+    </div>
+
+    <!-- Desktop Navigation -->
+    <div class="navbar__nav">
+      <a routerLink="/" routerLinkActive="navbar__link--active" class="navbar__link" (click)="closeMenu()">
+        Home
+      </a>
+      <a routerLink="/menu" routerLinkActive="navbar__link--active" class="navbar__link" (click)="closeMenu()">
+        Menu
+      </a>
+      <a routerLink="/about" routerLinkActive="navbar__link--active" class="navbar__link" (click)="closeMenu()">
+        About
+      </a>
+      <a routerLink="/contact" routerLinkActive="navbar__link--active" class="navbar__link" (click)="closeMenu()">
+        Contact
+      </a>
+    </div>
+
+    <!-- Actions -->
+    <div class="navbar__actions">
+      <!-- Cart -->
+      <a routerLink="/cart" class="navbar__action" (click)="closeMenu()" aria-label="Shopping cart">
+        <span class="navbar__action-icon">🛒</span>
+        @if (cartItemsCount() > 0) {
+          <span class="navbar__cart-count">{{ cartItemsCount() }}</span>
+        }
+      </a>
+
+      <!-- User -->
+      @if (isLoggedIn()) {
+        <div class="navbar__user-menu">
+          <button class="navbar__action" (click)="toggleMenu()" aria-label="User menu">
+            <span class="navbar__action-icon">👤</span>
+          </button>
+          @if (isMenuOpen()) {
+            <div class="navbar__dropdown">
+              <a routerLink="/profile" class="navbar__dropdown-item" (click)="closeMenu()">
+                Profile
+              </a>
+              <button class="navbar__dropdown-item" (click)="logout()">
+                Logout
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <a routerLink="/login" class="navbar__action" (click)="closeMenu()" aria-label="Login">
+          <span class="navbar__action-icon">👤</span>
+        </a>
+      }
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <button
+      class="navbar__mobile-toggle"
+      (click)="toggleMenu()"
+      [class.navbar__mobile-toggle--open]="isMenuOpen()"
+      aria-label="Toggle navigation menu">
+      <span class="navbar__hamburger"></span>
+    </button>
+  </div>
+
+  <!-- Mobile Navigation -->
+  @if (isMenuOpen()) {
+    <div class="navbar__mobile-menu">
+      <a routerLink="/" routerLinkActive="navbar__mobile-link--active" class="navbar__mobile-link" (click)="closeMenu()">
+        Home
+      </a>
+      <a routerLink="/menu" routerLinkActive="navbar__mobile-link--active" class="navbar__mobile-link" (click)="closeMenu()">
+        Menu
+      </a>
+      <a routerLink="/about" routerLinkActive="navbar__mobile-link--active" class="navbar__mobile-link" (click)="closeMenu()">
+        About
+      </a>
+      <a routerLink="/contact" routerLinkActive="navbar__mobile-link--active" class="navbar__mobile-link" (click)="closeMenu()">
+        Contact
+      </a>
+      <div class="navbar__mobile-divider"></div>
+      <a routerLink="/cart" class="navbar__mobile-link" (click)="closeMenu()">
+        <span class="navbar__mobile-link-icon">🛒</span>
+        Cart
+        @if (cartItemsCount() > 0) {
+          <span class="navbar__cart-count">({{ cartItemsCount() }})</span>
+        }
+      </a>
+      @if (isLoggedIn()) {
+        <a routerLink="/profile" class="navbar__mobile-link" (click)="closeMenu()">
+          <span class="navbar__mobile-link-icon">👤</span>
+          Profile
+        </a>
+        <button class="navbar__mobile-link navbar__mobile-link--logout" (click)="logout()">
+          <span class="navbar__mobile-link-icon">🚪</span>
+          Logout
+        </button>
+      } @else {
+        <a routerLink="/login" class="navbar__mobile-link" (click)="closeMenu()">
+          <span class="navbar__mobile-link-icon">🔐</span>
+          Login
+        </a>
+      }
+    </div>
+  }
+</nav>

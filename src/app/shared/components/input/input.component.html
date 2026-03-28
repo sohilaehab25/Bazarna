@@ -1,0 +1,19 @@
+<div class="input-wrapper" [class.input-wrapper--with-icon]="icon()">
+  @if (icon()) {
+    <div class="input-icon">
+      {{ icon() }}
+    </div>
+  }
+  <input
+    [type]="type()"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    [required]="required()"
+    [readonly]="readonly()"
+    [value]="value"
+    [class]="'input input--' + size()"
+    (input)="onInputChange($event)"
+    (focus)="onFocusEvent($event)"
+    (blur)="onBlurEvent($event)"
+  />
+</div>

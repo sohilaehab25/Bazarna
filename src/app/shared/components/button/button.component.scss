@@ -1,0 +1,52 @@
+.btn {
+  font-family: 'Poppins', sans-serif;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  border: none;
+  padding: 12px 24px;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: var(--shadow);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(139, 69, 19, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  &--primary {
+    background-color: var(--primary-color);
+    color: var(--text-color);
+
+    &:hover:not(:disabled) {
+      background-color: var(--secondary-color);
+    }
+  }
+
+  &--secondary {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+
+    &:hover:not(:disabled) {
+      background-color: var(--primary-color);
+    }
+  }
+
+  &--icon {
+    padding: 12px;
+    min-width: 48px;
+  }
+
+  &__icon {
+    font-size: 1.2em;
+  }
+}

@@ -1,0 +1,29 @@
+.cart-item {
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  &__emoji {
+    font-size: 2rem;
+  }
+
+  &__name {
+    margin: 0;
+    color: var(--primary-color);
+  }
+
+  &__description {
+    color: var(--text-color);
+    margin: 10px 0;
+  }
+
+  &__price {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+    margin: 10px 0 15px 0;
+  }
+}

@@ -1,0 +1,81 @@
+<div class="product-showcase">
+  <div class="product-showcase__header">
+    <h2 class="product-showcase__title">{{ title() }}</h2>
+    <p class="product-showcase__subtitle">{{ subtitle() }}</p>
+  </div>
+
+  <div class="product-showcase__grid">
+    @for (product of products(); track product.id) {
+      <app-product-card
+        [product]="product"
+        (onViewDetails)="openModal(product)">
+      </app-product-card>
+    }
+  </div>
+
+  @if (selectedProduct(); as product) {
+    <app-modal
+      [isOpen]="isModalOpen()"
+      (onClose)="closeModal()">
+      <div class="product-details">
+        <div class="product-details__header">
+          <h3 class="product-details__title">{{ product.name }}</h3>
+          <button
+            class="product-details__close-btn"
+            (click)="closeModal()"
+            aria-label="Close details">
+            ×
+          </button>
+        </div>
+
+        <div class="product-details__content">
+          <div class="product-details__image-container">
+            <img
+              [src]="product.image"
+              [alt]="product.name"
+              class="product-details__image"
+              ngSrc />
+          </div>
+
+          <div class="product-details__info">
+            <div class="product-details__price-section">
+              <span class="product-details__price">${{ product.price }}</span>
+              @if (product.originalPrice && product.originalPrice > product.price) {
+                <span class="product-details__original-price">${{ product.originalPrice }}</span>
+              }
+            </div>
+
+            <p class="product-details__description">{{ product.description }}</p>
+
+            <div class="product-details__rating">
+              <div class="product-details__stars">
+                @for (star of [1,2,3,4,5]; track star) {
+                  <span
+                    class="product-details__star"
+                    [class.product-details__star--filled]="product.rating && star <= product.rating">
+                    ★
+                  </span>
+                }
+              </div>
+              <span class="product-details__rating-text">
+                {{ product.rating || 0 }}/5 ({{ product.reviews || 0 }} reviews)
+              </span>
+            </div>
+
+            <div class="product-details__actions">
+              <button class="btn btn--primary product-details__add-to-cart" (click)="addToCart(product)">
+                Add to Cart
+              </button>
+              <button
+                class="btn btn--secondary product-details__wishlist"
+                (click)="addToWishlist(product)"
+                [class.product-details__wishlist--active]="isInWishlist(product.id)">
+                {{ isInWishlist(product.id) ? '❤️ In Wishlist' : '🤍 Add to Wishlist' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </app-modal>
+  }
+</div>
