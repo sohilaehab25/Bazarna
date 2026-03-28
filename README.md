@@ -1,23 +1,89 @@
-# Bazarna
+# Cute Bazar 🛒💕
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.4.
+A feminine, soft, and cozy web application for a handmade bazaar, built with Angular.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- 🏠 Home page with featured categories
+- 🛍️ Product catalog with handmade items
+- 🛒 Shopping cart functionality
+- 👤 User profile management
+- 📱 Responsive design with soft, feminine styling
+
+## Design System
+
+- **Colors**: Pink (#FFB6C1), Beige (#F5E6D8), Brown (#8B4513), Tan (#D4A574)
+- **Typography**: Poppins (main), Dancing Script (decorative)
+- **UI**: Rounded corners (25px), soft shadows, emoji icons
+- **Animations**: Smooth 0.3s ease transitions
+
+## Architecture
+
+- Angular 21+ with standalone components
+- Smart/Dumb component separation
+- Reusable component library
+- Signals for state management
+- API-ready services
+
+## Development
+
+### Prerequisites
+
+- Node.js 20+
+- Angular CLI 21+
+
+### Installation
+
+```bash
+npm install
+```
+
+### Development Server
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Navigate to `http://localhost:4200/`.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Build
 
 ```bash
-ng generate component component-name
+ng build
+```
+
+### Running Tests
+
+```bash
+ng test
+```
+
+### Linting
+
+```bash
+ng lint
+```
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── features/          # Feature modules
+│   │   ├── home/
+│   │   ├── products/
+│   │   ├── cart/
+│   │   └── profile/
+│   ├── shared/
+│   │   ├── components/    # Reusable components
+│   │   └── services/      # API services
+│   ├── app.ts             # Root component
+│   ├── app.html
+│   ├── app.scss
+│   ├── app.config.ts
+│   └── app.routes.ts
+└── styles.scss            # Global styles
+```
 ```
 
 For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:

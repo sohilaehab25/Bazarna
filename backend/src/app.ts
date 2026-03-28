@@ -1,28 +1,41 @@
+import 'dotenv/config';
 import express from 'express';
-import helmet from 'helmet';
 import cors from 'cors';
+import helmet from 'helmet';
 import morgan from 'morgan';
-import { json, urlencoded } from 'express';
-import authRoutes from './modules/auth/auth.routes';
-import { errorMiddleware } from './common/errors/errorMiddleware';
+import { AppDataSource } from './config/dataSource';
+import { errorHandler } from './middlewares/errorHandler';
+import { notFoundHandler } from './middlewares/notFoundHandler';
+import routes from './routes';
 
 const app = express();
 
+// Initialize database
+AppDataSource.initialize()
+  .then(() => {
+    console.log('Database connected successfully');
+  })
+  .catch((error) => {
+    console.error('Database connection failed:', error);
+    process.exit(1);
+  });
+
+// Security middleware
 app.use(helmet());
 app.use(cors());
-app.use(json());
-app.use(urlencoded({ extended: true }));
 
-if (process.env.NODE_ENV !== 'production') {
-  app.use(morgan('dev'));
-}
+// Logging
+app.use(morgan('combined'));
 
-// API prefix
-app.get('/', (_req, res) => res.json({ status: 'ok', service: 'bazarna-backend' }));
+// Body parsing
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/auth', authRoutes);
+// Routes
+app.use('/api', routes);
 
-// global error handler (last middleware)
-app.use(errorMiddleware);
+// Error handling
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;

@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:Bazarna": "node dist/Bazarna/server/server.mjs"
+    "serve:ssr:bazarna": "node dist/bazarna/server/server.mjs"
   },
   "prettier": {
     "printWidth": 100,
@@ -42,6 +42,8 @@
     "@angular/compiler-cli": "^21.0.0",
     "@types/express": "^5.0.1",
     "@types/node": "^20.17.19",
-    "typescript": "~5.9.2"
+    "jsdom": "^27.1.0",
+    "typescript": "~5.9.2",
+    "vitest": "^4.0.8"
   }
 }
