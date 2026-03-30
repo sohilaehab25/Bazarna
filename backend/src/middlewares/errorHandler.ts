@@ -12,16 +12,9 @@ export const errorHandler = (
   const statusCode = error.statusCode || 500;
   const message = error.message || 'Internal Server Error';
 
-  res.status(statusCode).json({
-    success: false,
-    message,
-    ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),
-  });
+  res.apiError(message, statusCode, process.env.NODE_ENV === 'development' ? error.stack : undefined);
 };
 
 export const notFoundHandler = (req: Request, res: Response) => {
-  res.status(404).json({
-    success: false,
-    message: 'Route not found',
-  });
+  res.apiError('Route not found', 404);
 };

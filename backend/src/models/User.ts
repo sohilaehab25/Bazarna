@@ -1,31 +1,43 @@
+import mongoose, { Document, Schema } from 'mongoose';
+
 export enum UserRole {
   USER = 'user',
-  STORE_OWNER = 'store_owner',
   ADMIN = 'admin',
 }
 
-export interface User {
-  id: string;
+export interface IUser extends Document {
+  name: string;
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
   role: UserRole;
-  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface CreateUserDTO {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  role?: UserRole;
-}
+const UserSchema: Schema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: Object.values(UserRole),
+    default: UserRole.USER,
+  },
+}, {
+  timestamps: true,
+});
 
-export interface UpdateUserDTO {
-  firstName?: string;
-  lastName?: string;
-  isActive?: boolean;
-}
+export default mongoose.model<IUser>('User', UserSchema);

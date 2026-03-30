@@ -1,6 +1,7 @@
-import app from './app';
+import { createApp } from './app.module';
 import { logger } from './utils/logger';
 
+const app = createApp();
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
