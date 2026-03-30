@@ -1,22 +1,25 @@
-export interface Category {
-  id: string;
+import mongoose, { Document, Schema } from 'mongoose';
+
+export interface ICategory extends Document {
   name: string;
-  description?: string;
-  image?: string;
-  isActive: boolean;
+  description: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface CreateCategoryDTO {
-  name: string;
-  description?: string;
-  image?: string;
-}
+const CategorySchema: Schema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  description: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+}, {
+  timestamps: true,
+});
 
-export interface UpdateCategoryDTO {
-  name?: string;
-  description?: string;
-  image?: string;
-  isActive?: boolean;
-}
+export default mongoose.model<ICategory>('Category', CategorySchema);

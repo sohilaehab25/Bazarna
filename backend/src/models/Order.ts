@@ -1,38 +1,68 @@
+import mongoose, { Document, Schema } from 'mongoose';
+
 export enum OrderStatus {
   PENDING = 'pending',
-  CONFIRMED = 'confirmed',
-  SHIPPED = 'shipped',
+  PREPARING = 'preparing',
   DELIVERED = 'delivered',
-  CANCELLED = 'cancelled',
 }
 
-export interface Order {
-  id: string;
-  userId: string;
-  totalAmount: number;
+export enum PaymentMethod {
+  CASH = 'cash',
+  VISA = 'visa',
+}
+
+export interface IOrderItem {
+  itemId: mongoose.Types.ObjectId;
+  quantity: number;
+}
+
+export interface IOrder extends Document {
+  userId: mongoose.Types.ObjectId;
+  items: IOrderItem[];
+  totalPrice: number;
   status: OrderStatus;
-  shippingAddress: string;
+  paymentMethod: PaymentMethod;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface OrderItem {
-  id: string;
-  orderId: string;
-  productId: string;
-  quantity: number;
-  price: number;
-}
+const OrderItemSchema: Schema = new Schema({
+  itemId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Item',
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    min: 1,
+  },
+}, { _id: false });
 
-export interface CreateOrderDTO {
-  items: Array<{
-    productId: string;
-    quantity: number;
-  }>;
-  shippingAddress: string;
-}
+const OrderSchema: Schema = new Schema({
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  items: [OrderItemSchema],
+  totalPrice: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  status: {
+    type: String,
+    enum: Object.values(OrderStatus),
+    default: OrderStatus.PENDING,
+  },
+  paymentMethod: {
+    type: String,
+    enum: Object.values(PaymentMethod),
+    required: true,
+  },
+}, {
+  timestamps: true,
+});
 
-export interface UpdateOrderDTO {
-  status?: OrderStatus;
-  shippingAddress?: string;
-}
+export default mongoose.model<IOrder>('Order', OrderSchema);
