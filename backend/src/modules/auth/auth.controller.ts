@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { AuthService } from '../services/AuthService';
-import { RegisterDTO, LoginDTO, RefreshTokenDTO } from '../dtos/AuthDTOs';
-import { validateDTO } from '../utils/validation';
+import { AuthService } from './auth.service';
+import { RegisterDTO, LoginDTO, RefreshTokenDTO } from '../../dtos/AuthDTOs';
+import { validateDTO } from '../../utils/validation';
 
 const authService = new AuthService();
 
@@ -14,18 +14,17 @@ export class AuthController {
       const user = await authService.register(registerData);
       const tokens = await authService.login(registerData.email, registerData.password);
 
-      res.status(201).json({
-        message: 'User registered successfully',
+      res.apiSuccess('User registered successfully', {
         user: {
-          id: user.id,
-          email: user.email,
+          id: user._id,
           name: user.name,
+          email: user.email,
           role: user.role,
         },
         ...tokens,
-      });
+      }, 201);
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      res.apiError(error.message, 400);
     }
   }
 
@@ -35,13 +34,9 @@ export class AuthController {
       await validateDTO(loginData, LoginDTO);
 
       const tokens = await authService.login(loginData.email, loginData.password);
-
-      res.json({
-        message: 'Login successful',
-        ...tokens,
-      });
+      res.apiSuccess('Login successful', tokens);
     } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      res.apiError(error.message, 401);
     }
   }
 
@@ -51,13 +46,9 @@ export class AuthController {
       await validateDTO(refreshData, RefreshTokenDTO);
 
       const tokens = await authService.refreshToken(refreshData.refreshToken);
-
-      res.json({
-        message: 'Token refreshed successfully',
-        ...tokens,
-      });
+      res.apiSuccess('Token refreshed successfully', tokens);
     } catch (error: any) {
-      res.status(401).json({ message: error.message });
+      res.apiError(error.message, 401);
     }
   }
 }
