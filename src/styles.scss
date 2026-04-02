@@ -5,8 +5,8 @@
 // Import Variables
 @import 'styles/variables';
 
-// Import Google Fonts
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;700&display=swap');
+// Import Google Fonts - More readable fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;700&display=swap');
 
 // ========================================
 // RESET & BASE STYLES
@@ -28,11 +28,12 @@ body {
   padding: 0;
   font-family: var(--font-primary);
   font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
+  line-height: 1.6; // Improved from 1.5 for better readability
   color: var(--color-text-primary);
   background-color: var(--color-background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.01em; // Slight letter spacing for better readability
 }
 
 // ========================================
@@ -74,7 +75,7 @@ h6 {
 
 p {
   margin: 0 0 var(--spacing-4) 0;
-  line-height: var(--line-height-relaxed);
+  line-height: 1.7; // Improved from 1.75 for better readability
 }
 
 a {
@@ -110,9 +111,12 @@ input, textarea, select {
   border: 2px solid var(--color-border);
   background-color: var(--color-surface);
   color: var(--color-text-primary);
+  line-height: 1.5; // Better line height for inputs
+  letter-spacing: 0.01em; // Slight letter spacing
 
   &::placeholder {
     color: var(--color-text-muted);
+    opacity: 0.8;
   }
 
   &:focus {

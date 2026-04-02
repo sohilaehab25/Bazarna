@@ -1,4 +1,23 @@
 <div class="home">
+  <!-- Auth Popup for Unlogged Users -->
+  @if (showAuthPopup()) {
+    <div class="auth-popup-overlay" (click)="closeAuthPopup()">
+      <div class="auth-popup" (click)="$event.stopPropagation()">
+        <div class="auth-popup-header">
+          <h3>Welcome to Bazarna! 👋</h3>
+          <button class="close-btn" (click)="closeAuthPopup()" aria-label="Close popup">×</button>
+        </div>
+        <div class="auth-popup-content">
+          <p>Join our amazing marketplace to start shopping and discover great deals!</p>
+          <div class="auth-popup-actions">
+            <app-button (click)="navigateToLogin()" class="login-btn">Login / Sign Up</app-button>
+            <app-button (click)="closeAuthPopup()" variant="secondary" class="continue-btn">Continue as Guest</app-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
   <!-- Hero Section with CTA Buttons -->
   <app-hero-banner></app-hero-banner>
 

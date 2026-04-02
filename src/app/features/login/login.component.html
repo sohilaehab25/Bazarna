@@ -1,0 +1,53 @@
+<div class="login">
+    <app-card>
+        <div class="login-form">
+        <h2>{{ isLoginMode() ? 'Welcome Back! 👋' : 'Join Us! 💕' }}</h2>
+        <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+            @if (!isLoginMode()) {
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input
+                    id="name"
+                    type="text"
+                    formControlName="name"
+                    placeholder="Your name"
+                    class="form-input">
+                </div>
+            }
+            <div class="form-group">
+            <label for="email">Email</label>
+            <input
+                id="email"
+                type="email"
+                formControlName="email"
+                placeholder="your@email.com"
+                class="form-input">
+            </div>
+            <div class="form-group">
+            <label for="password">Password</label>
+            <input
+                id="password"
+                type="password"
+                formControlName="password"
+                placeholder="Your password"
+                class="form-input">
+            </div>
+            <app-button
+                type="submit"
+                [disabled]="authForm.invalid"
+                class="login-btn">
+                {{ isLoginMode() ? 'Login 💕' : 'Sign Up 💕' }}
+            </app-button>
+            @if (errorMessage()) {
+                <div class="error-message">
+                    {{ errorMessage() }}
+                </div>
+            }
+        </form>
+        <p class="signup-link">
+            {{ isLoginMode() ? "Don't have an account?" : 'Already have an account?' }}
+            <a href="#" (click)="toggleMode($event)">{{ isLoginMode() ? 'Sign up here' : 'Login here' }}</a>
+        </p>
+        </div>
+    </app-card>
+</div>

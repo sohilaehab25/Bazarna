@@ -41,8 +41,8 @@
 
 // Typography
 :root {
-  // Font Families
-  --font-primary: 'Poppins', sans-serif;
+  // Font Families - Inter for better readability
+  --font-primary: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-heading: 'Dancing Script', cursive;
 
   // Font Sizes

@@ -1,4 +1,6 @@
 import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
 export interface User {
   id: string;
@@ -12,17 +14,29 @@ export interface User {
 })
 export class AuthService {
   private currentUser = signal<User | null>(null);
+  private apiUrl = 'http://localhost:3000/api/auth';
 
-  login(email: string, password: string) {
-    // TODO: Implement API call
-    // Mock login for now
-    if (email && password) {
-      this.currentUser.set({
-        id: '1',
-        name: 'Bazar Lover',
-        email: email
-      });
-    }
+  constructor(private http: HttpClient) {}
+
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, { email, password }).pipe(
+      tap((response: any) => {
+        // Assuming response has user data
+        if (response.user) {
+          this.currentUser.set(response.user);
+        }
+      })
+    );
+  }
+
+  signup(name: string, email: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, { name, email, password }).pipe(
+      tap((response: any) => {
+        if (response.user) {
+          this.currentUser.set(response.user);
+        }
+      })
+    );
   }
 
   logout() {

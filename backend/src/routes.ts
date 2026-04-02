@@ -4,6 +4,7 @@ import userRoutes from './controllers/users/user.routes';
 import productRoutes from './controllers/products/product.routes';
 import orderRoutes from './controllers/orders/order.routes';
 import categoryRoutes from './controllers/categories/category.routes';
+import menuRoutes from './modules/menu/menu.routes';
 
 const router = Router();
 
@@ -13,5 +14,6 @@ router.use('/users', userRoutes);
 router.use('/products', productRoutes);
 router.use('/orders', orderRoutes);
 router.use('/categories', categoryRoutes);
+router.use('/menu', menuRoutes);
 
 export default router;

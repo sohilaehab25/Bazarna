@@ -1,10 +1,11 @@
-import { Component, inject, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, computed, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { HeroBannerComponent } from '../../shared/components/hero-banner/hero-banner.component';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ProductsService } from '../../shared/services/products.service';
+import { AuthService } from '../../shared/services/auth.service';
 
 interface Feature {
   icon: string;
@@ -31,8 +32,11 @@ interface Feature {
 export class HomeComponent {
   private productsService = inject(ProductsService);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   categories = this.productsService.getCategories();
+  isLoggedIn = this.authService.isLoggedIn();
+  showAuthPopup = signal(!this.isLoggedIn);
   
   // Pre-compute category counts for performance
   categoryCounts = computed(() => {
@@ -95,5 +99,14 @@ export class HomeComponent {
       event.preventDefault();
       this.navigateToCategory(category);
     }
+  }
+
+  closeAuthPopup(): void {
+    this.showAuthPopup.set(false);
+  }
+
+  navigateToLogin(): void {
+    this.router.navigate(['/login']);
+    this.closeAuthPopup();
   }
 }

@@ -5,6 +5,7 @@ import { CategoriesComponent } from './features/categories/categories.component'
 import { CartComponent } from './features/cart/cart.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { LoginComponent } from './features/login/login.component';
+import { ConfirmSignupComponent } from './features/confirm-signup/confirm-signup.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { OrderSuccessComponent } from './features/order-success/order-success.component';
 import { AboutComponent } from './features/about/about.component';
@@ -23,5 +24,6 @@ export const routes: Routes = [
   { path: 'order-success', component: OrderSuccessComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'confirm-signup', component: ConfirmSignupComponent },
   { path: '**', redirectTo: '' }
 ];

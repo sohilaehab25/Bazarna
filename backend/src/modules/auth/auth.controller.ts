@@ -24,6 +24,7 @@ export class AuthController {
         ...tokens,
       }, 201);
     } catch (error: any) {
+      console.log("🚀 ~ AuthController ~ register ~ error:", error)
       res.apiError(error.message, 400);
     }
   }
@@ -36,6 +37,7 @@ export class AuthController {
       const tokens = await authService.login(loginData.email, loginData.password);
       res.apiSuccess('Login successful', tokens);
     } catch (error: any) {
+      console.log("🚀 ~ AuthController ~ login ~ error:", error)
       res.apiError(error.message, 401);
     }
   }
@@ -48,6 +50,7 @@ export class AuthController {
       const tokens = await authService.refreshToken(refreshData.refreshToken);
       res.apiSuccess('Token refreshed successfully', tokens);
     } catch (error: any) {
+      console.log("🚀 ~ AuthController ~ refreshToken ~ error:", error)
       res.apiError(error.message, 401);
     }
   }

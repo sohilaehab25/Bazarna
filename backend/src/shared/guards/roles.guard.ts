@@ -1,8 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { UserRole } from '../interfaces/user.interface';
+import { UserRole } from '../../models/User';
+import { ROLES_KEY } from '../decorators/roles.decorator';
+import { AuthRequest } from '../../middlewares/auth';
 
 export const rolesGuard = (allowedRoles: UserRole[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
@@ -19,4 +21,11 @@ export const rolesGuard = (allowedRoles: UserRole[]) => {
 
     next();
   };
+};
+
+// Metadata-based roles guard for use with @Roles decorator
+export const rolesGuardFromMetadata = (req: Request, res: Response, next: NextFunction) => {
+  // This would check metadata on the route handler
+  // For now, we'll use the parameter-based approach
+  next();
 };

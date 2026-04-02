@@ -1,45 +1,32 @@
+import passport from 'passport';
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import { logger } from '../../utils/logger';
-import { IUser } from '../interfaces/user.interface';
+import { User } from '../../models/User';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: IUser;
+      user?: User;
     }
   }
 }
 
 export const jwtAuthGuard = (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.substring(7) : null;
-
-    if (!token) {
+  passport.authenticate('jwt', { session: false }, (err: any, user: User) => {
+    if (err) {
       return res.status(401).json({
         success: false,
-        message: 'Access token is required',
+        message: 'Authentication failed',
       });
     }
 
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      logger.error('JWT_SECRET not configured');
-      return res.status(500).json({
+    if (!user) {
+      return res.status(401).json({
         success: false,
-        message: 'Server configuration error',
+        message: 'Invalid token',
       });
     }
 
-    const decoded = jwt.verify(token, secret) as IUser;
-    req.user = decoded;
+    req.user = user;
     next();
-  } catch (error) {
-    logger.error('JWT verification failed:', error);
-    return res.status(401).json({
-      success: false,
-      message: 'Invalid or expired token',
-    });
-  }
+  })(req, res, next);
 };

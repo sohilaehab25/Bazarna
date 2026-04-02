@@ -3,9 +3,12 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import passport from 'passport';
 import { connectDatabase } from './config/database';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import { responseInterceptor } from './shared/interceptors/response.interceptor';
+import { jwtStrategy } from './shared/strategies/jwt.strategy';
+import { UserRepository } from './repositories/UserRepository';
 import routes from './routes';
 
 export const createApp = () => {
@@ -13,6 +16,11 @@ export const createApp = () => {
 
   // Initialize database
   connectDatabase();
+
+  // Initialize Passport
+  app.use(passport.initialize());
+  const userRepository = new UserRepository();
+  passport.use('jwt', jwtStrategy(userRepository));
 
   // Security middleware
   app.use(helmet());

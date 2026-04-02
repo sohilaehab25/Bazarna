@@ -16,12 +16,12 @@ interface AuthTokens {
 
 export class AuthService {
   private userRepository = new UserRepository();
-  private jwtSecret = process.env.JWT_SECRET || 'your-secret-key';
-  private jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret';
+  private jwtSecret: string = process.env.JWT_SECRET || 'your-secret-key';
+  private jwtRefreshSecret: string = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret';
   private accessTokenExpiry = '15m';
   private refreshTokenExpiry = '7d';
 
-  async register(userData: { email: string; password: string; firstName: string; lastName: string; role?: UserRole }): Promise<User> {
+  async register(userData: { email: string; password: string; name: string; role?: UserRole }): Promise<User> {
     const existingUser = await this.userRepository.findByEmail(userData.email);
     if (existingUser) {
       throw new Error('User already exists');
@@ -38,7 +38,7 @@ export class AuthService {
 
   async login(email: string, password: string): Promise<AuthTokens> {
     const user = await this.userRepository.findByEmail(email);
-    if (!user || !user.isActive) {
+    if (!user) {
       throw new Error('Invalid credentials');
     }
 
@@ -54,7 +54,7 @@ export class AuthService {
     try {
       const payload = jwt.verify(refreshToken, this.jwtRefreshSecret) as JWTPayload;
       const user = await this.userRepository.findById(payload.userId);
-      if (!user || !user.isActive) {
+      if (!user) {
         throw new Error('Invalid refresh token');
       }
 
@@ -66,22 +66,14 @@ export class AuthService {
 
   private generateTokens(user: User): AuthTokens {
     const payload: JWTPayload = {
-      userId: user.id,
+      userId: user._id.toString(),
       email: user.email,
       role: user.role,
     };
 
-    const accessToken = jwt.sign(payload, this.jwtSecret, { expiresIn: this.accessTokenExpiry });
-    const refreshToken = jwt.sign(payload, this.jwtRefreshSecret, { expiresIn: this.refreshTokenExpiry });
+    const accessToken = jwt.sign(payload, this.jwtSecret as string, { expiresIn: this.accessTokenExpiry });
+    const refreshToken = jwt.sign(payload, this.jwtRefreshSecret as string, { expiresIn: this.refreshTokenExpiry });
 
     return { accessToken, refreshToken };
-  }
-
-  verifyAccessToken(token: string): JWTPayload {
-    try {
-      return jwt.verify(token, this.jwtSecret) as JWTPayload;
-    } catch (error) {
-      throw new Error('Invalid access token');
-    }
   }
 }
