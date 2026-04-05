@@ -8,7 +8,7 @@ import { NewsletterComponent } from '../newsletter/newsletter.component';
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, RouterLink, CardComponent, ButtonComponent, NewsletterComponent],
+  imports: [CommonModule, RouterLink, NewsletterComponent],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss']
 })

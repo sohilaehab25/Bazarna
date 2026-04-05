@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
@@ -22,8 +22,8 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/login`, { email, password }).pipe(
       tap((response: any) => {
         // Assuming response has user data
-        if (response.user) {
-          this.currentUser.set(response.user);
+        if (response.data && response.data.user) {
+          this.currentUser.set(response.data.user);
         }
       })
     );
@@ -32,8 +32,8 @@ export class AuthService {
   signup(name: string, email: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, { name, email, password }).pipe(
       tap((response: any) => {
-        if (response.user) {
-          this.currentUser.set(response.user);
+        if (response.data && response.data.user) {
+          this.currentUser.set(response.data.user);
         }
       })
     );
@@ -41,6 +41,7 @@ export class AuthService {
 
   logout() {
     this.currentUser.set(null);
+
   }
 
   getCurrentUser() {
