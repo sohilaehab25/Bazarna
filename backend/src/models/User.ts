@@ -5,7 +5,8 @@ export enum UserRole {
   ADMIN = 'admin',
 }
 
-export interface IUser extends Document {
+export interface User extends Document {
+  _id: mongoose.Types.ObjectId;
   name: string;
   email: string;
   password: string;
@@ -40,4 +41,4 @@ const UserSchema: Schema = new Schema({
   timestamps: true,
 });
 
-export default mongoose.model<IUser>('User', UserSchema);
+export default mongoose.model<User>('User', UserSchema);

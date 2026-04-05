@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { UserRole } from '../../models/User';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-import { AuthRequest } from '../../middlewares/auth';
 
 export const rolesGuard = (allowedRoles: UserRole[]) => {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
@@ -12,7 +11,7 @@ export const rolesGuard = (allowedRoles: UserRole[]) => {
       });
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
+    if (!allowedRoles.includes((req.user as any).role)) {
       return res.status(403).json({
         success: false,
         message: 'Insufficient permissions',

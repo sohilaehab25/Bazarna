@@ -15,12 +15,6 @@ export class AuthController {
       const tokens = await authService.login(registerData.email, registerData.password);
 
       res.apiSuccess('User registered successfully', {
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
         ...tokens,
       }, 201);
     } catch (error: any) {

@@ -1,17 +1,33 @@
 // ========================================
-// CUTE BAZAR GLOBAL STYLES
+// BAZAR GLOBAL STYLES
 // ========================================
 
 // Import Variables
-@import 'styles/variables';
+@use 'styles/variables';
+
 
 // Import Google Fonts - More readable fonts
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;700&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;700&display=swap');
 
 // ========================================
 // RESET & BASE STYLES
 // ========================================
 
+// Custom snackbar styles
+.success-snackbar {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.error-snackbar {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.info-snackbar {
+  background-color: #2196f3 !important;
+  color: white !important;
+}
 *,
 *::before,
 *::after {

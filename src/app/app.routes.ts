@@ -11,6 +11,7 @@ import { OrderSuccessComponent } from './features/order-success/order-success.co
 import { AboutComponent } from './features/about/about.component';
 import { ContactComponent } from './features/contact/contact.component';
 import { WishlistComponent } from './features/wishlist/wishlist.component';
+import { AuthGuard } from './shared/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -20,9 +21,9 @@ export const routes: Routes = [
   { path: 'contact', component: ContactComponent },
   { path: 'cart', component: CartComponent },
   { path: 'wishlist', component: WishlistComponent },
-  { path: 'checkout', component: CheckoutComponent },
+  { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
   { path: 'order-success', component: OrderSuccessComponent },
-  { path: 'profile', component: ProfileComponent },
+  { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'confirm-signup', component: ConfirmSignupComponent },
   { path: '**', redirectTo: '' }

@@ -8,17 +8,16 @@ import { CartService } from '../../services/cart.service';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ButtonComponent],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class NavbarComponent {
+export class HeaderComponent {
   private authService = inject(AuthService);
   private cartService = inject(CartService);
-
+  currentUser = this.authService.user$;
   isMenuOpen = signal(false);
   cartItemsCount = this.cartService.cartItemsCount;
-  currentUser = this.authService.getCurrentUser();
   isLoggedIn = this.authService.isLoggedIn;
 
   toggleMenu(): void {

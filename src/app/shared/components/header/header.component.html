@@ -50,7 +50,7 @@
               <a routerLink="/profile" class="navbar__dropdown-item" (click)="closeMenu()">
                 Profile
               </a>
-              <button class="navbar__dropdown-item" (click)="logout()">
+              <button class="navbar__dropdown-item" (click)="logout()" routerLink="/login">
                 Logout
               </button>
             </div>
@@ -58,7 +58,7 @@
         </div>
       } @else {
         <a routerLink="/login" class="navbar__action" (click)="closeMenu()" aria-label="Login">
-          <span class="navbar__action-icon">👤</span>
+          <span class="navbar__action-icon">🔐</span>
         </a>
       }
     </div>
