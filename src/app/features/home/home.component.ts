@@ -1,7 +1,6 @@
 import { Component, inject, computed, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
-import { HeroBannerComponent } from '../../shared/components/hero-banner/hero-banner.component';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ProductsService } from '../../shared/services/products.service';
@@ -21,7 +20,6 @@ interface Feature {
   imports: [
     CommonModule,
     RouterLink,
-    HeroBannerComponent,
     CardComponent,
     ButtonComponent
   ],

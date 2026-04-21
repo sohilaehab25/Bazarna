@@ -8,41 +8,42 @@ import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-profile',
-  standalone: true,
-  imports: [CommonModule, CardComponent, ButtonComponent],
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss']
+    selector: 'app-profile',
+    standalone: true,
+    imports: [CommonModule, CardComponent, ButtonComponent],
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-  private authService = inject(AuthService);
-  private ordersService = inject(OrdersService);
-  private router = inject(Router);
-  private _snackBar = inject(MatSnackBar);
+    private authService = inject(AuthService);
+    private ordersService = inject(OrdersService);
+    private router = inject(Router);
+    private _snackBar = inject(MatSnackBar);
 
-  // ✅ use signal, not observable
-  currentUser = this.authService.user$;
-  isLoggedIn = this.authService.isLoggedIn;
-  orders = this.ordersService.getOrders();
+    // use signal, not observable
+    currentUser = this.authService.user$;
+    isLoggedIn = this.authService.isLoggedIn;
+    orders = this.ordersService.getOrders();
 
-  ngOnInit(): void {
-    // ✅ fetch profile once, update signal internally
-    this.authService.userProfile().subscribe({
-      next: () => {},
-      error: (error) => {
-        this._snackBar.open('Failed to load profile', 'Close', {
-          duration: 3000,
-          panelClass: ['error-snackbar']
+    ngOnInit(): void {
+        // fetch profile once, update signal internally
+        this.authService.userProfile().subscribe({
+            next: () => {},
+            error: (error) => {
+                this._snackBar.open('Failed to load profile', 'Close', {
+                    duration: 3000,
+                    panelClass: ['error-snackbar']
+                });
+            }
         });
-      }
-    });
-  }
+    }
 
-  logout() {
-    this.authService.logout();
-    this._snackBar.open('Logged out successfully', 'Close', {
-      duration: 3000,
-      panelClass: ['success-snackbar']
-    });
-  }
+    logout() {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+        this._snackBar.open('Logged out successfully', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar']
+        });
+    }
 }
