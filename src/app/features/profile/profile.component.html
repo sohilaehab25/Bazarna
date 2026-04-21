@@ -6,8 +6,8 @@
             <h3>Welcome back, {{ currentUser()?.name }}!</h3>
             <p>Email: {{ currentUser()?.email }}</p>
             <div class="profile-actions">
-            <app-button routerLink="/edit-profile">Edit Profile</app-button>
-            <app-button variant="secondary" (onClick)="logout()" routerLink="/login">
+            <app-button (onClick)="updateProfile()">Edit Profile</app-button>
+            <app-button variant="secondary" (onClick)="logout()">
                 Logout
             </app-button>
             </div>

@@ -6,7 +6,6 @@ export * from './cart-item/cart-item.component';
 export * from './empty-state/empty-state.component';
 export * from './footer/footer.component';
 export * from './newsletter/newsletter.component';
-export * from './hero-banner/hero-banner.component';
 export * from './modal/modal.component';
 export * from './layout/layout.component';
 import { InputComponent } from './input/input.component';

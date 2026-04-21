@@ -46,4 +46,7 @@ export class ProfileComponent implements OnInit {
             panelClass: ['success-snackbar']
         });
     }
+    updateProfile() {
+        this.router.navigate(['/edit-profile']);
+    }
 }

@@ -1,0 +1,54 @@
+<div class="edit-profile">
+    <h1>Edit Profile</h1>
+
+    <app-card>
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="edit-form">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input
+                    id="name"
+                    type="text"
+                    formControlName="name"
+                    placeholder="Enter your name"
+                    class="form-control"
+                    [class.error]="profileForm.get('name')?.invalid && profileForm.get('name')?.touched"
+                />
+                @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
+                    <div class="error-message">
+                        @if (profileForm.get('name')?.errors?.['required']) {
+                            Name is required.
+                        } @else if (profileForm.get('name')?.errors?.['minlength']) {
+                            Name must be at least 2 characters.
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input
+                    id="email"
+                    type="email"
+                    formControlName="email"
+                    placeholder="Enter your email"
+                    class="form-control"
+                    [class.error]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
+                />
+                @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
+                    <div class="error-message">
+                        @if (profileForm.get('email')?.errors?.['required']) {
+                            Email is required.
+                        } @else if (profileForm.get('email')?.errors?.['email']) {
+                            Please enter a valid email.
+                        }
+                    </div>
+                }
+            </div>
+
+            <div class="form-actions">
+                <app-button type="submit" [disabled]="profileForm.invalid">Save Changes</app-button>
+                <app-button variant="secondary" type="button" (onClick)="cancel()">Cancel</app-button>
+            </div>
+        </form>
+    </app-card>
+</div>
