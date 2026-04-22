@@ -73,21 +73,6 @@ export class HomeComponent {
     this.router.navigate(['/products'], { queryParams: { category } });
   }
 
-  getCategoryEmoji(category: string): string {
-    const emojiMap: Record<string, string> = {
-      'Accessories': '🧣',
-      'Home': '🏠',
-      'Decor': '🏡', // Changed to avoid duplicate
-      'Groceries': '🥕',
-      'Cheese': '🧀',
-      'Sauces': '🍯',
-      'Kitchen': '☕',
-      'Jewelry': '💎', // Changed to diamond for distinction
-      'Art': '🎨'
-    };
-    return emojiMap[category] || '📦';
-  }
-
   getCategoryCount(category: string): number {
     return this.categoryCounts()[category] || 0;
   }

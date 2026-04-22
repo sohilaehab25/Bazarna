@@ -123,10 +123,11 @@
       justify-content: center;
       font-weight: bold;
       transition: all 0.2s;
+      color: rgb(235, 183, 183);
 
       &:hover:not(:disabled) {
         background-color: var(--primary-color);
-        color: white;
+        color: rgb(221, 189, 189);
         border-color: var(--primary-color);
       }
 
@@ -146,8 +147,14 @@
     display: flex;
     gap: 10px;
     margin-top: auto;
+    height: 48px; // Consistent height for button area
 
-    app-button {
+    .action-btn {
+      flex: 1;
+      height: 100%;
+    }
+
+    .action-btn-placeholder {
       flex: 1;
     }
   }

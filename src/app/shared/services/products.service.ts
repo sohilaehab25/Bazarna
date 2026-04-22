@@ -1,6 +1,6 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 export interface Product {
   _id: string;
@@ -39,10 +39,13 @@ export class ProductsService {
 
   private products = signal<Product[]>([]);
   private categories = signal<Category[]>([]);
+  private platformId = inject(PLATFORM_ID);
 
   constructor() {
-    this.loadProducts();
-    this.loadCategories();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadProducts();
+      this.loadCategories();
+    }
   }
 
   private loadProducts() {
@@ -79,5 +82,11 @@ export class ProductsService {
 
   getProductById(id: string) {
     return this.products().find(p => p._id === id);
+  }
+
+  updateStock(productId: string, newStock: number) {
+    this.products.update(products => 
+      products.map(p => p._id === productId ? { ...p, stock: newStock } : p)
+    );
   }
 }

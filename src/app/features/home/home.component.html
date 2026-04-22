@@ -39,7 +39,6 @@
             (click)="navigateToCategory(category)"
             (keydown)="onCategoryKeyDown($event, category)">
             <div class="category-content">
-              <div class="category-icon" aria-hidden="true">{{ getCategoryEmoji(category) }}</div>
               <h3>{{ category }}</h3>
               <p>{{ getCategoryCount(category) }} items available</p>
               <app-button>Shop {{ category }}</app-button>

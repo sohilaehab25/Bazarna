@@ -1,5 +1,6 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
 import { Observable, tap } from 'rxjs';
 
 export interface User {
@@ -32,6 +33,7 @@ interface AuthResponse extends ApiResponse<{
 export class AuthService {
     private http = inject(HttpClient);
     private apiUrl = 'http://localhost:3009/api';
+    private platformId = inject(PLATFORM_ID);
 
       // 🔹 state
     private currentUser = signal<User | null>(null);
@@ -67,8 +69,10 @@ export class AuthService {
     }
 
     logout(): void {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        if (isPlatformBrowser(this.platformId)) {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+        }
         this.currentUser.set(null);
     }
 
@@ -107,8 +111,10 @@ export class AuthService {
     }
 
     private setSession(data: { accessToken: string; refreshToken: string; user: User }) {
-        localStorage.setItem('accessToken', data.accessToken);
-        localStorage.setItem('refreshToken', data.refreshToken);
+        if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('accessToken', data.accessToken);
+            localStorage.setItem('refreshToken', data.refreshToken);
+        }
         this.currentUser.set(data.user);
   }
 
@@ -117,10 +123,16 @@ export class AuthService {
   // =========================
 
     getAccessToken(): string | null {
-        return localStorage.getItem('accessToken');
+        if (isPlatformBrowser(this.platformId)) {
+            return localStorage.getItem('accessToken');
+        }
+        return null;
     }
 
     getRefreshToken(): string | null {
-        return localStorage.getItem('refreshToken');
+        if (isPlatformBrowser(this.platformId)) {
+            return localStorage.getItem('refreshToken');
+        }
+        return null;
     }
 }

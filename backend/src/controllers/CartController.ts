@@ -18,6 +18,7 @@ export class CartController {
     try {
       const userId = (req as any).user._id;
       const { productId, quantity = 1 } = req.body;
+      console.log(`Adding to cart: User ${userId}, Product ${productId}, Quantity ${quantity}`);
 
       if (!productId) {
         return res.apiError('Product ID is required', 400);

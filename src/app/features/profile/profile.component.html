@@ -31,7 +31,7 @@
                     </span>
                 </div>
                 <p class="order-date">{{ order.createdAt | date:'medium' }}</p>
-                <p class="order-total">{{ order.totalPrice | currency }}</p>
+                <p class="order-total">{{ order.totalPrice }} EGP</p>
                 <p class="order-items">{{ order.items.length }} item(s)</p>
             </div>
         </app-card>

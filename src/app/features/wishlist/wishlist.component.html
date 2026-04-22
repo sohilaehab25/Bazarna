@@ -6,62 +6,59 @@
 
   <div class="wishlist-content">
     @if (categories().length === 0) {
-      <div class="wishlist-empty">
-        <div class="empty-wishlist">
-          <div class="empty-icon">🤍</div>
-          <h2>Your wishlist is empty</h2>
-          <p>Start adding items you love to your wishlist!</p>
-          <app-button routerLink="/products">
-            Browse Products
-          </app-button>
-        </div>
+    <div class="wishlist-empty">
+      <div class="empty-wishlist">
+        <div class="empty-icon">🤍</div>
+        <h2>Your wishlist is empty</h2>
+        <p>Start adding items you love to your wishlist!</p>
+        <app-button routerLink="/products">
+          Browse Products
+        </app-button>
       </div>
+    </div>
     } @else {
-      <div class="wishlist-categories">
-        @for (category of categories(); track category) {
-          <div class="category-section">
-            <div class="category-header">
-              <div class="category-title">
-                <span class="category-emoji">{{ getCategoryEmoji(category) }}</span>
-                <h2>{{ category }}</h2>
-                <span class="category-count">({{ groupedItems()[category].length }} items)</span>
+    <div class="wishlist-categories">
+      @for (category of categories(); track category) {
+      <div class="category-section">
+        <div class="category-header">
+          <div class="category-title">
+            <span class="category-emoji">{{ getCategoryEmoji(category) }}</span>
+            <h2>{{ category }}</h2>
+            <span class="category-count">({{ groupedItems()[category].length }} items)</span>
+          </div>
+        </div>
+
+        <div class="category-items">
+          @for (item of groupedItems()[category]; track item._id) {
+          <app-card class="wishlist-item">
+            <div class="wishlist-item-content">
+              <div class="item-header">
+                <div class="item-image-container">
+                  <img [src]="item.imageUrl" [alt]="item.name" class="item-image">
+                </div>
+                <button class="remove-btn" (click)="removeFromWishlist(item._id)" aria-label="Remove from wishlist">
+                  ✕
+                </button>
+              </div>
+
+              <h3 class="item-name">{{ item.name }}</h3>
+              <p class="item-description">{{ item.description }}</p>
+
+              <div class="item-footer">
+                <span class="item-price">{{ item.price }} EGP</span>
+                <div class="item-actions">
+                  <app-button size="small" (onClick)="addToCart(item)">
+                    Add to Cart
+                  </app-button>
+                </div>
               </div>
             </div>
-
-            <div class="category-items">
-              @for (item of groupedItems()[category]; track item._id) {
-                <app-card class="wishlist-item">
-                  <div class="wishlist-item-content">
-                    <div class="item-header">
-                      <div class="item-image-container">
-                        <img [src]="item.imageUrl" [alt]="item.name" class="item-image">
-                      </div>
-                      <button
-                        class="remove-btn"
-                        (click)="removeFromWishlist(item._id)"
-                        aria-label="Remove from wishlist">
-                        ✕
-                      </button>
-                    </div>
-
-                    <h3 class="item-name">{{ item.name }}</h3>
-                    <p class="item-description">{{ item.description }}</p>
-
-                    <div class="item-footer">
-                      <span class="item-price">{{ item.price | currency }}</span>
-                      <div class="item-actions">
-                        <app-button size="small" (onClick)="addToCart(item)">
-                          Add to Cart
-                        </app-button>
-                      </div>
-                    </div>
-                  </div>
-                </app-card>
-              }
-            </div>
-          </div>
-        }
+          </app-card>
+          }
+        </div>
       </div>
+      }
+    </div>
     }
   </div>
 </div>

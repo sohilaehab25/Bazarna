@@ -32,12 +32,12 @@ import { OrdersService } from '../../shared/services/orders.service';
                     <img [src]="item.product.imageUrl" [alt]="item.product.name" class="order-item__image">
                     <span class="order-item__name">{{ item.product.name }}</span>
                     <span class="order-item__quantity">x{{ item.quantity }}</span>
-                    <span class="order-item__price">{{ item.product.price * item.quantity | currency }}</span>
+                    <span class="order-item__price">{{ item.product.price * item.quantity }} EGP</span>
                   </div>
                 }
               </div>
               <div class="order-total">
-                <strong>Total: {{ cartTotal() | currency }}</strong>
+                <strong>Total: {{ cartTotal() }} EGP</strong>
               </div>
             </app-card>
           </div>

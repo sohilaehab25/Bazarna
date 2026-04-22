@@ -2,6 +2,7 @@ import { OrderRepository } from '../repositories/OrderRepository';
 import { Order, OrderStatus } from '../models/Order';
 import ProductModel from '../models/Product';
 import { CartRepository } from '../repositories/CartRepository';
+import { emitStockUpdate } from '../utils/socket';
 
 export class OrderService {
   private orderRepository = new OrderRepository();
@@ -47,6 +48,15 @@ export class OrderService {
       await this.cartRepository.clearCart(userId);
 
       await session.commitTransaction();
+
+      // Emit real-time stock updates after successful transaction
+      for (const item of cart.items) {
+        const product = await ProductModel.findById(item.productId);
+        if (product) {
+          emitStockUpdate(product._id.toString(), product.stock);
+        }
+      }
+
       return order;
     } catch (error) {
       await session.abortTransaction();

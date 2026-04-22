@@ -20,15 +20,15 @@ import { OrdersService } from '../../shared/services/orders.service';
           <div class="order-details">
             <h3>Order Summary</h3>
             <p><strong>Order ID:</strong> {{ orderId }}</p>
-            <p><strong>Total:</strong> {{ orderTotal | currency }}</p>
+            <p><strong>Total:</strong> {{ orderTotal }} EGP</p>
             <p><strong>Status:</strong> Processing</p>
           </div>
           <div class="success-actions">
             <app-button routerLink="/products">
-              Continue Shopping 🛍️
+              Continue Shopping
             </app-button>
             <app-button variant="secondary" routerLink="/profile">
-              View Order History 📋
+              View Order History
             </app-button>
           </div>
         </div>

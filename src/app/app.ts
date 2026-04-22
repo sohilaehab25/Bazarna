@@ -1,4 +1,5 @@
-import { Component, inject, computed, OnInit } from '@angular/core';
+import { Component, inject, computed, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { LayoutComponent } from './shared/components/layout/layout.component';
 import { CartService } from './shared/services/cart.service';
@@ -15,8 +16,12 @@ export class App implements OnInit {
 
   private authService = inject(AuthService);
 
+  private platformId = inject(PLATFORM_ID);
+
   ngOnInit(): void {
-    // Restore user session on app startup
-    this.authService.initUser();
+    if (isPlatformBrowser(this.platformId)) {
+      // Restore user session on app startup
+      this.authService.initUser();
+    }
   }
 }

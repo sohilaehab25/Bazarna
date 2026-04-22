@@ -17,6 +17,13 @@ export class OrderController {
   }
 
   async createOrder(req: Request, res: Response) {
+    try {
+      const order = await orderService.createOrder(req.body);
+      res.apiSuccess('Order created successfully', order, 201);
+    } catch (error: any) {
+      res.apiError(error.message, 400);
+    }
+  }
 
   async getOrder(req: Request, res: Response) {
     try {

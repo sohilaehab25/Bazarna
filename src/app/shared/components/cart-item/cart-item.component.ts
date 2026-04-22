@@ -1,4 +1,4 @@
-import { Component, input, output, inject } from '@angular/core';
+import { Component, input, output, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../card/card.component';
 import { ButtonComponent } from '../button/button.component';
@@ -15,14 +15,16 @@ export class CartItemComponent {
   item = input.required<CartItem>();
   onRemove = output<string>();
 
+  subtotal = computed(() => Math.round(this.item().product.price * this.item().quantity));
+
   private cartService = inject(CartService);
 
   increment() {
-    this.cartService.updateQuantity(this.item().product._id, this.item().quantity + 1);
+    this.cartService.increase(this.item().product._id);
   }
 
   decrement() {
-    this.cartService.updateQuantity(this.item().product._id, this.item().quantity - 1);
+    this.cartService.decrease(this.item().product._id);
   }
 
   remove() {

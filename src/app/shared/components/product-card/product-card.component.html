@@ -1,50 +1,54 @@
 <app-card>
-  <div class="product" [class.product--out-of-stock]="product().stock === 0">
-    <div class="product-header">
-      <div class="product-image-container">
-        <img [src]="product().imageUrl" [alt]="product().name" class="product-image">
-        @if (product().stock === 0) {
-        <span class="product-badge product-badge--out">Out of Stock</span>
-        } @else if (product().stock <= 5) { <span class="product-badge product-badge--low">Only {{ product().stock }}
-          left</span>
-          }
-      </div>
-      <button class="wishlist-btn" [class.wishlist-btn--active]="isInWishlist()" (click)="toggleWishlist()"
-        aria-label="Add to wishlist">
-        {{ isInWishlist() ? '💝' : '🤍' }}
-      </button>
+    <div class="product" [class.product--out-of-stock]="product().stock === 0">
+        <div class="product-header">
+            <div class="product-image-container">
+                <img [src]="product().imageUrl" [alt]="product().name" class="product-image">
+                @if (product().stock === 0) {
+                <span class="product-badge product-badge--out">Out of Stock</span>
+                } @else if (product().stock <= 5) { <span class="product-badge product-badge--low">Only {{
+                    product().stock }}
+                    left</span>
+                    }
+            </div>
+            <button class="wishlist-btn" [class.wishlist-btn--active]="isInWishlist()" (click)="toggleWishlist()"
+                aria-label="Add to wishlist">
+                {{ isInWishlist() ? '💝' : '🤍' }}
+            </button>
+        </div>
+
+        <div class="product-info">
+            <h3 class="product-name">{{ product().name }}</h3>
+            <p class="product-description">{{ product().description }}</p>
+
+            <div class="product-meta">
+                <p class="product-price">{{ product().price }} EGP</p>
+                <p class="product-stock" [class.product-stock--low]="product().stock <= 5">
+                    Remaining: {{ product().stock }}
+                </p>
+            </div>
+
+            @if (cartQuantity() > 0) {
+            <div class="product-quantity-control">
+                <button (click)="decrementQuantity()" class="qty-btn" aria-label="Decrease quantity">-</button>
+                <span class="qty-display">In Cart: {{ cartQuantity() }}</span>
+                <button (click)="incrementQuantity()" class="qty-btn" [disabled]="cartQuantity() >= product().stock"
+                    aria-label="Increase quantity">+</button>
+            </div>
+            }
+
+            <div class="product-actions">
+                <app-button (onClick)="viewDetails()" class="action-btn">
+                    View Details
+                </app-button>
+
+                @if (cartQuantity() === 0) {
+                <app-button (onClick)="addToCart()" [disabled]="product().stock === 0" class="action-btn">
+                    {{ product().stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+                </app-button>
+                } @else {
+                <div class="action-btn-placeholder"></div>
+                }
+            </div>
+        </div>
     </div>
-
-    <div class="product-info">
-      <h3 class="product-name">{{ product().name }}</h3>
-      <p class="product-description">{{ product().description }}</p>
-
-      <div class="product-meta">
-        <p class="product-price">{{ product().price | currency }}</p>
-        <p class="product-stock" [class.product-stock--low]="product().stock <= 5">
-          Remaining: {{ product().stock }}
-        </p>
-      </div>
-
-      @if (cartQuantity() > 0) {
-      <div class="product-quantity-control">
-        <button (click)="decrementQuantity()" class="qty-btn">-</button>
-        <span class="qty-display">Added: {{ cartQuantity() }}</span>
-        <button (click)="incrementQuantity()" class="qty-btn" [disabled]="cartQuantity() >= product().stock">+</button>
-      </div>
-      }
-
-      <div class="product-actions">
-        <app-button (onClick)="viewDetails()">
-          View Details 👁️
-        </app-button>
-
-        @if (cartQuantity() === 0) {
-        <app-button variant="secondary" (onClick)="addToCart()" [disabled]="product().stock === 0">
-          {{ product().stock === 0 ? 'Out of Stock' : 'Add to Cart 🛒' }}
-        </app-button>
-        }
-      </div>
-    </div>
-  </div>
 </app-card>

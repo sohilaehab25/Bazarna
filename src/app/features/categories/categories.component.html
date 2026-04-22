@@ -1,37 +1,37 @@
 <div class="categories">
-  <section class="hero">
-    <h1>Shop by Category</h1>
-    <p>Find exactly what you're looking for in our marketplace</p>
-  </section>
+    <section class="hero">
+        <h1>Shop by Category</h1>
+        <p>Find exactly what you're looking for in our marketplace</p>
+    </section>
 
-  <section class="categories-grid">
-    @for (cat of categories(); track cat.name) {
-      <app-card>
-        <div class="category-card">
-          <h3>{{ cat.name }}</h3>
-          <p>Explore our selection of {{ cat.name | lowercase }} items</p>
-          <div class="category-stats">
-            <span class="stat">{{ cat.count }} items</span>
-          </div>
-          <app-button routerLink="/products" [queryParams]="{category: cat.name}">
-            Shop {{ cat.name }}
-          </app-button>
-        </div>
-      </app-card>
-    }
-  </section>
+    <section class="categories-grid">
+        @for (cat of categories(); track cat.name) {
+            <app-card>
+                <div class="category-card">
+                    <h3>{{ cat.name }}</h3>
+                    <p>Explore our selection of {{ cat.name | lowercase }} items</p>
+                    <div class="category-stats">
+                        <span class="stat">{{ cat.count }} items</span>
+                    </div>
+                    <app-button routerLink="/products" [queryParams]="{category: cat.name}">
+                        Shop {{ cat.name }}
+                    </app-button>
+                </div>
+            </app-card>
+        }
+    </section>
 
-  <section class="featured-category">
-    <app-card>
-      <div class="featured-content">
-        <div class="featured-text">
-          <h2>New Arrivals</h2>
-          <p>Check out our latest products and fresh inventory</p>
-          <app-button routerLink="/products" [queryParams]="{sort: 'newest'}">
-            View New Items
-          </app-button>
-        </div>
-      </div>
-    </app-card>
-  </section>
+    <section class="featured-category">
+        <app-card>
+            <div class="featured-content">
+                <div class="featured-text">
+                    <h2>New Arrivals</h2>
+                    <p>Check out our latest products and fresh inventory</p>
+                    <app-button routerLink="/products" [queryParams]="{sort: 'newest'}">
+                        View New Items
+                    </app-button>
+                </div>
+            </div>
+        </app-card>
+    </section>
 </div>
