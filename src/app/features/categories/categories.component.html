@@ -1,142 +1,36 @@
 <div class="categories">
   <section class="hero">
-    <h1>Shop by Category 🛍️</h1>
+    <h1>Shop by Category</h1>
     <p>Find exactly what you're looking for in our marketplace</p>
   </section>
 
   <section class="categories-grid">
-    <app-card>
-      <div class="category-card">
-        <div class="category-icon">🧀</div>
-        <h3>Cheese</h3>
-        <p>Fresh and aged cheeses from local producers</p>
-        <div class="category-stats">
-          <span class="stat">4 items</span>
-          <span class="stat">⭐ 4.6</span>
+    @for (cat of categories(); track cat.name) {
+      <app-card>
+        <div class="category-card">
+          <h3>{{ cat.name }}</h3>
+          <p>Explore our selection of {{ cat.name | lowercase }} items</p>
+          <div class="category-stats">
+            <span class="stat">{{ cat.count }} items</span>
+          </div>
+          <app-button routerLink="/products" [queryParams]="{category: cat.name}">
+            Shop {{ cat.name }}
+          </app-button>
         </div>
-        <app-button routerLink="/products" [queryParams]="{category: 'Cheese'}">
-          Shop Cheese
-        </app-button>
-      </div>
-    </app-card>
-
-    <app-card>
-      <div class="category-card">
-        <div class="category-icon">🥕</div>
-        <h3>Groceries</h3>
-        <p>Fresh produce, dairy, and pantry essentials</p>
-        <div class="category-stats">
-          <span class="stat">4 items</span>
-          <span class="stat">⭐ 4.5</span>
-        </div>
-        <app-button routerLink="/products" [queryParams]="{category: 'Groceries'}">
-          Shop Groceries
-        </app-button>
-      </div>
-    </app-card>
-
-    <app-card>
-      <div class="category-card">
-        <div class="category-icon">🍯</div>
-        <h3>Sauces</h3>
-        <p>Premium sauces, condiments, and dressings</p>
-        <div class="category-stats">
-          <span class="stat">3 items</span>
-          <span class="stat">⭐ 4.5</span>
-        </div>
-        <app-button routerLink="/products" [queryParams]="{category: 'Sauces'}">
-          Shop Sauces
-        </app-button>
-      </div>
-    </app-card>
-
-    <app-card>
-      <div class="category-card">
-        <div class="category-icon">🧣</div>
-        <h3>Accessories</h3>
-        <p>Scarves, hats, bags, and fashion accessories</p>
-        <div class="category-stats">
-          <span class="stat">2 items</span>
-          <span class="stat">⭐ 4.7</span>
-        </div>
-        <app-button routerLink="/products" [queryParams]="{category: 'Accessories'}">
-          Shop Accessories
-        </app-button>
-      </div>
-    </app-card>
-
-    <app-card>
-      <div class="category-card">
-        <div class="category-icon">🏠</div>
-        <h3>Home & Decor</h3>
-        <p>Beautiful items for your home and garden</p>
-        <div class="category-stats">
-          <span class="stat">1 items</span>
-          <span class="stat">⭐ 4.8</span>
-        </div>
-        <app-button routerLink="/products" [queryParams]="{category: 'Home'}">
-          Shop Home Decor
-        </app-button>
-      </div>
-    </app-card>
-
-    <app-card>
-      <div class="category-card">
-        <div class="category-icon">☕</div>
-        <h3>Kitchen</h3>
-        <p>Mugs, plates, utensils, and kitchenware</p>
-        <div class="category-stats">
-          <span class="stat">1 items</span>
-          <span class="stat">⭐ 4.6</span>
-        </div>
-        <app-button routerLink="/products" [queryParams]="{category: 'Kitchen'}">
-          Shop Kitchen
-        </app-button>
-      </div>
-    </app-card>
-
-    <app-card>
-      <div class="category-card">
-        <div class="category-icon">💍</div>
-        <h3>Jewelry</h3>
-        <p>Earrings, necklaces, and jewelry accessories</p>
-        <div class="category-stats">
-          <span class="stat">1 items</span>
-          <span class="stat">⭐ 4.8</span>
-        </div>
-        <app-button routerLink="/products" [queryParams]="{category: 'Jewelry'}">
-          Shop Jewelry
-        </app-button>
-      </div>
-    </app-card>
-
-    <app-card>
-      <div class="category-card">
-        <div class="category-icon">🎨</div>
-        <h3>Art & Crafts</h3>
-        <p>Paintings, prints, handmade art, and crafts</p>
-        <div class="category-stats">
-          <span class="stat">1 items</span>
-          <span class="stat">⭐ 4.7</span>
-        </div>
-        <app-button routerLink="/products" [queryParams]="{category: 'Art'}">
-          Shop Art
-        </app-button>
-      </div>
-    </app-card>
+      </app-card>
+    }
   </section>
 
   <section class="featured-category">
     <app-card>
       <div class="featured-content">
         <div class="featured-text">
-          <h2>✨ New Arrivals</h2>
+          <h2>New Arrivals</h2>
           <p>Check out our latest products and fresh inventory</p>
           <app-button routerLink="/products" [queryParams]="{sort: 'newest'}">
             View New Items
           </app-button>
         </div>
-        <div class="featured-emoji">🆕</div>
       </div>
     </app-card>
   </section>

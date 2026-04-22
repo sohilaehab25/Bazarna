@@ -1,120 +1,120 @@
 <nav class="navbar" [class.navbar--sticky]="true">
-  <div class="navbar__container">
+  <div class="navbar-container">
     <!-- Logo -->
-    <div class="navbar__brand">
-      <a routerLink="/" class="navbar__logo" (click)="closeMenu()">
-        <span class="navbar__logo-icon">☕</span>
-        <span class="navbar__logo-text">Sweety Cafe</span>
+    <div class="navbar-brand">
+      <a routerLink="/" class="navbar-logo" (click)="closeMenu()">
+        <span class="navbar-logo-icon">☕</span>
+        <span class="navbar-logo-text">Sweety Cafe</span>
       </a>
     </div>
 
     <!-- Desktop Navigation -->
-    <div class="navbar__nav">
-      <a routerLink="/" routerLinkActive="navbar__link--active" class="navbar__link" (click)="closeMenu()">
+    <div class="navbar-nav">
+      <a routerLink="/" routerLinkActive="navbar-link--active" class="navbar-link" (click)="closeMenu()">
         Home
       </a>
-      <a routerLink="/menu" routerLinkActive="navbar__link--active" class="navbar__link" (click)="closeMenu()">
+      <a routerLink="/menu" routerLinkActive="navbar-link--active" class="navbar-link" (click)="closeMenu()">
         Menu
       </a>
-      <a routerLink="/about" routerLinkActive="navbar__link--active" class="navbar__link" (click)="closeMenu()">
+      <a routerLink="/about" routerLinkActive="navbar-link--active" class="navbar-link" (click)="closeMenu()">
         About
       </a>
-      <a routerLink="/contact" routerLinkActive="navbar__link--active" class="navbar__link" (click)="closeMenu()">
+      <a routerLink="/contact" routerLinkActive="navbar-link--active" class="navbar-link" (click)="closeMenu()">
         Contact
       </a>
     </div>
 
     <!-- Actions -->
-    <div class="navbar__actions">
+    <div class="navbar-actions">
       <!-- Wishlist -->
-      <a routerLink="/wishlist" class="navbar__action" (click)="closeMenu()" aria-label="Wishlist">
-        <span class="navbar__action-icon">❤️</span>
+      <a routerLink="/wishlist" class="navbar-action" (click)="closeMenu()" aria-label="Wishlist">
+        <span class="navbar-action-icon">❤️</span>
       </a>
 
       <!-- Cart -->
-      <a routerLink="/cart" class="navbar__action" (click)="closeMenu()" aria-label="Shopping cart">
-        <span class="navbar__action-icon">🛒</span>
+      <a routerLink="/cart" class="navbar-action" (click)="closeMenu()" aria-label="Shopping cart">
+        <span class="navbar-action-icon">🛒</span>
         @if (cartItemsCount() > 0) {
-          <span class="navbar__cart-count">{{ cartItemsCount() }}</span>
+        <span class="navbar-cart-count">{{ cartItemsCount() }}</span>
         }
       </a>
 
       <!-- User -->
       @if (isLoggedIn()) {
-        <div class="navbar__user-menu">
-          <button class="navbar__action" (click)="toggleMenu()" aria-label="User menu">
-            <span class="navbar__action-icon">👤</span>
+      <div class="navbar-user-menu">
+        <button class="navbar-action" (click)="toggleMenu()" aria-label="User menu">
+          <span class="navbar-action-icon">👤</span>
+        </button>
+        @if (isMenuOpen()) {
+        <div class="navbar-dropdown">
+          <a routerLink="/profile" class="navbar-dropdown-item" (click)="closeMenu()">
+            Profile
+          </a>
+          <button class="navbar-dropdown-item" (click)="logout()" routerLink="/login">
+            Logout
           </button>
-          @if (isMenuOpen()) {
-            <div class="navbar__dropdown">
-              <a routerLink="/profile" class="navbar__dropdown-item" (click)="closeMenu()">
-                Profile
-              </a>
-              <button class="navbar__dropdown-item" (click)="logout()" routerLink="/login">
-                Logout
-              </button>
-            </div>
-          }
         </div>
+        }
+      </div>
       } @else {
-        <a routerLink="/login" class="navbar__action" (click)="closeMenu()" aria-label="Login">
-          <span class="navbar__action-icon">🔐</span>
-        </a>
+      <a routerLink="/login" class="navbar-action" (click)="closeMenu()" aria-label="Login">
+        <span class="navbar-action-icon">🔐</span>
+      </a>
       }
     </div>
 
     <!-- Mobile Menu Toggle -->
-    <button
-      class="navbar__mobile-toggle"
-      (click)="toggleMenu()"
-      [class.navbar__mobile-toggle--open]="isMenuOpen()"
+    <button class="navbar-mobile-toggle" (click)="toggleMenu()" [class.navbar-mobile-toggle--open]="isMenuOpen()"
       aria-label="Toggle navigation menu">
-      <span class="navbar__hamburger"></span>
+      <span class="navbar-hamburger"></span>
     </button>
   </div>
 
   <!-- Mobile Navigation -->
   @if (isMenuOpen()) {
-    <div class="navbar__mobile-menu">
-      <a routerLink="/" routerLinkActive="navbar__mobile-link--active" class="navbar__mobile-link" (click)="closeMenu()">
-        Home
-      </a>
-      <a routerLink="/menu" routerLinkActive="navbar__mobile-link--active" class="navbar__mobile-link" (click)="closeMenu()">
-        Menu
-      </a>
-      <a routerLink="/about" routerLinkActive="navbar__mobile-link--active" class="navbar__mobile-link" (click)="closeMenu()">
-        About
-      </a>
-      <a routerLink="/contact" routerLinkActive="navbar__mobile-link--active" class="navbar__mobile-link" (click)="closeMenu()">
-        Contact
-      </a>
-      <div class="navbar__mobile-divider"></div>
-      <a routerLink="/wishlist" class="navbar__mobile-link" (click)="closeMenu()">
-        <span class="navbar__mobile-link-icon">❤️</span>
-        Wishlist
-      </a>
-      <a routerLink="/cart" class="navbar__mobile-link" (click)="closeMenu()">
-        <span class="navbar__mobile-link-icon">🛒</span>
-        Cart
-        @if (cartItemsCount() > 0) {
-          <span class="navbar__cart-count">({{ cartItemsCount() }})</span>
-        }
-      </a>
-      @if (isLoggedIn()) {
-        <a routerLink="/profile" class="navbar__mobile-link" (click)="closeMenu()">
-          <span class="navbar__mobile-link-icon">👤</span>
-          Profile
-        </a>
-        <button class="navbar__mobile-link navbar__mobile-link--logout" (click)="logout()">
-          <span class="navbar__mobile-link-icon">🚪</span>
-          Logout
-        </button>
-      } @else {
-        <a routerLink="/login" class="navbar__mobile-link" (click)="closeMenu()">
-          <span class="navbar__mobile-link-icon">🔐</span>
-          Login
-        </a>
+  <div class="navbar-mobile-menu">
+    <a routerLink="/" routerLinkActive="navbar-mobile-link--active" class="navbar-mobile-link" (click)="closeMenu()">
+      Home
+    </a>
+    <a routerLink="/menu" routerLinkActive="navbar-mobile-link--active" class="navbar-mobile-link"
+      (click)="closeMenu()">
+      Menu
+    </a>
+    <a routerLink="/about" routerLinkActive="navbar-mobile-link--active" class="navbar-mobile-link"
+      (click)="closeMenu()">
+      About
+    </a>
+    <a routerLink="/contact" routerLinkActive="navbar-mobile-link--active" class="navbar-mobile-link"
+      (click)="closeMenu()">
+      Contact
+    </a>
+    <div class="navbar-mobile-divider"></div>
+    <a routerLink="/wishlist" class="navbar-mobile-link" (click)="closeMenu()">
+      <span class="navbar-mobile-link-icon">❤️</span>
+      Wishlist
+    </a>
+    <a routerLink="/cart" class="navbar-mobile-link" (click)="closeMenu()">
+      <span class="navbar-mobile-link-icon">🛒</span>
+      Cart
+      @if (cartItemsCount() > 0) {
+      <span class="navbar-cart-count">({{ cartItemsCount() }})</span>
       }
-    </div>
+    </a>
+    @if (isLoggedIn()) {
+    <a routerLink="/profile" class="navbar-mobile-link" (click)="closeMenu()">
+      <span class="navbar-mobile-link-icon">👤</span>
+      Profile
+    </a>
+    <button class="navbar-mobile-link navbar-mobile-link--logout" (click)="logout()">
+      <span class="navbar-mobile-link-icon">🚪</span>
+      Logout
+    </button>
+    } @else {
+    <a routerLink="/login" class="navbar-mobile-link" (click)="closeMenu()">
+      <span class="navbar-mobile-link-icon">🔐</span>
+      Login
+    </a>
+    }
+  </div>
   }
 </nav>

@@ -1,9 +1,8 @@
-<div class="card"
-    [class]="'card card--' + padding() + ' card--' + elevation() + ' card--' + variant()"
-    [class.card--hoverable]="hoverable()">
-  <ng-content select="[card-header]" class="card__header"></ng-content>
-  <div class="card__body">
+<div class="card" [class]="'card card--' + padding() + ' card--' + elevation() + ' card--' + variant()"
+  [class.card--hoverable]="hoverable()">
+  <ng-content select="[card-header]" class="card-header"></ng-content>
+  <div class="card-body">
     <ng-content></ng-content>
   </div>
-  <ng-content select="[card-footer]" class="card__footer"></ng-content>
+  <ng-content select="[card-footer]" class="card-footer"></ng-content>
 </div>

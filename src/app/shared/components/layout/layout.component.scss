@@ -3,13 +3,13 @@
   flex-direction: column;
   min-height: 100vh;
 
-  &__main {
+  &-main {
     flex: 1;
     padding-top: 20px;
     background: var(--color-background);
   }
 
-  &__container {
+  &-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
@@ -20,11 +20,11 @@
 // Responsive adjustments
 @media (max-width: 768px) {
   .layout {
-    &__main {
+    &-main {
       padding-top: var(--spacing-md);
     }
 
-    &__container {
+    &-container {
       padding: 0 var(--spacing-lg);
     }
   }
@@ -32,7 +32,7 @@
 
 @media (max-width: 480px) {
   .layout {
-    &__container {
+    &-container {
       padding: 0 var(--spacing-md);
     }
   }

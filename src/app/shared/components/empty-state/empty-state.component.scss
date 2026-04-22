@@ -2,17 +2,17 @@
   text-align: center;
   padding: 40px 20px;
 
-  &__icon {
+  &-icon {
     font-size: 4rem;
     margin-bottom: 20px;
   }
 
-  &__title {
+  &-title {
     color: var(--primary-color);
     margin-bottom: 10px;
   }
 
-  &__message {
+  &-message {
     color: var(--text-color);
     opacity: 0.8;
     margin-bottom: 30px;

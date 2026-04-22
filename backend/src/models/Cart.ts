@@ -1,11 +1,11 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface ICartItem {
-  itemId: mongoose.Types.ObjectId;
+  productId: mongoose.Types.ObjectId;
   quantity: number;
 }
 
-export interface ICart extends Document {
+export interface Cart extends Document {
   userId: mongoose.Types.ObjectId;
   items: ICartItem[];
   totalPrice: number;
@@ -14,9 +14,9 @@ export interface ICart extends Document {
 }
 
 const CartItemSchema: Schema = new Schema({
-  itemId: {
+  productId: {
     type: Schema.Types.ObjectId,
-    ref: 'Item',
+    ref: 'Product',
     required: true,
   },
   quantity: {
@@ -44,4 +44,4 @@ const CartSchema: Schema = new Schema({
   timestamps: true,
 });
 
-export default mongoose.model<ICart>('Cart', CartSchema);
+export default mongoose.model<Cart>('Cart', CartSchema);

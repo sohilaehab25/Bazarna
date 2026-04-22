@@ -11,6 +11,9 @@ export interface User extends Document {
   email: string;
   password: string;
   role: UserRole;
+  isVerified: boolean;
+  emailVerificationToken?: string;
+  emailVerificationExpires?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,6 +39,16 @@ const UserSchema: Schema = new Schema({
     type: String,
     enum: Object.values(UserRole),
     default: UserRole.USER,
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  emailVerificationToken: {
+    type: String,
+  },
+  emailVerificationExpires: {
+    type: Date,
   },
 }, {
   timestamps: true,

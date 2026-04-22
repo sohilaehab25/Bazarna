@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CartService } from '../../shared/services/cart.service';
@@ -9,7 +9,7 @@ import { OrdersService } from '../../shared/services/orders.service';
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, CardComponent, ButtonComponent],
+  imports: [CommonModule, CardComponent, ButtonComponent, RouterLink],
   template: `
     <div class="checkout">
       <h1>Checkout 💳</h1>
@@ -27,9 +27,9 @@ import { OrdersService } from '../../shared/services/orders.service';
                 <h3>Order Summary</h3>
               </div>
               <div class="order-items">
-                @for (item of cartItems(); track item.product.id) {
+                @for (item of cartItems(); track item.product._id) {
                   <div class="order-item">
-                    <span class="order-item__emoji">{{ item.product.emoji }}</span>
+                    <img [src]="item.product.imageUrl" [alt]="item.product.name" class="order-item__image">
                     <span class="order-item__name">{{ item.product.name }}</span>
                     <span class="order-item__quantity">x{{ item.quantity }}</span>
                     <span class="order-item__price">{{ item.product.price * item.quantity | currency }}</span>
@@ -125,30 +125,19 @@ export class CheckoutComponent {
   cartTotal = this.cartService.cartTotal;
 
   placeOrder() {
-    // In a real app, you'd collect shipping and payment info from forms
-    const shippingInfo = {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john@example.com',
-      address: '123 Main St',
-      city: 'New York',
-      zipCode: '10001'
-    };
-
-    const paymentInfo = {
-      cardNumber: '**** **** **** 3456',
-      expiryDate: '12/25',
-      cvv: '123'
-    };
-
-    const order = this.ordersService.createOrder(
-      this.cartItems(),
-      shippingInfo,
-      paymentInfo
-    );
-
-    alert(`Order ${order.id} placed successfully! Thank you for shopping with Cute Bazar! 💕`);
-    this.cartService.clearCart();
-    this.router.navigate(['/order-success']);
+    // In a real app, you'd collect shipping info from forms.
+    // For now, we just pass the payment method as required by the backend.
+    this.ordersService.checkout('cash').subscribe({
+      next: (res) => {
+        if (res.success) {
+          alert(`Order placed successfully! Order ID: ${res.data._id} 💕`);
+          this.cartService.clearCart();
+          this.router.navigate(['/products']); // Redirect to products or a success page
+        }
+      },
+      error: (err) => {
+        alert('Failed to place order: ' + (err.error?.message || err.message));
+      }
+    });
   }
 }

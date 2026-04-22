@@ -17,18 +17,18 @@ export class WishlistService {
 
   addToWishlist(item: Product) {
     const currentWishlist = this.wishlist();
-    if (!currentWishlist.find(w => w.id === item.id)) {
+    if (!currentWishlist.find(w => w._id === item._id)) {
       const wishlistItem: WishlistItem = { ...item, addedAt: new Date() };
       this.wishlist.set([...currentWishlist, wishlistItem]);
     }
   }
 
   removeFromWishlist(itemId: string) {
-    this.wishlist.set(this.wishlist().filter(item => item.id !== itemId));
+    this.wishlist.set(this.wishlist().filter(item => item._id !== itemId));
   }
 
   isInWishlist(itemId: string): boolean {
-    return this.wishlist().some(item => item.id === itemId);
+    return this.wishlist().some(item => item._id === itemId);
   }
 
   clearWishlist() {

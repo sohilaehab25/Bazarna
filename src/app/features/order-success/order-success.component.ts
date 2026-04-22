@@ -9,7 +9,7 @@ import { OrdersService } from '../../shared/services/orders.service';
 @Component({
   selector: 'app-order-success',
   standalone: true,
-  imports: [CommonModule, RouterLink, CardComponent, ButtonComponent, EmptyStateComponent],
+  imports: [CommonModule, RouterLink, CardComponent, ButtonComponent],
   template: `
     <div class="order-success">
       <app-card>

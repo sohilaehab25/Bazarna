@@ -29,14 +29,16 @@
             </div>
 
             <div class="category-items">
-              @for (item of groupedItems()[category]; track item.id) {
+              @for (item of groupedItems()[category]; track item._id) {
                 <app-card class="wishlist-item">
                   <div class="wishlist-item-content">
                     <div class="item-header">
-                      <span class="item-emoji">{{ item.emoji }}</span>
+                      <div class="item-image-container">
+                        <img [src]="item.imageUrl" [alt]="item.name" class="item-image">
+                      </div>
                       <button
                         class="remove-btn"
-                        (click)="removeFromWishlist(item.id)"
+                        (click)="removeFromWishlist(item._id)"
                         aria-label="Remove from wishlist">
                         ✕
                       </button>

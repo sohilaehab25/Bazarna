@@ -6,6 +6,7 @@ export interface Product extends Document {
   price: number;
   categoryId: mongoose.Types.ObjectId;
   imageUrl: string;
+  stock: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,10 +37,14 @@ const ProductSchema: Schema = new Schema({
     required: true,
     trim: true,
   },
+  stock: {
+    type: Number,
+    required: true,
+    min: 0,
+    default: 0,
+  },
 }, {
   timestamps: true,
 });
 
 export default mongoose.model<Product>('Product', ProductSchema);
-  isActive?: boolean;
-}

@@ -1,16 +1,18 @@
 import { Router } from 'express';
-import { OrderController } from './OrderController';
-import { authenticate, authorize } from '../../middlewares/auth';
+import { OrderController } from '../OrderController';
+import { jwtAuthGuard } from '../../shared/guards/jwt-auth.guard';
+import { rolesGuard } from '../../shared/guards/roles.guard';
 import { UserRole } from '../../models/User';
 
 const router = Router();
 const orderController = new OrderController();
 
-router.post('/', authenticate, orderController.createOrder.bind(orderController));
-router.get('/my-orders', authenticate, orderController.getUserOrders.bind(orderController));
-router.get('/:id', authenticate, orderController.getOrder.bind(orderController));
-router.get('/:id/items', authenticate, orderController.getOrderItems.bind(orderController));
-router.get('/', authenticate, authorize(UserRole.ADMIN), orderController.getAllOrders.bind(orderController));
-router.put('/:id/status', authenticate, authorize(UserRole.ADMIN), orderController.updateOrderStatus.bind(orderController));
+router.post('/', jwtAuthGuard, orderController.createOrder.bind(orderController));
+router.post('/checkout', jwtAuthGuard, orderController.checkout.bind(orderController));
+router.get('/my-orders', jwtAuthGuard, orderController.getUserOrders.bind(orderController));
+router.get('/:id', jwtAuthGuard, orderController.getOrder.bind(orderController));
+router.get('/:id/items', jwtAuthGuard, orderController.getOrderItems.bind(orderController));
+router.get('/', jwtAuthGuard, rolesGuard([UserRole.ADMIN]), orderController.getAllOrders.bind(orderController));
+router.put('/:id/status', jwtAuthGuard, rolesGuard([UserRole.ADMIN]), orderController.updateOrderStatus.bind(orderController));
 
 export default router;

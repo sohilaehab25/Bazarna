@@ -1,12 +1,13 @@
-import { Response } from 'express';
-import { ProductService } from '../../services/ProductService';
-import { AuthRequest } from '../../middlewares/auth';
-import { UserRole } from '../../models/User';
+import { Request, Response } from 'express';
+import mongoose from 'mongoose';
+import { ProductService } from '../services/ProductService';
+import { CreateProductDTO, UpdateProductDTO } from '../dtos/ProductDTOs';
+import { validateDTO } from '../utils/validation';
 
 const productService = new ProductService();
 
 export class ProductController {
-  async getAllProducts(req: AuthRequest, res: Response) {
+  async getAllProducts(req: Request, res: Response) {
     try {
       const { limit = 20, offset = 0, categoryId } = req.query;
       const products = await productService.getAllProducts(
@@ -15,82 +16,73 @@ export class ProductController {
         categoryId as string
       );
 
-      res.json(products);
+      res.apiSuccess('Products retrieved successfully', products);
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.apiError(error.message, 500);
     }
   }
 
-  async getProduct(req: AuthRequest, res: Response) {
+  async getProduct(req: Request, res: Response) {
     try {
       const product = await productService.getProductById(req.params.id);
       if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
+        return res.apiError('Product not found', 404);
       }
 
-      res.json(product);
+      res.apiSuccess('Product retrieved successfully', product);
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.apiError(error.message, 500);
     }
   }
 
-  async createProduct(req: AuthRequest, res: Response) {
+  async createProduct(req: Request, res: Response) {
     try {
-      const product = await productService.createProduct(req.body, req.user!.userId);
-      res.status(201).json(product);
+      const createData: CreateProductDTO = req.body;
+      await validateDTO(createData, CreateProductDTO);
+
+      const productData = {
+        ...createData,
+        categoryId: new mongoose.Types.ObjectId(createData.categoryId)
+      };
+
+      const product = await productService.createProduct(productData);
+      res.apiSuccess('Product created successfully', product, 201);
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      res.apiError(error.message, 400);
     }
   }
 
-  async updateProduct(req: AuthRequest, res: Response) {
+  async updateProduct(req: Request, res: Response) {
     try {
-      const product = await productService.updateProduct(
-        req.params.id,
-        req.body,
-        req.user!.userId,
-        req.user!.role
-      );
+      const updateData: UpdateProductDTO = req.body;
+      await validateDTO(updateData, UpdateProductDTO);
 
+      const productData: any = { ...updateData };
+      if (updateData.categoryId) {
+        productData.categoryId = new mongoose.Types.ObjectId(updateData.categoryId);
+      }
+
+      const product = await productService.updateProduct(req.params.id, productData);
       if (!product) {
-        return res.status(404).json({ message: 'Product not found' });
+        return res.apiError('Product not found', 404);
       }
 
-      res.json(product);
+      res.apiSuccess('Product updated successfully', product);
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      res.apiError(error.message, 400);
     }
   }
 
-  async deleteProduct(req: AuthRequest, res: Response) {
+  async deleteProduct(req: Request, res: Response) {
     try {
-      const deleted = await productService.deleteProduct(
-        req.params.id,
-        req.user!.userId,
-        req.user!.role
-      );
-
+      const deleted = await productService.deleteProduct(req.params.id);
       if (!deleted) {
-        return res.status(404).json({ message: 'Product not found' });
+        return res.apiError('Product not found', 404);
       }
 
-      res.json({ message: 'Product deleted successfully' });
+      res.apiSuccess('Product deleted successfully');
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
-    }
-  }
-
-  async getStoreProducts(req: AuthRequest, res: Response) {
-    try {
-      const products = await productService.getProductsByStoreOwner(
-        req.params.storeOwnerId,
-        req.user!.userId,
-        req.user!.role
-      );
-
-      res.json(products);
-    } catch (error: any) {
-      res.status(403).json({ message: error.message });
+      res.apiError(error.message, 500);
     }
   }
 }

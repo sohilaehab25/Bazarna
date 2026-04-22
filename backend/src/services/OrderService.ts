@@ -1,61 +1,82 @@
 import { OrderRepository } from '../repositories/OrderRepository';
-import { Order, OrderItem, CreateOrderDTO, UpdateOrderDTO, OrderStatus, UserRole } from '../models/Order';
+import { Order, OrderStatus } from '../models/Order';
+import ProductModel from '../models/Product';
+import { CartRepository } from '../repositories/CartRepository';
 
 export class OrderService {
   private orderRepository = new OrderRepository();
+  private cartRepository = new CartRepository();
 
-  async createOrder(orderData: CreateOrderDTO, userId: string): Promise<Order> {
-    return await this.orderRepository.create(orderData, userId);
-  }
-
-  async getOrderById(id: string, requestingUserId: string, requestingUserRole: UserRole): Promise<Order | null> {
-    const order = await this.orderRepository.findById(id);
-    if (!order) return null;
-
-    // Users can see their own orders, admins can see all
-    if (order.userId !== requestingUserId && requestingUserRole !== UserRole.ADMIN) {
-      throw new Error('Unauthorized to view this order');
+  async checkout(userId: string, paymentMethod: any): Promise<Order> {
+    const cart = await this.cartRepository.findByUserId(userId);
+    if (!cart || cart.items.length === 0) {
+      throw new Error('Cart is empty');
     }
 
-    return order;
+    // Atomic stock deduction for all items
+    const session = await ProductModel.startSession();
+    try {
+      session.startTransaction();
+
+      for (const item of cart.items) {
+        const product = await ProductModel.findOneAndUpdate(
+          { _id: item.productId, stock: { $gte: item.quantity } },
+          { $inc: { stock: -item.quantity } },
+          { new: true, session }
+        );
+
+        if (!product) {
+          throw new Error(`Product ${item.productId} is out of stock or insufficient quantity`);
+        }
+      }
+
+      const orderData: Partial<Order> = {
+        userId: cart.userId,
+        items: cart.items.map(item => ({
+          productId: item.productId,
+          quantity: item.quantity
+        })),
+        totalPrice: cart.totalPrice,
+        status: OrderStatus.PENDING,
+        paymentMethod
+      };
+
+      const order = await this.orderRepository.create(orderData);
+      
+      // Clear cart after successful order
+      await this.cartRepository.clearCart(userId);
+
+      await session.commitTransaction();
+      return order;
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
   }
 
-  async getUserOrders(userId: string, requestingUserId: string, requestingUserRole: UserRole): Promise<Order[]> {
-    // Users can see their own orders, admins can see all
-    if (userId !== requestingUserId && requestingUserRole !== UserRole.ADMIN) {
-      throw new Error('Unauthorized to view these orders');
-    }
+  async createOrder(orderData: Partial<Order>): Promise<Order> {
+    return await this.orderRepository.create(orderData);
+  }
 
+  async getOrderById(id: string): Promise<Order | null> {
+    return await this.orderRepository.findById(id);
+  }
+
+  async getUserOrders(userId: string): Promise<Order[]> {
     return await this.orderRepository.findByUserId(userId);
   }
 
-  async getAllOrders(requestingUserRole: UserRole): Promise<Order[]> {
-    if (requestingUserRole !== UserRole.ADMIN) {
-      throw new Error('Only admins can view all orders');
-    }
-
+  async getAllOrders(): Promise<Order[]> {
     return await this.orderRepository.findAll();
   }
 
-  async updateOrderStatus(id: string, status: OrderStatus, requestingUserRole: UserRole): Promise<Order | null> {
-    if (requestingUserRole !== UserRole.ADMIN) {
-      throw new Error('Only admins can update order status');
-    }
-
+  async updateOrderStatus(id: string, status: OrderStatus): Promise<Order | null> {
     return await this.orderRepository.update(id, { status });
   }
 
-  async getOrderItems(orderId: string, requestingUserId: string, requestingUserRole: UserRole): Promise<OrderItem[]> {
-    const order = await this.orderRepository.findById(orderId);
-    if (!order) {
-      throw new Error('Order not found');
-    }
-
-    // Users can see their own order items, admins can see all
-    if (order.userId !== requestingUserId && requestingUserRole !== UserRole.ADMIN) {
-      throw new Error('Unauthorized to view these order items');
-    }
-
-    return await this.orderRepository.getOrderItems(orderId);
+  async deleteOrder(id: string): Promise<boolean> {
+    return await this.orderRepository.delete(id);
   }
 }

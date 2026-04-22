@@ -1,89 +1,77 @@
-import { Response } from 'express';
-import { OrderService } from '../../services/OrderService';
-import { AuthRequest } from '../../middlewares/auth';
+import { Request, Response } from 'express';
+import mongoose from 'mongoose';
+import { OrderService } from '../services/OrderService';
 
 const orderService = new OrderService();
 
 export class OrderController {
-  async createOrder(req: AuthRequest, res: Response) {
+  async checkout(req: Request, res: Response) {
     try {
-      const order = await orderService.createOrder(req.body, req.user!.userId);
-      res.status(201).json(order);
+      const userId = (req.user as any)._id.toString();
+      const { paymentMethod } = req.body;
+      const order = await orderService.checkout(userId, paymentMethod);
+      res.apiSuccess('Order placed successfully', order, 201);
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      res.apiError(error.message, 400);
     }
   }
 
-  async getOrder(req: AuthRequest, res: Response) {
-    try {
-      const order = await orderService.getOrderById(
-        req.params.id,
-        req.user!.userId,
-        req.user!.role
-      );
+  async createOrder(req: Request, res: Response) {
 
+  async getOrder(req: Request, res: Response) {
+    try {
+      const order = await orderService.getOrderById(req.params.id);
       if (!order) {
-        return res.status(404).json({ message: 'Order not found' });
+        return res.apiError('Order not found', 404);
       }
 
-      res.json(order);
+      res.apiSuccess('Order retrieved successfully', order);
     } catch (error: any) {
-      res.status(403).json({ message: error.message });
+      res.apiError(error.message, 500);
     }
   }
 
-  async getUserOrders(req: AuthRequest, res: Response) {
+  async getUserOrders(req: Request, res: Response) {
     try {
-      const orders = await orderService.getUserOrders(
-        req.user!.userId,
-        req.user!.userId,
-        req.user!.role
-      );
-
-      res.json(orders);
+      const orders = await orderService.getUserOrders((req.user as any)._id.toString());
+      res.apiSuccess('Orders retrieved successfully', orders);
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+      res.apiError(error.message, 500);
     }
   }
 
-  async getAllOrders(req: AuthRequest, res: Response) {
+  async getAllOrders(req: Request, res: Response) {
     try {
-      const orders = await orderService.getAllOrders(req.user!.role);
-      res.json(orders);
+      const orders = await orderService.getAllOrders();
+      res.apiSuccess('All orders retrieved successfully', orders);
     } catch (error: any) {
-      res.status(403).json({ message: error.message });
+      res.apiError(error.message, 500);
     }
   }
 
-  async updateOrderStatus(req: AuthRequest, res: Response) {
+  async getOrderItems(req: Request, res: Response) {
     try {
-      const order = await orderService.updateOrderStatus(
-        req.params.id,
-        req.body.status,
-        req.user!.role
-      );
-
+      const order = await orderService.getOrderById(req.params.id);
       if (!order) {
-        return res.status(404).json({ message: 'Order not found' });
+        return res.apiError('Order not found', 404);
       }
 
-      res.json(order);
+      res.apiSuccess('Order items retrieved successfully', order.items);
     } catch (error: any) {
-      res.status(400).json({ message: error.message });
+      res.apiError(error.message, 500);
     }
   }
 
-  async getOrderItems(req: AuthRequest, res: Response) {
+  async updateOrderStatus(req: Request, res: Response) {
     try {
-      const items = await orderService.getOrderItems(
-        req.params.id,
-        req.user!.userId,
-        req.user!.role
-      );
+      const order = await orderService.updateOrderStatus(req.params.id, req.body.status);
+      if (!order) {
+        return res.apiError('Order not found', 404);
+      }
 
-      res.json(items);
+      res.apiSuccess('Order status updated successfully', order);
     } catch (error: any) {
-      res.status(403).json({ message: error.message });
+      res.apiError(error.message, 400);
     }
   }
 }

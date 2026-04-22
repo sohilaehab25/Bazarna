@@ -24,7 +24,7 @@ import { CartService } from '../../shared/services/cart.service';
         </app-empty-state>
       } @else {
         <div class="cart-items">
-          @for (item of cartItems(); track item.product.id) {
+          @for (item of cartItems(); track item.product._id) {
             <app-cart-item [item]="item" (onRemove)="removeFromCart($event)"></app-cart-item>
           }
         </div>

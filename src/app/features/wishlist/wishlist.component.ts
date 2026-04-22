@@ -23,10 +23,11 @@ export class WishlistComponent {
   groupedItems = computed(() => {
     const items = this.wishlistItems();
     const grouped = items.reduce((acc, item) => {
-      if (!acc[item.category]) {
-        acc[item.category] = [];
+      const categoryName = item.categoryId.name;
+      if (!acc[categoryName]) {
+        acc[categoryName] = [];
       }
-      acc[item.category].push(item);
+      acc[categoryName].push(item);
       return acc;
     }, {} as Record<string, WishlistItem[]>);
     return grouped;
@@ -36,7 +37,7 @@ export class WishlistComponent {
   categories = computed(() => Object.keys(this.groupedItems()));
 
   trackById(index: number, item: any): string {
-    return item.id;
+    return item._id;
   }
 
   addToCart(item: any) {

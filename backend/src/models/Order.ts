@@ -12,11 +12,11 @@ export enum PaymentMethod {
 }
 
 export interface IOrderItem {
-  itemId: mongoose.Types.ObjectId;
+  productId: mongoose.Types.ObjectId;
   quantity: number;
 }
 
-export interface IOrder extends Document {
+export interface Order extends Document {
   userId: mongoose.Types.ObjectId;
   items: IOrderItem[];
   totalPrice: number;
@@ -27,9 +27,9 @@ export interface IOrder extends Document {
 }
 
 const OrderItemSchema: Schema = new Schema({
-  itemId: {
+  productId: {
     type: Schema.Types.ObjectId,
-    ref: 'Item',
+    ref: 'Product',
     required: true,
   },
   quantity: {
@@ -65,4 +65,4 @@ const OrderSchema: Schema = new Schema({
   timestamps: true,
 });
 
-export default mongoose.model<IOrder>('Order', OrderSchema);
+export default mongoose.model<Order>('Order', OrderSchema);

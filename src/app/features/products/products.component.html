@@ -1,77 +1,66 @@
 <div class="products">
   <h1>{{ pageTitle() }}</h1>
   <div class="products-grid">
-    @for (product of products(); track product.id) {
-      <app-product-card
-        [product]="product"
-        (onViewDetails)="openModal(product)">
-      </app-product-card>
+    @for (product of products(); track product._id) {
+    <app-product-card [product]="product" (onViewDetails)="openModal(product)">
+    </app-product-card>
     }
   </div>
 
   @if (selectedProduct(); as product) {
-    <app-modal
-      [isOpen]="isModalOpen()"
-      (onClose)="closeModal()">
-      <div class="product-details">
-        <div class="product-details__header">
-          <h3 class="product-details__title">{{ product.name }}</h3>
-          <button
-            class="product-details__close-btn"
-            (click)="closeModal()"
-            aria-label="Close details">
-            ×
-          </button>
+  <app-modal [isOpen]="isModalOpen()" (onClose)="closeModal()">
+    <div class="product-details">
+      <div class="product-details-header">
+        <h3 class="product-details-title">{{ product.name }}</h3>
+        <button class="product-details-close-btn" (click)="closeModal()" aria-label="Close details">
+          ×
+        </button>
+      </div>
+
+      <div class="product-details-content">
+        <div class="product-details-image-container">
+          <img [src]="product.imageUrl" [alt]="product.name" class="product-details-image" />
         </div>
 
-        <div class="product-details__content">
-          <div class="product-details__image-container">
-            <img
-              [src]="product.image"
-              [alt]="product.name"
-              class="product-details__image"
-              ngSrc />
+        <div class="product-details-info">
+          <div class="product-details-price-section">
+            <span class="product-details-price">{{ product.price | currency }}</span>
           </div>
 
-          <div class="product-details__info">
-            <div class="product-details__price-section">
-              <span class="product-details__price">${{ product.price }}</span>
-              @if (product.originalPrice && product.originalPrice > product.price) {
-                <span class="product-details__original-price">${{ product.originalPrice }}</span>
+          <p class="product-details-description">{{ product.description }}</p>
+
+          <p class="product-details-stock" [class.product-details-stock--low]="product.stock <= 5">
+            Available: {{ product.stock }}
+          </p>
+
+          @if (product.rating) {
+          <div class="product-details-rating">
+            <div class="product-details-stars">
+              @for (star of [1,2,3,4,5]; track star) {
+              <span class="product-details-star" [class.product-details-star--filled]="star <= product.rating!">
+                ★
+              </span>
               }
             </div>
+            <span class="product-details-rating-text">
+              {{ product.rating }}/5 ({{ product.reviews || 0 }} reviews)
+            </span>
+          </div>
+          }
 
-            <p class="product-details__description">{{ product.description }}</p>
-
-            <div class="product-details__rating">
-              <div class="product-details__stars">
-                @for (star of [1,2,3,4,5]; track star) {
-                  <span
-                    class="product-details__star"
-                    [class.product-details__star--filled]="product.rating && star <= product.rating">
-                    ★
-                  </span>
-                }
-              </div>
-              <span class="product-details__rating-text">
-                {{ product.rating || 0 }}/5 ({{ product.reviews || 0 }} reviews)
-              </span>
-            </div>
-
-            <div class="product-details__actions">
-              <button class="btn btn--primary product-details__add-to-cart" (click)="addToCart(product)">
-                Add to Cart
-              </button>
-              <button
-                class="btn btn--secondary product-details__wishlist"
-                (click)="addToWishlist(product)"
-                [class.product-details__wishlist--active]="isInWishlist(product.id)">
-                {{ isInWishlist(product.id) ? '❤️ In Wishlist' : '🤍 Add to Wishlist' }}
-              </button>
-            </div>
+          <div class="product-details-actions">
+            <button class="btn btn--primary product-details-add-to-cart" (click)="addToCart(product)"
+              [disabled]="product.stock === 0">
+              {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+            </button>
+            <button class="btn btn--secondary product-details-wishlist" (click)="addToWishlist(product)"
+              [class.product-details-wishlist--active]="isInWishlist(product._id)">
+              {{ isInWishlist(product._id) ? '❤️ In Wishlist' : '🤍 Add to Wishlist' }}
+            </button>
           </div>
         </div>
       </div>
-    </app-modal>
+    </div>
+  </app-modal>
   }
 </div>

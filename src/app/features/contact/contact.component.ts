@@ -7,7 +7,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [CommonModule, RouterLink, CardComponent, ButtonComponent],
+  imports: [CommonModule, CardComponent, ButtonComponent],
   template: `
     <div class="contact">
       <section class="hero">

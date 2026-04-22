@@ -32,7 +32,7 @@ export class ProductsComponent {
   products = computed(() => {
     const cat = this.category();
     if (cat) {
-      return this.allProducts().filter(p => p.category === cat);
+      return this.allProducts().filter(p => p.categoryId.name === cat);
     }
     return this.allProducts();
   });

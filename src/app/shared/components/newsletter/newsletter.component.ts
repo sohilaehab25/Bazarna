@@ -8,7 +8,7 @@ import { InputComponent } from '../input/input.component';
 @Component({
   selector: 'app-newsletter',
   standalone: true,
-  imports: [CommonModule, RouterLink, CardComponent, ButtonComponent, InputComponent],
+  imports: [CommonModule, CardComponent, ButtonComponent, InputComponent],
   templateUrl: './newsletter.component.html',
   styleUrls: ['./newsletter.component.scss']
 })

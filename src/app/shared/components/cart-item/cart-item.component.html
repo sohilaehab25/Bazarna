@@ -1,15 +1,30 @@
 <app-card>
   <div class="cart-item">
-    <div class="cart-item__header">
-      <span class="cart-item__emoji">{{ item().product.emoji }}</span>
-      <h3 class="cart-item__name">{{ item().product.name }}</h3>
+    <div class="cart-item-image">
+      <img [src]="item().product.imageUrl" [alt]="item().product.name">
     </div>
-    <p class="cart-item__description">{{ item().product.description }}</p>
-    <p class="cart-item__price">
-      {{ item().product.price | currency }} x {{ item().quantity }} = {{ item().product.price * item().quantity | currency }}
-    </p>
-    <app-button variant="secondary" (onClick)="onRemove.emit(item().product.id)">
-      Remove
-    </app-button>
+
+    <div class="cart-item-info">
+      <h3 class="cart-item-name">{{ item().product.name }}</h3>
+      <p class="cart-item-price">{{ item().product.price | currency }}</p>
+
+      <div class="cart-item-controls">
+        <button (click)="decrement()" class="qty-btn" aria-label="Decrease quantity">-</button>
+        <span class="qty-display">{{ item().quantity }}</span>
+        <button (click)="increment()" class="qty-btn" [disabled]="item().quantity >= item().product.stock"
+          aria-label="Increase quantity">+</button>
+
+        <span class="stock-info" [class.stock-info--low]="item().product.stock <= 5">
+          (Max: {{ item().product.stock }})
+        </span>
+      </div>
+    </div>
+
+    <div class="cart-item-actions">
+      <p class="cart-item-subtotal">{{ (item().product.price * item().quantity) | currency }}</p>
+      <button (click)="remove()" class="remove-btn" aria-label="Remove item">
+        🗑️
+      </button>
+    </div>
   </div>
 </app-card>

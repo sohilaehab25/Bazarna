@@ -38,7 +38,7 @@
   }
 
   .order {
-    &__header {
+    &-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -50,7 +50,7 @@
       }
     }
 
-    &__status {
+    &-status {
       padding: 4px 12px;
       border-radius: var(--border-radius);
       font-size: 0.8rem;
@@ -77,9 +77,9 @@
       }
     }
 
-    &__date,
-    &__total,
-    &__items {
+    &-date,
+    &-total,
+    &-items {
       margin: 5px 0;
       color: var(--text-color);
       opacity: 0.8;
