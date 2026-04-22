@@ -1,0 +1,42 @@
+<div class="cart-page">
+    <div class="cart-container">
+        @if (cartItems().length === 0) {
+            <app-empty-state 
+                icon="🛒" 
+                title="Your shopping cart is empty" 
+                message="Start shopping to fill your cart with lovely items!"
+                actionText="Browse Products">
+            </app-empty-state>
+        } @else {
+            <div class="cart-main">
+                <app-card class="items-card" padding="large">
+                    <div card-header>
+                      <h2 class="cart-title">Shopping Cart</h2>
+                    </div>
+                    <div class="cart-items">
+                        @for (item of cartItems(); track item.product._id) {
+                            <app-cart-item [item]="item" (onRemove)="removeFromCart($event)"></app-cart-item>
+                        }
+                    </div>
+                    <div class="cart-footer-summary">
+                        Subtotal ({{ cartItemsCount() }} items): <strong>{{ cartTotal() }} EGP</strong>
+                    </div>
+                </app-card>
+            </div>
+
+            <div class="cart-sidebar">
+                <app-card padding="medium">
+                    <div class="checkout-summary">
+                        <div class="subtotal-row">
+                          <span>Subtotal ({{ cartItemsCount() }} items):</span>
+                          <span class="subtotal-amount">{{ cartTotal() }} EGP</span>
+                        </div>
+                        <app-button routerLink="/checkout" variant="primary" class="checkout-btn">
+                            Proceed to Checkout
+                        </app-button>
+                    </div>
+                </app-card>
+            </div>
+        }
+    </div>
+</div>
