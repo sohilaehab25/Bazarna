@@ -1,0 +1,33 @@
+<div class="confirm-signup">
+    <app-card>
+        <div class="confirm-content">
+            <h2>Welcome to Bazarna! 🎉</h2>
+            <p>Your account has been created successfully.</p>
+            <p>Please check your email to activate your account.</p>
+
+            @if (resendMessage()) {
+                <p
+                    class="message"
+                    [class.success]="resendMessageType() === 'success'"
+                    [class.error]="resendMessageType() === 'error'"
+                >
+                    {{ resendMessage() }}
+                </p>
+            }
+
+            <div class="resend-section">
+                <p>Didn't receive the email?</p>
+                <app-button
+                    (click)="resendVerification()"
+                    [disabled]="isResending()"
+                    class="resend-btn">
+                    {{ isResending() ? 'Sending...' : 'Resend Verification Email' }}
+                </app-button>
+            </div>
+
+            <app-button routerLink="/menu" class="continue-btn">
+                Continue to Shop 💕
+            </app-button>
+        </div>
+    </app-card>
+</div>

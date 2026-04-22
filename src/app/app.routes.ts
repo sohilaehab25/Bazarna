@@ -11,7 +11,9 @@ import { OrderSuccessComponent } from './features/order-success/order-success.co
 import { AboutComponent } from './features/about/about.component';
 import { ContactComponent } from './features/contact/contact.component';
 import { WishlistComponent } from './features/wishlist/wishlist.component';
+import { EditProfileComponent } from './features/edit-profile/edit-profile.component';
 import { AuthGuard } from './shared/guards/auth.guard';
+import { VerifyEmailComponent } from './features/verify-email/verify-email.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -24,7 +26,9 @@ export const routes: Routes = [
   { path: 'checkout', component: CheckoutComponent, canActivate: [AuthGuard] },
   { path: 'order-success', component: OrderSuccessComponent },
   { path: 'profile', component: ProfileComponent, canActivate: [AuthGuard] },
+  { path: 'edit-profile', component: EditProfileComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'confirm-signup', component: ConfirmSignupComponent },
+  { path: 'auth/verify-email', component: VerifyEmailComponent },
   { path: '**', redirectTo: '' }
 ];

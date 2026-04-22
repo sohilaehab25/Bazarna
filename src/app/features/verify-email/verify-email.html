@@ -1,0 +1,22 @@
+<div class="verify-email">
+    <app-card>
+        <div class="verify-content">
+            @if (verificationStatus() === 'loading') {
+                <h2>Verifying your email...</h2>
+                <p>Please wait while we verify your email address.</p>
+            } @else if (verificationStatus() === 'success') {
+                <h2>Email Verified! ✅</h2>
+                <p>{{ message() }}</p>
+                <app-button (click)="goToLogin()" class="login-btn">
+                    Go to Login
+                </app-button>
+            } @else {
+                <h2>Verification Failed ❌</h2>
+                <p>{{ message() }}</p>
+                <app-button (click)="goToLogin()" class="login-btn">
+                    Back to Login
+                </app-button>
+            }
+        </div>
+    </app-card>
+</div>

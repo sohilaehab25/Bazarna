@@ -12,14 +12,17 @@ export class AuthController {
       await validateDTO(registerData, RegisterDTO);
 
       const user = await authService.register(registerData);
-      const tokens = await authService.login(registerData.email, registerData.password);
 
-      res.apiSuccess('User registered successfully', {
-        ...tokens,
+      res.apiSuccess('User registered successfully. Please check your email to verify your account.', {
+        user: {
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+        },
       }, 201);
-    } catch (error: any) {
-      console.log("🚀 ~ AuthController ~ register ~ error:", error)
-      res.apiError(error.message, 400);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Registration failed';
+      res.apiError(message, 400);
     }
   }
 
@@ -30,9 +33,9 @@ export class AuthController {
 
       const tokens = await authService.login(loginData.email, loginData.password);
       res.apiSuccess('Login successful', tokens);
-    } catch (error: any) {
-      console.log("🚀 ~ AuthController ~ login ~ error:", error)
-      res.apiError(error.message, 401);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Login failed';
+      res.apiError(message, 401);
     }
   }
 
@@ -43,9 +46,46 @@ export class AuthController {
 
       const tokens = await authService.refreshToken(refreshData.refreshToken);
       res.apiSuccess('Token refreshed successfully', tokens);
-    } catch (error: any) {
-      console.log("🚀 ~ AuthController ~ refreshToken ~ error:", error)
-      res.apiError(error.message, 401);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Invalid refresh token';
+      res.apiError(message, 401);
+    }
+  }
+
+  async verifyEmail(req: Request, res: Response) {
+    try {
+      const { token } = req.query;
+      if (!token || typeof token !== 'string') {
+        return res.apiError('Verification token is required', 400);
+      }
+
+      const user = await authService.verifyEmail(token);
+      res.apiSuccess('Email verified successfully', {
+        user: {
+          _id: user._id,
+          email: user.email,
+          name: user.name,
+          isVerified: user.isVerified,
+        },
+      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Email verification failed';
+      res.apiError(message, 400);
+    }
+  }
+
+  async resendVerification(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.apiError('Email is required', 400);
+      }
+
+      await authService.resendVerification(email);
+      res.apiSuccess('If an account with that email exists and is not verified, a verification email has been sent.');
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to resend verification email';
+      res.apiError(message, 500);
     }
   }
 }
