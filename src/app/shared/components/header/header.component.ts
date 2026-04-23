@@ -6,10 +6,12 @@ import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { BazaarIconComponent } from '../bazaar-icon/bazaar-icon.component';
+
 @Component({
     selector: 'app-navbar',
     standalone: true,
-    imports: [CommonModule, RouterLink, RouterLinkActive],
+    imports: [CommonModule, RouterLink, RouterLinkActive, BazaarIconComponent],
     templateUrl: './header.component.html',
     styleUrls: ['./header.component.scss']
 })

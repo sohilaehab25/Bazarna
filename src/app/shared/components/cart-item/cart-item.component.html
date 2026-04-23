@@ -1,32 +1,31 @@
 <div class="cart-item">
-  <div class="cart-item-image">
-    <img [src]="item().product.imageUrl" [alt]="item().product.name">
-  </div>
-
-  <div class="cart-item-info">
-    <h3 class="cart-item-name">{{ item().product.name }}</h3>
-    <p class="cart-item-price">{{ item().product.price }} EGP</p>
-
-    <div class="cart-item-controls">
-      <button (click)="decrement()" class="qty-btn" aria-label="Decrease quantity">-</button>
-      <span class="qty-display">{{ item().quantity }}</span>
-      <button (click)="increment()" class="qty-btn" [disabled]="item().quantity >= item().product.stock"
-        aria-label="Increase quantity">+</button>
-
-      <span class="stock-info" [class.stock-info--low]="item().product.stock <= 5">
-        @if (item().product.stock <= 5) {
-          Only {{ item().product.stock }} left in stock - order soon.
-        } @else {
-          In Stock
-        }
-      </span>
+    <div class="cart-item-image">
+        <img [src]="item().product.imageUrl" [alt]="item().product.name">
     </div>
-  </div>
 
-  <div class="cart-item-actions">
-    <p class="cart-item-subtotal">{{ subtotal() }} EGP</p>
-    <button (click)="remove()" class="remove-btn" aria-label="Remove item">
-      Delete
-    </button>
-  </div>
+    <div class="cart-item-info">
+        <h3 class="cart-item-name">{{ item().product.name }}</h3>
+        <p class="cart-item-price">{{ item().product.price }} EGP</p>
+
+        <div class="cart-item-controls">
+            <button (click)="decrement()" class="qty-btn">-</button>
+            <span class="qty-display">{{ item().quantity }}</span>
+            <button (click)="increment()" class="qty-btn" [disabled]="item().quantity >= item().product.stock">+</button>
+
+            <span class="stock-info" [class.stock-info--low]="item().product.stock <= 5">
+                @if (item().product.stock <= 5) {
+                    Only {{ item().product.stock }} left in stock - order soon.
+                } @else {
+                    In Stock
+                }
+            </span>
+        </div>
+    </div>
+
+    <div class="cart-item-actions">
+        <p class="cart-item-subtotal">{{ subtotal() }} EGP</p>
+        <button (click)="remove()" class="remove-btn" aria-label="Remove item">
+            Delete
+        </button>
+    </div>
 </div>

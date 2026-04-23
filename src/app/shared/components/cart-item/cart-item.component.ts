@@ -12,22 +12,22 @@ import { CartItem, CartService } from '../../services/cart.service';
   styleUrls: ['./cart-item.component.scss']
 })
 export class CartItemComponent {
-  item = input.required<CartItem>();
-  onRemove = output<string>();
+    item = input.required<CartItem>();
+    onRemove = output<string>();
 
-  subtotal = computed(() => Math.round(this.item().product.price * this.item().quantity));
+    subtotal = computed(() => Math.round(this.item().product.price * this.item().quantity));
 
-  private cartService = inject(CartService);
+    private cartService = inject(CartService);
 
-  increment() {
-    this.cartService.increase(this.item().product._id);
-  }
+    increment() {
+        this.cartService.increase(this.item().product._id);
+    }
 
-  decrement() {
-    this.cartService.decrease(this.item().product._id);
-  }
+    decrement() {
+        this.cartService.decrease(this.item().product._id);
+    }
 
-  remove() {
-    this.onRemove.emit(this.item().product._id);
-  }
+    remove() {
+        this.onRemove.emit(this.item().product._id);
+    }
 }

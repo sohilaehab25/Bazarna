@@ -66,12 +66,12 @@
 
     &:hover {
       color: var(--color-primary);
-      background: var(--color-background-hover);
+      // background: var(--color-background-hover);
     }
 
     &--active {
       color: var(--color-primary);
-      background: var(--color-primary-light);
+      // background: var(--color-primary-light);
     }
   }
 
@@ -95,7 +95,7 @@
     transition: all var(--transition-fast);
 
     &:hover {
-      background: var(--color-background-hover);
+      // background: var(--color-background-hover);
       color: var(--color-primary);
     }
   }
@@ -152,7 +152,7 @@
     transition: background var(--transition-fast);
 
     &:hover {
-      background: var(--color-background-hover);
+      // background: var(--color-background-hover);
       color: var(--color-text-primary);
     }
 
@@ -234,9 +234,7 @@
     display: flex;
     align-items: center;
     gap: 20px;
-    ;
     padding: 20px;
-    ;
     text-decoration: none;
     color: var(--color-text-secondary);
     border-radius: var(--border-radius-md);
@@ -244,7 +242,7 @@
     font-weight: var(--font-weight-medium);
 
     &:hover {
-      background: var(--color-background-hover);
+      // background: var(--color-background-hover);
       color: var(--color-text-primary);
     }
 

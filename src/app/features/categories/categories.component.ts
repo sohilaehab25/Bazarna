@@ -28,6 +28,6 @@ export class CategoriesComponent {
             categoriesMap.get(catName)!.count++;
         });
 
-      return Array.from(categoriesMap.values());
+        return Array.from(categoriesMap.values());
     });
 }
