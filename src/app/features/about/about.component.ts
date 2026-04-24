@@ -11,7 +11,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
   template: `
     <div class="about">
       <section class="hero">
-        <h1>About Cute Bazar 💕</h1>
+        <h1>About Bazarna 💕</h1>
         <p>Your destination for your products</p>
       </section>
 

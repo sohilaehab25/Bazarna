@@ -1,6 +1,6 @@
-# Cute Bazar Backend
+# Bazar Backend
 
-A Node.js backend API for the Cute Bazar e-commerce web application built with TypeScript, Express, and MongoDB.
+A Node.js backend API for Bazar e-commerce web application built with TypeScript, Express, and MongoDB.
 
 ## Features
 

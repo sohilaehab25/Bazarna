@@ -1,4 +1,4 @@
-# Cute Bazar 🛒💕
+# Bazar 🛒💕
 
 A feminine, soft, and cozy web application for a handmade bazaar, built with Angular & Node.
 

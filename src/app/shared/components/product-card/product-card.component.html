@@ -29,12 +29,12 @@
             </div>
 
             @if (cartQuantity() > 0) {
-            <div class="product-quantity-control">
-                <button (click)="decrementQuantity()" class="qty-btn" aria-label="Decrease quantity">-</button>
-                <span class="qty-display">{{ cartQuantity() }}</span>
-                <button (click)="incrementQuantity()" class="qty-btn" [disabled]="cartQuantity() >= product().stock"
-                    aria-label="Increase quantity">+</button>
-            </div>
+                <div class="product-quantity-control">
+                    <button (click)="decrementQuantity()" class="qty-btn" aria-label="Decrease quantity">-</button>
+                    <span class="qty-display">{{ cartQuantity() }}</span>
+                    <button (click)="incrementQuantity()" class="qty-btn" [disabled]="cartQuantity() >= product().stock"
+                        aria-label="Increase quantity">+</button>
+                </div>
             }
 
             <div class="product-actions">

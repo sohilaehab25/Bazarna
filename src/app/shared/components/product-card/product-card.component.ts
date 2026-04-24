@@ -42,6 +42,8 @@ export class ProductCardComponent {
 
     decrementQuantity() {
         this.cartService.decrease(this.product()._id);
+        console.log(this.product()._id);
+        
     }
 
     viewDetails() {

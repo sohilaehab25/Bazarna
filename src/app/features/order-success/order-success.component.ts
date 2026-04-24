@@ -16,7 +16,7 @@ import { OrdersService } from '../../shared/services/orders.service';
         <div class="success-content">
           <div class="success-icon">🎉</div>
           <h1>Order Placed Successfully!</h1>
-          <p>Thank you for shopping with Cute Bazar 💕</p>
+          <p>Thank you for shopping with Bazar 💕</p>
           <div class="order-details">
             <h3>Order Summary</h3>
             <p><strong>Order ID:</strong> {{ orderId }}</p>

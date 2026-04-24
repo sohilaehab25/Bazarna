@@ -1,7 +1,7 @@
 {
   "name": "cute-bazar-backend",
   "version": "1.0.0",
-  "description": "Backend for Cute Bazar Web App",
+  "description": "Backend for Bazar Web App",
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
