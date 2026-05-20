@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { UserController } from '../UserController';
-import { jwtAuthGuard } from '../../shared/guards/jwt-auth.guard';
+import { UserController } from '../controllers/UserController';
+import { jwtAuthGuard } from '../shared/guards/jwt-auth.guard';
 
 const router = Router();
 const userController = new UserController();

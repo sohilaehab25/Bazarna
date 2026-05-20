@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import authRoutes from './controllers/auth/auth.routes';
-import userRoutes from './controllers/users/user.routes';
-import productRoutes from './controllers/products/product.routes';
-import orderRoutes from './controllers/orders/order.routes';
-import categoryRoutes from './controllers/categories/category.routes';
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import productRoutes from './routes/product.routes';
+import orderRoutes from './routes/order.routes';
+import categoryRoutes from './routes/category.routes';
 import cartRoutes from './routes/cart.routes';
 
 const router = Router();

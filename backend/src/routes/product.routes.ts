@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { ProductController } from '../ProductController';
-import { jwtAuthGuard } from '../../shared/guards/jwt-auth.guard';
-import { rolesGuard } from '../../shared/guards/roles.guard';
-import { validateObjectId } from '../../shared/utils/validation.util';
-import { UserRole } from '../../models/User';
+import { ProductController } from '../controllers/ProductController';
+import { jwtAuthGuard } from '../shared/guards/jwt-auth.guard';
+import { rolesGuard } from '../shared/guards/roles.guard';
+import { validateObjectId } from '../shared/utils/validation.util';
+import { UserRole } from '../models/User';
 
 const router = Router();
 const productController = new ProductController();

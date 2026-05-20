@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { CategoryController } from '../CategoryController';
-import { jwtAuthGuard } from '../../shared/guards/jwt-auth.guard';
-import { rolesGuard } from '../../shared/guards/roles.guard';
-import { validateObjectId } from '../../shared/utils/validation.util';
-import { UserRole } from '../../models/User';
+import { CategoryController } from '../controllers/CategoryController';
+import { jwtAuthGuard } from '../shared/guards/jwt-auth.guard';
+import { rolesGuard } from '../shared/guards/roles.guard';
+import { validateObjectId } from '../shared/utils/validation.util';
+import { UserRole } from '../models/User';
 
 const router = Router();
 const categoryController = new CategoryController();

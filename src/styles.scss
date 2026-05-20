@@ -6,8 +6,13 @@
 @use 'styles/variables';
 
 
-// Import Google Fonts - More readable fonts
-// @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Dancing+Script:wght@400;700&display=swap');
+// Google Fonts @import removed — external font CDN is blocked by CSP (font-src 'self').
+// To use Inter/Poppins/Dancing Script, install them locally:
+//   npm install @fontsource/inter @fontsource/poppins @fontsource/dancing-script
+// Then import in this file:
+//   @use '@fontsource/inter/index.css';
+//   @use '@fontsource/poppins/index.css';
+//   @use '@fontsource/dancing-script/index.css';
 
 // ========================================
 // RESET & BASE STYLES

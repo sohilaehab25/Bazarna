@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { OrderController } from '../OrderController';
-import { jwtAuthGuard } from '../../shared/guards/jwt-auth.guard';
-import { rolesGuard } from '../../shared/guards/roles.guard';
-import { UserRole } from '../../models/User';
+import { OrderController } from '../controllers/OrderController';
+import { jwtAuthGuard } from '../shared/guards/jwt-auth.guard';
+import { rolesGuard } from '../shared/guards/roles.guard';
+import { UserRole } from '../models/User';
 
 const router = Router();
 const orderController = new OrderController();
