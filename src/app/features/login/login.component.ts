@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit {
         } else {
             this.authService.signup(name!, email!, password!).subscribe({
                 next: () => {
-                    localStorage.setItem('pendingVerificationEmail', email!);
+                    sessionStorage.setItem('pendingVerificationEmail', email!);
                     this.router.navigate(['/confirm-signup']);
                 },
                 error: (error) => {

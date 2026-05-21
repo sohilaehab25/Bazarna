@@ -6,6 +6,7 @@ const orderService = new OrderService();
 
 export class OrderController {
   async checkout(req: Request, res: Response) {
+    console.log("🚀 ~ OrderController ~ checkout ~ req:", req)
     try {
       const userId = (req.user as any)._id.toString();
       const { paymentMethod } = req.body;
@@ -17,8 +18,10 @@ export class OrderController {
   }
 
   async createOrder(req: Request, res: Response) {
+    console.log("🚀 ~ OrderController ~ createOrder ~ req:", req.body)
     try {
       const order = await orderService.createOrder(req.body);
+      console.log("🚀 ~ OrderController ~ createOrder ~ order:", order)
       res.apiSuccess('Order created successfully', order, 201);
     } catch (error: any) {
       res.apiError(error.message, 400);

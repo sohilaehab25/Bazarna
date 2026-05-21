@@ -35,6 +35,7 @@ export class CartService {
     private socketService = inject(SocketService);
     private productsService = inject(ProductsService);
     private apiUrl = 'http://localhost:3009/api/cart';
+    private storageKey = 'cartItems';
 
     private cartItems = signal<CartItem[]>([]);
     
@@ -45,7 +46,10 @@ export class CartService {
 
     constructor() {
         if (isPlatformBrowser(this.platformId)) {
-            this.loadCart();
+            this.restoreCartFromStorage();
+            if (this.authService.getAccessToken()) {
+                this.loadCart();
+            }
             this.initStockUpdates();
         }
     }
@@ -72,7 +76,11 @@ export class CartService {
                         quantity: item.quantity
                     }));
                     this.cartItems.set(items);
+                    this.persistCart();
                 }
+            },
+            error: () => {
+                this.persistCart();
             }
         });
     }
@@ -85,6 +93,7 @@ export class CartService {
         } else {
             // Optimistic update
             this.cartItems.set([...this.cartItems(), { product, quantity }]);
+            this.persistCart();
         
             this.http.post<ApiResponse<BackendCart>>(`${this.apiUrl}/add`, {
                 productId: product._id,
@@ -128,6 +137,7 @@ export class CartService {
         this.cartItems.update(items => items.map(i => 
             i.product._id === productId ? { ...i, quantity } : i
         ));
+        this.persistCart();
 
         this.http.post<ApiResponse<BackendCart>>(`${this.apiUrl}/update-quantity`, {
             productId,
@@ -144,6 +154,7 @@ export class CartService {
 
         // Optimistic update
         this.cartItems.update(items => items.filter(i => i.product._id !== productId));
+        this.persistCart();
 
         this.http.delete<ApiResponse<BackendCart>>(`${this.apiUrl}/remove/${productId}`).subscribe({
             next: (res) => {
@@ -155,6 +166,7 @@ export class CartService {
 
     clearCart() {
         this.cartItems.set([]);
+        this.clearStoredCart();
     }
 
     private syncCart(data: BackendCart) {
@@ -163,9 +175,35 @@ export class CartService {
             quantity: item.quantity
         }));
         this.cartItems.set(items);
+        this.persistCart();
     }
 
     getCartItems() {
         return this.cartItems;
+    }
+
+    private restoreCartFromStorage() {
+        if (!isPlatformBrowser(this.platformId)) return;
+        const raw = sessionStorage.getItem(this.storageKey);
+        if (!raw) return;
+
+        try {
+            const items = JSON.parse(raw) as CartItem[];
+            if (Array.isArray(items)) {
+                this.cartItems.set(items);
+            }
+        } catch {
+            sessionStorage.removeItem(this.storageKey);
+        }
+    }
+
+    private persistCart() {
+        if (!isPlatformBrowser(this.platformId)) return;
+        sessionStorage.setItem(this.storageKey, JSON.stringify(this.cartItems()));
+    }
+
+    private clearStoredCart() {
+        if (!isPlatformBrowser(this.platformId)) return;
+        sessionStorage.removeItem(this.storageKey);
     }
 }

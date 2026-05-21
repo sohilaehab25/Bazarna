@@ -6,14 +6,6 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { ProductsService } from '../../shared/services/products.service';
 import { AuthService } from '../../shared/services/auth.service';
 
-interface Feature {
-  icon: string;
-  title: string;
-  description: string;
-  link: string;
-  linkText: string;
-}
-
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -33,8 +25,10 @@ export class HomeComponent {
   private authService = inject(AuthService);
 
   categories = this.productsService.getCategories();
-  isLoggedIn = this.authService.isLoggedIn();
-  showAuthPopup = signal(!this.isLoggedIn);
+  features = this.productsService.getFeaturedInfo();
+  isLoggedIn = this.authService.isLoggedIn;
+  private authPopupDismissed = signal(false);
+  showAuthPopup = computed(() => !this.isLoggedIn() && !this.authPopupDismissed());
   
   // Pre-compute category counts for performance
   categoryCounts = computed(() => {
@@ -44,30 +38,6 @@ export class HomeComponent {
     });
     return counts;
   });
-
-  features: Feature[] = [
-    {
-      icon: '🏆',
-      title: 'Quality Guaranteed',
-      description: 'Every product is carefully inspected for the highest quality standards',
-      link: '/products',
-      linkText: 'Browse Products'
-    },
-    {
-      icon: '🚚',
-      title: 'Free Shipping',
-      description: 'Free shipping on orders over $50 with fast and secure delivery',
-      link: '/products',
-      linkText: 'Start Shopping'
-    },
-    {
-      icon: '💬',
-      title: '24/7 Support',
-      description: 'Our friendly team is here to help with any questions you have',
-      link: '/contact',
-      linkText: 'Contact Us'
-    }
-  ];
 
   navigateToCategory(category: string): void {
     this.router.navigate(['/products'], { queryParams: { category } });
@@ -85,7 +55,7 @@ export class HomeComponent {
   }
 
   closeAuthPopup(): void {
-    this.showAuthPopup.set(false);
+    this.authPopupDismissed.set(true);
   }
 
   navigateToLogin(): void {

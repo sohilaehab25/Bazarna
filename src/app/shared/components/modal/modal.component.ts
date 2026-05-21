@@ -1,6 +1,5 @@
-import { Component, input, output, signal, effect, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ButtonComponent } from '../button/button.component';
+import { Component, input, output, signal, effect, inject, ChangeDetectionStrategy, PLATFORM_ID, ElementRef, ViewChild } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 /**
  * Reusable Modal Component with animations and overlay
@@ -24,10 +23,10 @@ import { ButtonComponent } from '../button/button.component';
  */
 @Component({
   selector: 'app-modal',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './modal.component.html',
-  styleUrls: ['./modal.component.scss']
+  styleUrls: ['./modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ModalComponent {
   // Input properties
@@ -37,6 +36,9 @@ export class ModalComponent {
   showCloseButton = input<boolean>(true);
   closeOnOverlayClick = input<boolean>(true);
   closeOnEscape = input<boolean>(true);
+  role = input<'dialog' | 'alertdialog'>('dialog');
+  ariaLabelledBy = input<string | null>(null);
+  ariaDescribedBy = input<string | null>(null);
 
   // Output events
   closeModal = output<void>();
@@ -44,11 +46,21 @@ export class ModalComponent {
   // Internal state
   isVisible = signal(false);
   isAnimating = signal(false);
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
+
+  @ViewChild('modalContainer') private modalContainer?: ElementRef<HTMLDivElement>;
 
   constructor() {
     // Handle open/close animations
     effect(() => {
       const open = this.isOpen();
+      if (!this.isBrowser) {
+        this.isVisible.set(open);
+        this.isAnimating.set(open);
+        return;
+      }
+
       if (open) {
         this.isVisible.set(true);
         this.isAnimating.set(true);
@@ -56,6 +68,7 @@ export class ModalComponent {
         if (this.closeOnEscape()) {
           document.addEventListener('keydown', this.handleKeyDown);
         }
+        setTimeout(() => this.focusDialog(), 0);
       } else {
         this.isAnimating.set(false);
         // Remove ESC key listener after animation
@@ -72,6 +85,10 @@ export class ModalComponent {
       this.close();
     }
   };
+
+  private focusDialog() {
+    this.modalContainer?.nativeElement.focus();
+  }
 
   close() {
     this.closeModal.emit();

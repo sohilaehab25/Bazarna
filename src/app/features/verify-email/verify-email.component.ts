@@ -31,7 +31,7 @@ export class VerifyEmailComponent implements OnInit {
       next: () => {
         this.verificationStatus.set('success');
         this.message.set('Email verified successfully! You can now sign in.');
-        localStorage.removeItem('pendingVerificationEmail');
+        sessionStorage.removeItem('pendingVerificationEmail');
       },
       error: (error) => {
         this.verificationStatus.set('error');

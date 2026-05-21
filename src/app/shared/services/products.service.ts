@@ -30,6 +30,14 @@ interface ApiResponse<T> {
   data: T;
 }
 
+export interface FeaturedInfo {
+  icon: string;
+  title: string;
+  description: string;
+  link: string;
+  linkText: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -39,6 +47,29 @@ export class ProductsService {
 
   private products = signal<Product[]>([]);
   private categories = signal<Category[]>([]);
+  private featuredInfo = signal<FeaturedInfo[]>([
+    {
+      icon: '🏆',
+      title: 'Quality Guaranteed',
+      description: 'Every product is carefully inspected for the highest quality standards',
+      link: '/products',
+      linkText: 'Browse Products'
+    },
+    {
+      icon: '🚚',
+      title: 'Free Shipping',
+      description: 'Free shipping on orders over $50 with fast and secure delivery',
+      link: '/products',
+      linkText: 'Start Shopping'
+    },
+    {
+      icon: '💬',
+      title: '24/7 Support',
+      description: 'Our friendly team is here to help with any questions you have',
+      link: '/contact',
+      linkText: 'Contact Us'
+    }
+  ]);
   private platformId = inject(PLATFORM_ID);
 
   constructor() {
@@ -74,6 +105,10 @@ export class ProductsService {
 
   getCategories() {
     return computed(() => this.categories().map(c => c.name));
+  }
+
+  getFeaturedInfo() {
+    return this.featuredInfo;
   }
 
   getProductsByCategory(categoryName: string) {

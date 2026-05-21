@@ -41,7 +41,7 @@ export class OrdersService {
     this.http.get<ApiResponse<Order[]>>(`${this.apiUrl}/my-orders`).subscribe({
       next: (res) => {
         if (res.success) {
-          this.orders.set(res.data);
+          this.orders.set(this.sortOrders(res.data));
         }
       }
     });
@@ -51,7 +51,7 @@ export class OrdersService {
     return this.http.post<ApiResponse<Order>>(`${this.apiUrl}/checkout`, { paymentMethod }).pipe(
       tap(res => {
         if (res.success) {
-          this.orders.update(orders => [res.data, ...orders]);
+          this.orders.update(orders => this.sortOrders([res.data, ...orders]));
         }
       })
     );
@@ -63,5 +63,13 @@ export class OrdersService {
 
   getOrderById(id: string) {
     return this.orders().find(order => order._id === id);
+  }
+
+  private sortOrders(orders: Order[]): Order[] {
+    return [...orders].sort((first, second) => {
+      const firstTime = new Date(first.createdAt).getTime();
+      const secondTime = new Date(second.createdAt).getTime();
+      return secondTime - firstTime;
+    });
   }
 }
