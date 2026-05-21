@@ -1,9 +1,5 @@
-import { Component, inject, computed, OnInit, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
 import { LayoutComponent } from './shared/components/layout/layout.component';
-import { CartService } from './shared/services/cart.service';
-import { AuthService } from './shared/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -11,17 +7,6 @@ import { AuthService } from './shared/services/auth.service';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App implements OnInit {
+export class App {
   protected readonly title = 'Bazarna';
-
-  private authService = inject(AuthService);
-
-  private platformId = inject(PLATFORM_ID);
-
-  ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      // Restore user session on app startup
-      this.authService.initUser();
-    }
-  }
 }

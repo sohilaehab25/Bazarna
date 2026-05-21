@@ -6,6 +6,16 @@ import { User, UserRole } from '../../models/User';
 import { EmailService } from '../../services/EmailService';
 import { RefreshTokenRepository } from '../../repositories/RefreshTokenRepository';
 
+const debugAuth = process.env.DEBUG_AUTH === 'true';
+
+const logAuthDebug = (message: string, details?: Record<string, unknown>): void => {
+  if (!debugAuth) return;
+  if (details) {
+    console.info(`[auth] ${message}`, details);
+    return;
+  }
+  console.info(`[auth] ${message}`);
+};
 
 interface JWTPayload {
   sub: string;
@@ -79,14 +89,21 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
+    logAuthDebug('login success', { userId: user._id.toString() });
     return await this.issueTokens(user, meta);
   }
 
   async refreshToken(refreshToken: string, meta: TokenMeta): Promise<AuthTokens> {
     const tokenHash = this.hashToken(refreshToken);
+    logAuthDebug('refresh token attempt', {
+      tokenHashPrefix: tokenHash.slice(0, 8),
+      ip: meta.ip,
+      userAgent: meta.userAgent,
+    });
     const storedToken = await this.refreshTokenRepository.findByTokenHash(tokenHash);
 
     if (!storedToken) {
+      logAuthDebug('refresh token missing', { tokenHashPrefix: tokenHash.slice(0, 8) });
       throw new Error('Invalid refresh token');
     }
 
@@ -94,15 +111,18 @@ export class AuthService {
       if (storedToken.replacedByTokenHash) {
         await this.refreshTokenRepository.revokeAllForUser(storedToken.userId.toString(), 'reuse-detected');
       }
+      logAuthDebug('refresh token revoked', { tokenHashPrefix: tokenHash.slice(0, 8) });
       throw new Error('Invalid refresh token');
     }
 
     if (storedToken.expiresAt < new Date()) {
+      logAuthDebug('refresh token expired', { tokenHashPrefix: tokenHash.slice(0, 8) });
       throw new Error('Refresh token expired');
     }
 
     const user = await this.userRepository.findById(storedToken.userId.toString());
     if (!user) {
+      logAuthDebug('refresh token user missing', { tokenHashPrefix: tokenHash.slice(0, 8) });
       throw new Error('Invalid refresh token');
     }
 
@@ -114,6 +134,12 @@ export class AuthService {
       revokedReason: 'rotated',
     });
     await this.refreshTokenRepository.updateLastUsed(tokenHash, new Date());
+
+    logAuthDebug('refresh token rotated', {
+      oldTokenHashPrefix: tokenHash.slice(0, 8),
+      newTokenHashPrefix: newTokenHash.slice(0, 8),
+    });
+
     return tokens;
   }
 
@@ -122,6 +148,7 @@ export class AuthService {
 
     const tokenHash = this.hashToken(refreshToken);
     await this.refreshTokenRepository.revokeToken(tokenHash, { revokedReason: 'logout' });
+    logAuthDebug('refresh token revoked on logout', { tokenHashPrefix: tokenHash.slice(0, 8) });
   }
 
   async verifyEmail(token: string): Promise<User> {
@@ -194,6 +221,13 @@ export class AuthService {
       expiresAt: refreshTokenExpiresAt,
       ip: meta.ip,
       userAgent: meta.userAgent,
+    });
+
+    logAuthDebug('tokens issued', {
+      userId: user._id.toString(),
+      sessionId,
+      refreshTokenExpiresAt: refreshTokenExpiresAt.toISOString(),
+      accessTokenTtl: this.accessTokenExpiry,
     });
 
     return {

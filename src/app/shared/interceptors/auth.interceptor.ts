@@ -5,6 +5,21 @@ import { SessionActivityService } from '../services/session-activity.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 
 const AUTH_RETRY_CONTEXT = new HttpContextToken<boolean>(() => false);
+const DEBUG_STORAGE_KEY = 'debug-auth';
+
+const isDebugEnabled = (): boolean => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem(DEBUG_STORAGE_KEY) === 'true';
+};
+
+const logAuthDebug = (message: string, details?: Record<string, unknown>): void => {
+    if (!isDebugEnabled()) return;
+    if (details) {
+        console.debug(`[auth] ${message}`, details);
+        return;
+    }
+    console.debug(`[auth] ${message}`);
+};
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
@@ -20,6 +35,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     sessionActivity.recordApiActivity();
 
+    logAuthDebug('interceptor request', {
+        url: req.url,
+        hasToken: !!token,
+        isAuthEndpoint,
+        isRetryRequest,
+    });
+
     if (token) {
         req = req.clone({
             setHeaders: {
@@ -31,9 +53,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(req).pipe(
         catchError((error: HttpErrorResponse) => {
             if (error.status !== 401 || isAuthEndpoint || isRetryRequest) {
+                logAuthDebug('interceptor passthrough', { url: req.url, status: error.status });
                 return throwError(() => error);
             }
 
+            logAuthDebug('interceptor 401 - attempting refresh', { url: req.url });
             return authService.refreshAccessToken().pipe(
                 switchMap((newToken) => {
                     if (!newToken) {

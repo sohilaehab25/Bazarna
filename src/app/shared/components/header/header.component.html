@@ -35,7 +35,7 @@
       <a routerLink="/cart" class="navbar-action" (click)="closeMenu()" aria-label="Shopping cart">
         <span class="navbar-action-icon">🛒</span>
         @if (cartItemsCount() > 0) {
-        <span class="navbar-cart-count">{{ cartItemsCount() }}</span>
+          <span class="navbar-cart-count">{{ cartItemsCount() }}</span>
         }
       </a>
 
@@ -97,7 +97,7 @@
       <span class="navbar-mobile-link-icon">🛒</span>
       Cart
       @if (cartItemsCount() > 0) {
-      <span class="navbar-cart-count">({{ cartItemsCount() }})</span>
+        <span class="navbar-cart-count">({{ cartItemsCount() }})</span>
       }
     </a>
     @if (isLoggedIn()) {
