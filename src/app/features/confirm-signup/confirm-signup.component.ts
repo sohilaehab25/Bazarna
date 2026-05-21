@@ -19,7 +19,7 @@ export class ConfirmSignupComponent {
   isResending = signal(false);
 
   resendVerification() {
-    const email = localStorage.getItem('pendingVerificationEmail');
+    const email = sessionStorage.getItem('pendingVerificationEmail');
     if (!email) {
       this.resendMessage.set('Unable to resend verification email. Please try signing up again.');
       this.resendMessageType.set('error');
