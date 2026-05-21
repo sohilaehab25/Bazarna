@@ -1,0 +1,31 @@
+.session-warning {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  color: var(--color-text-primary);
+  margin: var(--spacing-4) 0;
+}
+
+.session-warning__title {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.session-warning__message {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.session-warning__countdown {
+  margin: 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.session-warning__actions {
+  display: flex;
+  gap: var(--spacing-3);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  padding-top: var(--spacing-6);
+}

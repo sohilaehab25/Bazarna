@@ -1,0 +1,22 @@
+<app-modal
+  [isOpen]="isOpen()"
+  [closeOnEscape]="false"
+  [closeOnOverlayClick]="false"
+  [showCloseButton]="false"
+  [role]="'alertdialog'"
+  [ariaLabelledBy]="'session-warning-title'"
+  [ariaDescribedBy]="'session-warning-desc'">
+  <div class="session-warning">
+    <h2 id="session-warning-title" class="session-warning__title">Session expiring</h2>
+    <p id="session-warning-desc" class="session-warning__message">
+      Your session is about to expire. Do you want to continue working?
+    </p>
+    <p class="session-warning__countdown">
+      You will be signed out in {{ countdownSeconds() }} seconds.
+    </p>
+    <div class="session-warning__actions">
+      <app-button (onClick)="continueSession()">Yes, continue</app-button>
+      <app-button variant="secondary" (onClick)="logout()">No, logout</app-button>
+    </div>
+  </div>
+</app-modal>
