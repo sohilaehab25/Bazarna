@@ -24,8 +24,3 @@ export class LoginDTO {
   @IsString()
   password: string;
 }
-
-export class RefreshTokenDTO {
-  @IsString()
-  refreshToken: string;
-}

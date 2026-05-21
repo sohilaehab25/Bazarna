@@ -12,7 +12,6 @@ declare global {
 
 export const jwtAuthGuard = (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate('jwt', { session: false }, (err: any, user: User) => {
-    console.log("🚀 ~ jwtAuthGuard ~ err:", err)
     if (err) {
       return res.status(401).json({
         success: false,

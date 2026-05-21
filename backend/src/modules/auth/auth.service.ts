@@ -4,17 +4,26 @@ import crypto from 'crypto';
 import { UserRepository } from '../../repositories/UserRepository';
 import { User, UserRole } from '../../models/User';
 import { EmailService } from '../../services/EmailService';
+import { RefreshTokenRepository } from '../../repositories/RefreshTokenRepository';
+
 
 interface JWTPayload {
+  sub: string;
   _id: string;
   email: string;
   name: string;
   role: UserRole;
 }
 
+interface TokenMeta {
+  ip?: string;
+  userAgent?: string;
+}
+
 interface AuthTokens {
   accessToken: string;
   refreshToken: string;
+  refreshTokenExpiresAt: Date;
   user: {
     _id: string;
     email: string;
@@ -23,15 +32,13 @@ interface AuthTokens {
   };
 }
 
-interface AuthResponse extends AuthTokens {}
-
 export class AuthService {
   private userRepository = new UserRepository();
+  private refreshTokenRepository = new RefreshTokenRepository();
   private emailService = new EmailService();
   private jwtSecret = process.env.JWT_SECRET || 'your-secret-key';
-  private jwtRefreshSecret = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret';
-  private accessTokenExpiry = '15m';
-  private refreshTokenExpiry = '7d';
+  private accessTokenExpiry = process.env.ACCESS_TOKEN_TTL || '1m';
+  private refreshTokenTtlMs = this.resolveRefreshTokenTtlMs();
 
   async register(userData: { email: string; password: string; name: string; role?: UserRole }): Promise<User> {
     const existingUser = await this.userRepository.findByEmail(userData.email);
@@ -57,7 +64,7 @@ export class AuthService {
     return user;
   }
 
-  async login(email: string, password: string): Promise<AuthResponse> {
+  async login(email: string, password: string, meta: TokenMeta): Promise<AuthTokens> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw new Error('Invalid credentials');
@@ -72,32 +79,49 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
-    const tokens = this.generateTokens(user);
-
-    return {
-      ...tokens,
-      user: this.mapUserProfile(user),
-    };
+    return await this.issueTokens(user, meta);
   }
 
-  async refreshToken(refreshToken: string): Promise<AuthTokens> {
-    try {
-      const payload = jwt.verify(refreshToken, this.jwtRefreshSecret) as JWTPayload;
-      const user = await this.userRepository.findById(payload._id);
+  async refreshToken(refreshToken: string, meta: TokenMeta): Promise<AuthTokens> {
+    const tokenHash = this.hashToken(refreshToken);
+    const storedToken = await this.refreshTokenRepository.findByTokenHash(tokenHash);
 
-      if (!user) {
-        throw new Error('Invalid refresh token');
-      }
-
-      const tokens = this.generateTokens(user);
-
-      return {
-        ...tokens,
-        user: this.mapUserProfile(user),
-      };
-    } catch {
+    if (!storedToken) {
       throw new Error('Invalid refresh token');
     }
+
+    if (storedToken.revokedAt) {
+      if (storedToken.replacedByTokenHash) {
+        await this.refreshTokenRepository.revokeAllForUser(storedToken.userId.toString(), 'reuse-detected');
+      }
+      throw new Error('Invalid refresh token');
+    }
+
+    if (storedToken.expiresAt < new Date()) {
+      throw new Error('Refresh token expired');
+    }
+
+    const user = await this.userRepository.findById(storedToken.userId.toString());
+    if (!user) {
+      throw new Error('Invalid refresh token');
+    }
+
+    const tokens = await this.issueTokens(user, meta, storedToken.sessionId);
+    const newTokenHash = this.hashToken(tokens.refreshToken);
+
+    await this.refreshTokenRepository.revokeToken(tokenHash, {
+      replacedByTokenHash: newTokenHash,
+      revokedReason: 'rotated',
+    });
+    await this.refreshTokenRepository.updateLastUsed(tokenHash, new Date());
+    return tokens;
+  }
+
+  async revokeSession(refreshToken?: string): Promise<void> {
+    if (!refreshToken) return;
+
+    const tokenHash = this.hashToken(refreshToken);
+    await this.refreshTokenRepository.revokeToken(tokenHash, { revokedReason: 'logout' });
   }
 
   async verifyEmail(token: string): Promise<User> {
@@ -143,18 +167,59 @@ export class AuthService {
     await this.emailService.sendVerificationEmail(user.email, emailVerificationToken);
   }
 
-  private generateTokens(user: User): AuthTokens {
+  private generateAccessToken(user: User): string {
+    const userId = user._id.toString();
     const payload: JWTPayload = {
-      _id: user._id.toString(),
+      sub: userId,
+      _id: userId,
       email: user.email,
       name: user.name,
       role: user.role,
     };
 
-    const accessToken = jwt.sign(payload, this.jwtSecret, { expiresIn: this.accessTokenExpiry } as SignOptions);
-    const refreshToken = jwt.sign(payload, this.jwtRefreshSecret, { expiresIn: this.refreshTokenExpiry } as SignOptions);
+    return jwt.sign(payload, this.jwtSecret, { expiresIn: this.accessTokenExpiry } as SignOptions);
+  }
 
-    return { accessToken, refreshToken, user: this.mapUserProfile(user) };
+  private async issueTokens(user: User, meta: TokenMeta, existingSessionId?: string): Promise<AuthTokens> {
+    const accessToken = this.generateAccessToken(user);
+    const refreshToken = this.createRefreshToken();
+    const refreshTokenHash = this.hashToken(refreshToken);
+    const refreshTokenExpiresAt = new Date(Date.now() + this.refreshTokenTtlMs);
+    const sessionId = existingSessionId ?? (crypto.randomUUID?.() || crypto.randomBytes(16).toString('hex'));
+
+    await this.refreshTokenRepository.create({
+      userId: user._id,
+      tokenHash: refreshTokenHash,
+      sessionId,
+      expiresAt: refreshTokenExpiresAt,
+      ip: meta.ip,
+      userAgent: meta.userAgent,
+    });
+
+    return {
+      accessToken,
+      refreshToken,
+      refreshTokenExpiresAt,
+      user: this.mapUserProfile(user),
+    };
+  }
+
+  private createRefreshToken(): string {
+    return crypto.randomBytes(64).toString('hex');
+  }
+
+  private hashToken(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex');
+  }
+
+  private resolveRefreshTokenTtlMs(): number {
+
+    const days = Number(process.env.REFRESH_TOKEN_TTL_DAYS);
+    if (Number.isFinite(days) && days > 0) {
+      return days * 24 * 60 * 60 * 1000;
+    }
+
+    return 30 * 24 * 60 * 60 * 1000;
   }
 
   private mapUserProfile(user: User) {

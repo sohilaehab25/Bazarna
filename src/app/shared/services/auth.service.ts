@@ -1,14 +1,14 @@
 import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
-import { Observable, tap } from 'rxjs';
+import { Observable, catchError, finalize, map, of, shareReplay, tap } from 'rxjs';
 
 export interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  role?: string;
+    _id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+    role?: string;
 }
 
 interface ApiResponse<T = undefined> {
@@ -23,7 +23,6 @@ interface SignupResponse extends ApiResponse<{
 
 interface AuthResponse extends ApiResponse<{
     accessToken: string;
-    refreshToken: string;
     user: User;
 }> {}
 
@@ -34,6 +33,13 @@ export class AuthService {
     private http = inject(HttpClient);
     private apiUrl = 'http://localhost:3009/api';
     private platformId = inject(PLATFORM_ID);
+    private refreshInFlight: Observable<string | null> | null = null;
+    private initInFlight: Observable<boolean> | null = null;
+    private authInitialized = signal(false);
+    private accessToken = signal<string | null>(null);
+    private csrfToken = signal<string | null>(null);
+    private refreshErrorStatus = signal<number | null>(null);
+    private readonly debugStorageKey = 'debug-auth';
 
       // 🔹 state
     private currentUser = signal<User | null>(null);
@@ -47,7 +53,7 @@ export class AuthService {
     // =========================
 
     login(email: string, password: string): Observable<AuthResponse> {
-        return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, { email, password }).pipe(
+        return this.http.post<AuthResponse>(`${this.apiUrl}/auth/login`, { email, password }, { withCredentials: true }).pipe(
             tap((res) => {
                 if (res.data) this.setSession(res.data);
             })
@@ -70,10 +76,9 @@ export class AuthService {
 
     logout(): void {
         if (isPlatformBrowser(this.platformId)) {
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            this.logoutSession().subscribe();
         }
-        this.currentUser.set(null);
+        this.clearSession();
     }
 
     // =========================
@@ -98,41 +103,154 @@ export class AuthService {
 
     // =========================
     // 🔄 SESSION MANAGEMENT
-  // =========================
+    // =========================
 
-    initUser(): void {
+    initUser(): Observable<boolean> {
+        if (!isPlatformBrowser(this.platformId)) {
+            this.authInitialized.set(true);
+            return of(false);
+        }
+
+        if (this.authInitialized()) {
+            return of(this.isLoggedIn());
+        }
+
+        if (this.initInFlight) {
+            return this.initInFlight;
+        }
+
+        this.syncCsrfTokenFromCookie();
         const token = this.getAccessToken();
-        if (!token) return;
 
-            // Restore user from backend; clear session if token is invalid
-        this.userProfile().subscribe({
-            error: () => this.logout(),
-        });
+        if (token && this.currentUser()) {
+            this.authInitialized.set(true);
+            return of(true);
+        }
+
+        const request$ = this.refreshAccessToken().pipe(
+            map((newToken) => !!newToken),
+            tap((isAuthenticated) => {
+                if (isAuthenticated) return;
+                if (this.shouldLogoutAfterRefreshFailure()) {
+                    this.logout();
+                    return;
+                }
+                this.clearSession();
+            }),
+            finalize(() => {
+                this.authInitialized.set(true);
+                this.initInFlight = null;
+            }),
+            shareReplay(1)
+        );
+
+        this.initInFlight = request$;
+        return request$;
     }
 
-    private setSession(data: { accessToken: string; refreshToken: string; user: User }) {
-        if (isPlatformBrowser(this.platformId)) {
-            localStorage.setItem('accessToken', data.accessToken);
-            localStorage.setItem('refreshToken', data.refreshToken);
-        }
-        this.currentUser.set(data.user);
-  }
+    private setSession(data: { accessToken: string; user: User }) {
+        const normalizedUser: User = {
+            ...data.user,
+            _id: data.user._id,
+        };
+        this.refreshErrorStatus.set(null);
+        this.accessToken.set(data.accessToken);
+        this.syncCsrfTokenFromCookie();
+        this.currentUser.set(normalizedUser);
+    }
 
-  // =========================
-  // 🔑 TOKEN HELPERS
-  // =========================
+    refreshAccessToken(): Observable<string | null> {
+        if (this.refreshInFlight) return this.refreshInFlight;
+
+        this.refreshErrorStatus.set(null);
+
+        this.syncCsrfTokenFromCookie();
+
+        const request$ = this.http
+            .post<AuthResponse>(`${this.apiUrl}/auth/refresh`, {}, {
+                withCredentials: true,
+                headers: this.getCsrfHeaders(),
+            })
+            .pipe(
+                map((res) => (res.success ? res.data ?? null : null)),
+                tap((data) => {
+                    if (data) {
+                        this.refreshErrorStatus.set(null);
+                        this.setSession(data);
+                    }
+                }),
+                map((data) => data?.accessToken ?? null),
+                catchError((error: HttpErrorResponse) => {
+                    this.refreshErrorStatus.set(error.status ?? 0);
+                    return of(null);
+                }),
+                finalize(() => {
+                    this.refreshInFlight = null;
+                }),
+                shareReplay(1)
+            );
+
+        this.refreshInFlight = request$;
+        return request$;
+    }
+
+    // =========================
+    // 🔑 TOKEN HELPERS
+    // =========================
 
     getAccessToken(): string | null {
-        if (isPlatformBrowser(this.platformId)) {
-            return localStorage.getItem('accessToken');
-        }
-        return null;
+        return this.accessToken();
     }
 
-    getRefreshToken(): string | null {
-        if (isPlatformBrowser(this.platformId)) {
-            return localStorage.getItem('refreshToken');
+    private logoutSession(): Observable<void> {
+        this.syncCsrfTokenFromCookie();
+        return this.http.post<ApiResponse>(`${this.apiUrl}/auth/logout`, {}, {
+            withCredentials: true,
+            headers: this.getCsrfHeaders(),
+        }).pipe(
+            catchError(() => of(null)),
+            map(() => undefined)
+        );
+    }
+
+    private clearSession(): void {
+        this.accessToken.set(null);
+        this.currentUser.set(null);
+        this.csrfToken.set(null);
+        this.refreshErrorStatus.set(null);
+    }
+
+    shouldLogoutAfterRefreshFailure(): boolean {
+        const status = this.refreshErrorStatus();
+        return status === 401 || status === 403;
+    }
+
+    private isDebugEnabled(): boolean {
+        if (!isPlatformBrowser(this.platformId)) return false;
+        return window.localStorage.getItem(this.debugStorageKey) === 'true';
+    }
+
+    private syncCsrfTokenFromCookie(): void {
+        if (!isPlatformBrowser(this.platformId)) return;
+
+        const csrfToken = this.readCookieValue('csrf_token');
+        if (csrfToken) {
+            this.csrfToken.set(csrfToken);
         }
-        return null;
+    }
+
+    private getCsrfHeaders(): { [header: string]: string } | undefined {
+        const token = this.csrfToken();
+        return token ? { 'X-CSRF-Token': token } : undefined;
+    }
+
+    private readCookieValue(name: string): string | null {
+        if (!isPlatformBrowser(this.platformId)) return null;
+
+        const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
+        const target = cookies.find((cookie) => cookie.startsWith(`${name}=`));
+        if (!target) return null;
+
+        return decodeURIComponent(target.substring(name.length + 1));
     }
 }
