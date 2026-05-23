@@ -20,7 +20,6 @@
 }
 
 .product-details {
-  background: var(--color-background);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-xl);
   max-width: 800px;
@@ -44,6 +43,8 @@
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   margin: 0;
+  position: absolute;
+  right: 41%;
 }
 
 .product-details-close-btn {
@@ -55,6 +56,8 @@
   padding: var(--spacing-xs);
   border-radius: var(--border-radius-sm);
   transition: all var(--transition-fast);
+  left: 97%;
+  position: relative;
 }
 
 .product-details-close-btn:hover {
@@ -163,7 +166,7 @@
 }
 
 .btn--primary {
-  background: var(--color-primary);
+  background: var(--color-background);
   color: var(--color-text-on-primary);
   width: 100px;
   height: 50px;
@@ -180,7 +183,7 @@
   background: var(--color-background);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
-  width: 100px;
+  width: 125px;
   height: 50px;
   border-radius: 12px;
 }

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
@@ -13,12 +14,14 @@ import { AuthService } from '../../shared/services/auth.service';
 })
 export class ConfirmSignupComponent {
   private authService = inject(AuthService);
+  private platformId = inject(PLATFORM_ID);
 
   resendMessage = signal('');
   resendMessageType = signal<'success' | 'error'>('success');
   isResending = signal(false);
 
   resendVerification() {
+    if (!isPlatformBrowser(this.platformId)) return;
     const email = sessionStorage.getItem('pendingVerificationEmail');
     if (!email) {
       this.resendMessage.set('Unable to resend verification email. Please try signing up again.');

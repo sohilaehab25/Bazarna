@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CardComponent } from '../../shared/components/card/card.component';
@@ -17,6 +18,7 @@ export class LoginComponent implements OnInit {
     private authService = inject(AuthService);
     private router = inject(Router);
 
+    private platformId = inject(PLATFORM_ID);
     isLoginMode = signal(true);
     errorMessage = signal('');
 
@@ -66,7 +68,9 @@ export class LoginComponent implements OnInit {
         } else {
             this.authService.signup(name!, email!, password!).subscribe({
                 next: () => {
-                    sessionStorage.setItem('pendingVerificationEmail', email!);
+                    if (isPlatformBrowser(this.platformId)) {
+                        sessionStorage.setItem('pendingVerificationEmail', email!);
+                    }
                     this.router.navigate(['/confirm-signup']);
                 },
                 error: (error) => {

@@ -1,5 +1,4 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CardComponent } from '../../shared/components/card/card.component';
@@ -11,10 +10,10 @@ import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
     selector: 'app-checkout',
-    standalone: true,
-    imports: [CommonModule, CardComponent, ButtonComponent, RouterLink, ReactiveFormsModule, EmptyStateComponent],
+    imports: [CardComponent, ButtonComponent, RouterLink, ReactiveFormsModule, EmptyStateComponent],
     templateUrl: './checkout.component.html',
-    styleUrls: ['./checkout.component.scss']
+    styleUrls: ['./checkout.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
 export class CheckoutComponent {
@@ -36,12 +35,12 @@ export class CheckoutComponent {
         paymentMethod: ['cash', Validators.required]
     });
 
-    handleSucces(res: any) {
+    private handleSuccess(res: any) {
         if (res.success) {
             this.cartService.clearCart();
             this.router.navigate(['/products']);
         }
-    };
+    }
 
     placeOrder() {
         if (this.checkoutForm.invalid) {
@@ -52,7 +51,7 @@ export class CheckoutComponent {
 
         if (this.authService.isLoggedIn()) {
             this.ordersService.checkout(paymentMethod).subscribe({
-                next: this.handleSucces.bind(this),
+                next: this.handleSuccess.bind(this),
             });
             return;
         }
@@ -75,7 +74,7 @@ export class CheckoutComponent {
         };
 
         this.ordersService.guestCheckout({ items, paymentMethod, customer }).subscribe({
-            next: this.handleSucces.bind(this),
+            next: this.handleSuccess.bind(this),
         });
     }
 }

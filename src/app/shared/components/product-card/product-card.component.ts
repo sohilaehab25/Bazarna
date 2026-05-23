@@ -29,6 +29,9 @@ export class ProductCardComponent {
         return item ? item.quantity : 0;
     });
 
+    /** Available stock = actual stock minus quantity already reserved in cart */
+    availableStock = computed(() => Math.max(0, this.product().stock - this.cartQuantity()));
+
     // Output events
     onViewDetails = output<Product>();
 

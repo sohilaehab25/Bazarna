@@ -76,10 +76,18 @@ export class CartService {
     }
 
     addToCart(product: Product, quantity: number = 1) {
+        if (quantity <= 0) return;
+
+        const latestProduct = this.productsService.getProductById(product._id);
+        const currentStock = latestProduct?.stock ?? product.stock;
+
         const existingItem = this.cartItems().find(item => item.product._id === product._id);
-        
+        const alreadyInCart = existingItem?.quantity ?? 0;
+
+        if (alreadyInCart + quantity > currentStock) return; // Would exceed available stock
+
         if (existingItem) {
-            this.updateQuantity(product._id, existingItem.quantity + quantity);
+            this.updateQuantity(product._id, alreadyInCart + quantity);
         } else {
             // Optimistic update
             this.cartItems.set([...this.cartItems(), { product, quantity }]);
@@ -99,7 +107,9 @@ export class CartService {
 
     increase(productId: string) {
         const item = this.cartItems().find(i => i.product._id === productId);
-        if (item && item.quantity < item.product.stock) {
+        if (!item) return;
+        const currentStock = this.productsService.getProductById(productId)?.stock ?? item.product.stock;
+        if (item.quantity < currentStock) {
             this.updateQuantity(productId, item.quantity + 1);
         }
     }
@@ -119,7 +129,8 @@ export class CartService {
         }
 
         const item = this.cartItems().find(i => i.product._id === productId);
-        if (item && quantity > item.product.stock) {
+        const currentStock = this.productsService.getProductById(productId)?.stock ?? item?.product.stock ?? 0;
+        if (item && quantity > currentStock) {
             return; // Cannot exceed stock
         }
 

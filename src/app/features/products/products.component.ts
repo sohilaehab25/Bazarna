@@ -25,6 +25,26 @@ export class ProductsComponent {
   isModalOpen = signal(false);
   selectedProduct = signal<Product | null>(null);
 
+  /** Keeps the modal in sync with the live products signal (e.g. after socket stock update) */
+  selectedProductLive = computed(() => {
+    const selected = this.selectedProduct();
+    if (!selected) return null;
+    return this.allProducts().find(p => p._id === selected._id) ?? selected;
+  });
+
+  /** Quantity of the modal product already in the cart */
+  private modalCartQuantity = computed(() => {
+    const product = this.selectedProductLive();
+    if (!product) return 0;
+    const item = this.cartService.getCartItems()().find(i => i.product._id === product._id);
+    return item ? item.quantity : 0;
+  });
+
+  /** Available stock = actual stock minus what is already in the cart */
+  modalAvailableStock = computed(() =>
+    Math.max(0, (this.selectedProductLive()?.stock ?? 0) - this.modalCartQuantity())
+  );
+
   // Get category from query params
   category = computed(() => this.route.snapshot.queryParams['category']);
 

@@ -7,7 +7,7 @@
     }
   </div>
 
-  @if (selectedProduct(); as product) {
+  @if (selectedProductLive(); as product) {
   <app-modal [isOpen]="isModalOpen()" (onClose)="closeModal()">
     <div class="product-details">
       <div class="product-details-header">
@@ -29,8 +29,8 @@
 
           <p class="product-details-description">{{ product.description }}</p>
 
-          <p class="product-details-stock" [class.product-details-stock--low]="product.stock <= 5">
-            Available: {{ product.stock }}
+          <p class="product-details-stock" [class.product-details-stock--low]="modalAvailableStock() <= 5">
+            Available: {{ modalAvailableStock() }}
           </p>
 
           @if (product.rating) {
@@ -50,8 +50,8 @@
 
           <div class="product-details-actions">
             <button class="btn btn--primary product-details-add-to-cart" (click)="addToCart(product)"
-              [disabled]="product.stock === 0">
-              {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+              [disabled]="product.stock === 0 || modalAvailableStock() === 0">
+              {{ product.stock === 0 ? 'Out of Stock' : modalAvailableStock() === 0 ? 'All in Cart' : 'Add to Cart' }}
             </button>
             <button class="btn btn--secondary product-details-wishlist" (click)="addToWishlist(product)"
               [class.product-details-wishlist--active]="isInWishlist(product._id)">

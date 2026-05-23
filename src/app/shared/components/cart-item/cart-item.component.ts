@@ -1,6 +1,5 @@
 import { Component, input, output, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CardComponent } from '../card/card.component';
 import { ButtonComponent } from '../button/button.component';
 import { CartItem } from '../../../../app.type';
 import { CartService } from '../../services/cart.service';
@@ -8,7 +7,7 @@ import { CartService } from '../../services/cart.service';
 @Component({
   selector: 'app-cart-item',
   standalone: true,
-  imports: [CommonModule, CardComponent],
+  imports: [CommonModule],
   templateUrl: './cart-item.component.html',
   styleUrls: ['./cart-item.component.scss']
 })

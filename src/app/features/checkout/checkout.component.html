@@ -68,19 +68,21 @@
                             
                             <div class="payment-options">
                                 <label class="radio-label" [class.selected]="checkoutForm.get('paymentMethod')?.value === 'cash'">
-                                    <input type="radio" formControlName="paymentMethod" value="cash">
                                     <div class="radio-content">
                                         <span class="radio-title">Cash on Delivery</span>
                                         <span class="radio-desc">Pay with cash when your order is delivered.</span>
                                     </div>
+                                    <input type="radio" formControlName="paymentMethod" value="cash">
+
                                 </label>
 
                                 <label class="radio-label disabled-label">
-                                    <input type="radio" [disabled]="true" value="instapay">
                                     <div class="radio-content">
                                         <span class="radio-title">Instapay</span>
                                         <span class="radio-desc">Currently unavailable.</span>
                                     </div>
+                                    <input type="radio" [disabled]="true" value="instapay">
+
                                 </label>
                             </div>
                             @if (checkoutForm.get('paymentMethod')?.touched && checkoutForm.get('paymentMethod')?.invalid) {

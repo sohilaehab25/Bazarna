@@ -1,6 +1,5 @@
-import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { isPlatformBrowser } from '@angular/common';
 import { ApiResponse, Category, FeaturedInfo, Product } from '../../../app.type';
 
 @Injectable({
@@ -35,13 +34,12 @@ export class ProductsService {
       linkText: 'Contact Us'
     }
   ]);
-  private platformId = inject(PLATFORM_ID);
 
   constructor() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.loadProducts();
-      this.loadCategories();
-    }
+    // Load on both server and browser.
+    // provideClientHydration() transfer cache prevents duplicate browser requests.
+    this.loadProducts();
+    this.loadCategories();
   }
 
   private loadProducts() {

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, inject, signal, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
@@ -15,6 +16,7 @@ export class VerifyEmailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private authService = inject(AuthService);
+  private platformId = inject(PLATFORM_ID);
 
   verificationStatus = signal<'loading' | 'success' | 'error'>('loading');
   message = signal('');
@@ -31,7 +33,9 @@ export class VerifyEmailComponent implements OnInit {
       next: () => {
         this.verificationStatus.set('success');
         this.message.set('Email verified successfully! You can now sign in.');
-        sessionStorage.removeItem('pendingVerificationEmail');
+        if (isPlatformBrowser(this.platformId)) {
+          sessionStorage.removeItem('pendingVerificationEmail');
+        }
       },
       error: (error) => {
         this.verificationStatus.set('error');

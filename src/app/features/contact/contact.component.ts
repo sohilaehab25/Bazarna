@@ -31,15 +31,15 @@ import { ButtonComponent } from '../../shared/components/button/button.component
                 <span class="contact-icon">📞</span>
                 <div>
                   <strong>Phone</strong><br>
-                  +1 (555) 123-BAZAR
+                  +20 1066 7949 97
                 </div>
               </div>
               <div class="contact-item">
                 <span class="contact-icon">📍</span>
                 <div>
                   <strong>Address</strong><br>
-                  123 Artisan Street<br>
-                  Craft City, CC 12345
+                  nakhlah Street<br>
+                  Mansourah, Egypt
                 </div>
               </div>
               <div class="contact-item">
