@@ -17,6 +17,25 @@ export class OrderController {
     }
   }
 
+  async guestCheckout(req: Request, res: Response) {
+    try {
+      const { items, paymentMethod, customer } = req.body;
+
+      if (!customer?.firstName || !customer?.lastName || !customer?.email || !customer?.address || !customer?.city) {
+        return res.apiError('Customer details are required', 400);
+      }
+
+      if (!Array.isArray(items) || items.length === 0) {
+        return res.apiError('Cart is empty', 400);
+      }
+
+      const order = await orderService.checkoutGuest(items, paymentMethod, customer);
+      res.apiSuccess('Order placed successfully', order, 201);
+    } catch (error: any) {
+      res.apiError(error.message, 400);
+    }
+  }
+
   async createOrder(req: Request, res: Response) {
     console.log("🚀 ~ OrderController ~ createOrder ~ req:", req.body)
     try {

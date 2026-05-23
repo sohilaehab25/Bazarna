@@ -2,24 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { AuthService } from './auth.service';
-
-export interface Order {
-  _id: string;
-  items: {
-    productId: any;
-    quantity: number;
-  }[];
-  totalPrice: number;
-  status: 'pending' | 'preparing' | 'delivered';
-  paymentMethod: 'cash' | 'visa';
-  createdAt: Date;
-}
-
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
+import { ApiResponse, customerInfo, GuestCheckoutPayload, items, Order } from '../../../app.type';
 
 @Injectable({
   providedIn: 'root'
@@ -55,6 +38,10 @@ export class OrdersService {
         }
       })
     );
+  }
+
+  guestCheckout(payload: GuestCheckoutPayload): Observable<ApiResponse<Order>> {
+    return this.http.post<ApiResponse<Order>>(`${this.apiUrl}/guest-checkout`, payload);
   }
 
   getOrders() {

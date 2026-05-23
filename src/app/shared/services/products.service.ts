@@ -1,42 +1,7 @@
 import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
-
-export interface Product {
-  _id: string;
-  name: string;
-  description: string;
-  price: number;
-  categoryId: {
-    _id: string;
-    name: string;
-    description: string;
-  };
-  imageUrl: string;
-  stock: number;
-  rating?: number;
-  reviews?: number;
-}
-
-interface Category {
-  _id: string;
-  name: string;
-  description: string;
-}
-
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
-
-export interface FeaturedInfo {
-  icon: string;
-  title: string;
-  description: string;
-  link: string;
-  linkText: string;
-}
+import { ApiResponse, Category, FeaturedInfo, Product } from '../../../app.type';
 
 @Injectable({
   providedIn: 'root'

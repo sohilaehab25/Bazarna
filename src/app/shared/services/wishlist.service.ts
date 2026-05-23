@@ -1,9 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Product } from './products.service';
-
-export interface WishlistItem extends Product {
-  addedAt: Date;
-}
+import { Product, WishlistItem } from '../../../app.type';
 
 @Injectable({
   providedIn: 'root'

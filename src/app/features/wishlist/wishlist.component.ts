@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { WishlistService, WishlistItem } from '../../shared/services/wishlist.service';
+import { WishlistService } from '../../shared/services/wishlist.service';
+import { WishlistItem } from '../../../app.type';
 import { CartService } from '../../shared/services/cart.service';
 
 @Component({

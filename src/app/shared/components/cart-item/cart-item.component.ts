@@ -2,7 +2,8 @@ import { Component, input, output, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../card/card.component';
 import { ButtonComponent } from '../button/button.component';
-import { CartItem, CartService } from '../../services/cart.service';
+import { CartItem } from '../../../../app.type';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-cart-item',

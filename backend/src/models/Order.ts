@@ -11,17 +11,26 @@ export enum PaymentMethod {
   VISA = 'visa',
 }
 
+export interface IOrderCustomer {
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: string;
+  city: string;
+}
+
 export interface IOrderItem {
   productId: mongoose.Types.ObjectId;
   quantity: number;
 }
 
 export interface Order extends Document {
-  userId: mongoose.Types.ObjectId;
+  userId?: mongoose.Types.ObjectId;
   items: IOrderItem[];
   totalPrice: number;
   status: OrderStatus;
   paymentMethod: PaymentMethod;
+  customer?: IOrderCustomer;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -39,11 +48,40 @@ const OrderItemSchema: Schema = new Schema({
   },
 }, { _id: false });
 
+const OrderCustomerSchema: Schema = new Schema({
+  firstName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+  },
+  address: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  city: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+}, { _id: false });
+
 const OrderSchema: Schema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
+    required: false,
   },
   items: [OrderItemSchema],
   totalPrice: {
@@ -60,6 +98,10 @@ const OrderSchema: Schema = new Schema({
     type: String,
     enum: Object.values(PaymentMethod),
     required: true,
+  },
+  customer: {
+    type: OrderCustomerSchema,
+    required: false,
   },
 }, {
   timestamps: true,

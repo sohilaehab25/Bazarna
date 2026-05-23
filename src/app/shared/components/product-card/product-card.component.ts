@@ -2,7 +2,7 @@ import { Component, inject, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../card/card.component';
 import { ButtonComponent } from '../button/button.component';
-import { Product } from '../../services/products.service';
+import { Product } from '../../../../app.type';
 import { CartService } from '../../services/cart.service';
 import { WishlistService } from '../../services/wishlist.service';
 

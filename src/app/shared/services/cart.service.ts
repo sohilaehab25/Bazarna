@@ -1,20 +1,10 @@
 import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
-import { Product, ProductsService } from './products.service';
+import { ProductsService } from './products.service';
 import { AuthService } from './auth.service';
 import { SocketService } from './socket.service';
-
-export interface CartItem {
-    product: Product;
-    quantity: number;
-}
-
-interface ApiResponse<T> {
-    success: boolean;
-    message: string;
-    data: T;
-}
+import { ApiResponse, CartItem, Product } from '../../../app.type';
 
 interface BackendCartItem {
     productId: Product;

@@ -6,7 +6,7 @@ import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { ProductsService } from '../../shared/services/products.service';
 import { WishlistService } from '../../shared/services/wishlist.service';
 import { CartService } from '../../shared/services/cart.service';
-import { Product } from '../../shared/services/products.service';
+import { Product } from '../../../app.type';
 
 @Component({
   selector: 'app-products',

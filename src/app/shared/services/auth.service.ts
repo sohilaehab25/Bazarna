@@ -2,21 +2,7 @@ import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
 import { Observable, catchError, finalize, map, of, shareReplay, tap } from 'rxjs';
-
-export interface User {
-    id?: string;
-    _id?: string;
-    name: string;
-    email: string;
-    avatar?: string;
-    role?: string;
-}
-
-interface ApiResponse<T = undefined> {
-    success: boolean;
-    message: string;
-    data?: T;
-}
+import { ApiResponse, User } from '../../../app.type';
 
 interface SignupResponse extends ApiResponse<{
     user: { _id: string; email: string; name: string };

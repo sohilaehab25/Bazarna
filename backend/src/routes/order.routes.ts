@@ -9,6 +9,7 @@ const orderController = new OrderController();
 
 router.post('/', jwtAuthGuard, orderController.createOrder.bind(orderController));
 router.post('/checkout', jwtAuthGuard, orderController.checkout.bind(orderController));
+router.post('/guest-checkout', orderController.guestCheckout.bind(orderController));
 router.get('/my-orders', jwtAuthGuard, orderController.getUserOrders.bind(orderController));
 router.get('/:id', jwtAuthGuard, orderController.getOrder.bind(orderController));
 router.get('/:id/items', jwtAuthGuard, orderController.getOrderItems.bind(orderController));

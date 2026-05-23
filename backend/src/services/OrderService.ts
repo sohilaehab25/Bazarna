@@ -4,6 +4,19 @@ import ProductModel from '../models/Product';
 import { CartRepository } from '../repositories/CartRepository';
 import { emitStockUpdate } from '../utils/socket';
 
+type GuestOrderItem = {
+  productId: string;
+  quantity: number;
+};
+
+type GuestCustomer = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  address: string;
+  city: string;
+};
+
 export class OrderService {
   private orderRepository = new OrderRepository();
   private cartRepository = new CartRepository();
@@ -55,6 +68,64 @@ export class OrderService {
         if (product) {
           emitStockUpdate(product._id.toString(), product.stock);
         }
+      }
+
+      return order;
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+  }
+
+  async checkoutGuest(items: GuestOrderItem[], paymentMethod: any, customer: GuestCustomer): Promise<Order> {
+    if (!Array.isArray(items) || items.length === 0) {
+      throw new Error('Cart is empty');
+    }
+
+    const session = await ProductModel.startSession();
+    const updatedProducts: Array<{ id: string; stock: number }> = [];
+
+    try {
+      session.startTransaction();
+
+      let totalPrice = 0;
+      const normalizedItems = [] as { productId: any; quantity: number }[];
+
+      for (const item of items) {
+        if (!item?.productId || !item?.quantity || item.quantity < 1) {
+          throw new Error('Invalid cart item');
+        }
+
+        const product = await ProductModel.findOneAndUpdate(
+          { _id: item.productId, stock: { $gte: item.quantity } },
+          { $inc: { stock: -item.quantity } },
+          { new: true, session }
+        );
+
+        if (!product) {
+          throw new Error(`Product ${item.productId} is out of stock or insufficient quantity`);
+        }
+
+        totalPrice += product.price * item.quantity;
+        normalizedItems.push({ productId: product._id, quantity: item.quantity });
+        updatedProducts.push({ id: product._id.toString(), stock: product.stock });
+      }
+
+      const orderData: Partial<Order> = {
+        items: normalizedItems,
+        totalPrice,
+        status: OrderStatus.PENDING,
+        paymentMethod,
+        customer,
+      };
+
+      const order = await this.orderRepository.create(orderData);
+      await session.commitTransaction();
+
+      for (const product of updatedProducts) {
+        emitStockUpdate(product.id, product.stock);
       }
 
       return order;
