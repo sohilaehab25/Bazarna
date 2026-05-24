@@ -46,6 +46,8 @@ const UserSchema: Schema = new Schema({
   },
   emailVerificationToken: {
     type: String,
+    index: true,
+    sparse: true,
   },
   emailVerificationExpires: {
     type: Date,

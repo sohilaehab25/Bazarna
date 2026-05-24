@@ -14,14 +14,15 @@ export class RefreshTokenRepository {
     await RefreshTokenModel.updateOne({ tokenHash }, { $set: { lastUsedAt } });
   }
 
-  async revokeToken(tokenHash: string, data: { replacedByTokenHash?: string; revokedReason?: string }): Promise<void> {
+  async revokeToken(tokenHash: string, data: { replacedByTokenHash?: string; revokedReason?: string; lastUsedAt?: Date }): Promise<void> {
     await RefreshTokenModel.updateOne(
       { tokenHash },
       {
         $set: {
           revokedAt: new Date(),
-          replacedByTokenHash: data.replacedByTokenHash,
-          revokedReason: data.revokedReason,
+          ...(data.replacedByTokenHash && { replacedByTokenHash: data.replacedByTokenHash }),
+          ...(data.revokedReason && { revokedReason: data.revokedReason }),
+          ...(data.lastUsedAt && { lastUsedAt: data.lastUsedAt }),
         },
       }
     );

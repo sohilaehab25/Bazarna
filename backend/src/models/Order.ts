@@ -107,6 +107,8 @@ const OrderSchema: Schema = new Schema({
   timestamps: true,
 });
 
+OrderSchema.index({ userId: 1, createdAt: -1 });
 OrderSchema.index({ createdAt: -1 });
+OrderSchema.index({ status: 1 });
 
 export default mongoose.model<Order>('Order', OrderSchema);

@@ -7,7 +7,7 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  logger.error('Error occurred:', error);
+  logger.error('Unhandled error', { method: req.method, path: req.path, status: error.statusCode || 500 });
 
   const statusCode = error.statusCode || 500;
   const message = error.message || 'Internal Server Error';

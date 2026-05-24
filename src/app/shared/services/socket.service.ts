@@ -20,19 +20,19 @@ export class SocketService {
     }
   }
 
-  onEvent(event: string): Observable<any> {
-    return new Observable(observer => {
+  onEvent<T = unknown>(event: string): Observable<T> {
+    return new Observable<T>(observer => {
       if (!this.socket) {
         return;
       }
       
-      this.socket.on(event, (data: any) => {
+      this.socket.on(event, (data: T) => {
         this.ngZone.run(() => observer.next(data));
       });
     });
   }
 
-  emit(event: string, data: any) {
+  emit(event: string, data: unknown) {
     if (this.socket) {
       this.socket.emit(event, data);
     }

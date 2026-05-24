@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardComponent } from '../../shared/components/card/card.component';
@@ -7,10 +7,10 @@ import { ProductsService } from '../../shared/services/products.service';
 
 @Component({
     selector: 'app-categories',
-    standalone: true,
     imports: [CommonModule, RouterLink, CardComponent, ButtonComponent],
     templateUrl: './categories.component.html',
-    styleUrls: ['./categories.component.scss']
+    styleUrls: ['./categories.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoriesComponent {
     private productsService = inject(ProductsService);

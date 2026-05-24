@@ -31,6 +31,7 @@ const ProductSchema: Schema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Category',
     required: true,
+    index: true,
   },
   imageUrl: {
     type: String,
@@ -46,5 +47,8 @@ const ProductSchema: Schema = new Schema({
 }, {
   timestamps: true,
 });
+
+ProductSchema.index({ name: 1 });
+ProductSchema.index({ categoryId: 1, createdAt: -1 });
 
 export default mongoose.model<Product>('Product', ProductSchema);

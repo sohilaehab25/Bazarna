@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardComponent } from '../../shared/components/card/card.component';
@@ -8,8 +8,8 @@ import { OrdersService } from '../../shared/services/orders.service';
 
 @Component({
   selector: 'app-order-success',
-  standalone: true,
   imports: [CommonModule, RouterLink, CardComponent, ButtonComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="order-success">
       <app-card>

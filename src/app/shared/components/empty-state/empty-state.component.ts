@@ -1,14 +1,14 @@
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../card/card.component';
 import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'app-empty-state',
-  standalone: true,
   imports: [CommonModule, CardComponent, ButtonComponent],
   templateUrl: './empty-state.component.html',
-  styleUrls: ['./empty-state.component.scss']
+  styleUrls: ['./empty-state.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmptyStateComponent {
   icon = input<string>('📦');

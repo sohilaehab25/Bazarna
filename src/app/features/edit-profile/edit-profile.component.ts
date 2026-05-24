@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CardComponent } from '../../shared/components/card/card.component';
@@ -9,10 +9,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-edit-profile',
-    standalone: true,
     imports: [CommonModule, ReactiveFormsModule, CardComponent, ButtonComponent],
     templateUrl: './edit-profile.component.html',
-    styleUrls: ['./edit-profile.component.scss']
+    styleUrls: ['./edit-profile.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditProfileComponent implements OnInit {
     private fb = inject(FormBuilder);

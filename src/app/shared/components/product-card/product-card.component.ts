@@ -1,4 +1,4 @@
-import { Component, inject, input, output, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardComponent } from '../card/card.component';
 import { ButtonComponent } from '../button/button.component';
@@ -8,10 +8,10 @@ import { WishlistService } from '../../services/wishlist.service';
 
 @Component({
     selector: 'app-product-card',
-    standalone: true,
     imports: [CommonModule, CardComponent, ButtonComponent],
     templateUrl: './product-card.component.html',
     styleUrls: ['./product-card.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
         style: 'display: block; height: 100%;'
     }
@@ -45,8 +45,6 @@ export class ProductCardComponent {
 
     decrementQuantity() {
         this.cartService.decrease(this.product()._id);
-        console.log(this.product()._id);
-        
     }
 
     viewDetails() {

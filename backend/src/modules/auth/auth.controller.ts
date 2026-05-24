@@ -9,14 +9,6 @@ const REFRESH_COOKIE_NAME = 'refresh_token';
 const CSRF_COOKIE_NAME = 'csrf_token';
 const debugAuth = process.env.DEBUG_AUTH === 'true';
 
-const logAuthDebug = (message: string, details?: Record<string, unknown>): void => {
-  if (!debugAuth) return;
-  if (details) {
-    console.info(`[auth] ${message}`, details);
-    return;
-  }
-  console.info(`[auth] ${message}`);
-};
 
 const getCookieOptions = (expiresAt: Date) => {
   const isProd = process.env.NODE_ENV === 'production';
@@ -105,19 +97,13 @@ export class AuthController {
 
       const tokens = await authService.login(loginData.email, loginData.password, {
         ip: req.ip,
-        userAgent: req.get('user-agent') ?? undefined,
+        userAgent: (req.get('user-agent') ?? '').slice(0, 512) || undefined,
       });
       clearCsrfCookies(res);
       const csrfToken = createCsrfToken();
       
       res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, getCookieOptions(tokens.refreshTokenExpiresAt));
       res.cookie(CSRF_COOKIE_NAME, csrfToken, getCsrfCookieOptions(tokens.refreshTokenExpiresAt));
-
-      logAuthDebug('login cookies set', {
-        hasRefreshCookie: true,
-        hasCsrfCookie: true,
-        refreshExpiresAt: tokens.refreshTokenExpiresAt.toISOString(),
-      });
 
       res.apiSuccess('Login successful', {
         accessToken: tokens.accessToken,
@@ -137,15 +123,6 @@ export class AuthController {
         : undefined;
       const csrfCookie = req.cookies?.[CSRF_COOKIE_NAME];
       const csrfCookieValues = new Set([csrfCookie, ...getCookieValues(req, CSRF_COOKIE_NAME)].filter(Boolean));
-
-      logAuthDebug('refresh request cookies', {
-        hasRefreshCookie: !!refreshToken,
-        hasCsrfCookie: !!csrfCookie,
-        csrfCookieCount: csrfCookieValues.size,
-        hasCsrfHeader: !!csrfHeader,
-        cookieNames: Object.keys(req.cookies ?? {}),
-      });
-
       if (!refreshToken) {
         return res.apiError('Refresh token is missing', 401);
       }
@@ -156,19 +133,13 @@ export class AuthController {
 
       const tokens = await authService.refreshToken(refreshToken, {
         ip: req.ip,
-        userAgent: req.get('user-agent') ?? undefined,
+        userAgent: (req.get('user-agent') ?? '').slice(0, 512) || undefined,
       });
 
       const nextCsrfToken = createCsrfToken();
       clearCsrfCookies(res);
       res.cookie(REFRESH_COOKIE_NAME, tokens.refreshToken, getCookieOptions(tokens.refreshTokenExpiresAt));
       res.cookie(CSRF_COOKIE_NAME, nextCsrfToken, getCsrfCookieOptions(tokens.refreshTokenExpiresAt));
-
-      logAuthDebug('refresh cookies rotated', {
-        hasRefreshCookie: true,
-        hasCsrfCookie: true,
-        refreshExpiresAt: tokens.refreshTokenExpiresAt.toISOString(),
-      });
 
       res.apiSuccess('Token refreshed successfully', {
         accessToken: tokens.accessToken,
@@ -197,7 +168,6 @@ export class AuthController {
       await authService.revokeSession(refreshToken);
 
       clearAuthCookies(res);
-      logAuthDebug('logout cookies cleared');
       res.apiSuccess('Logged out successfully');
     } catch (error: unknown) {
       clearAuthCookies(res);

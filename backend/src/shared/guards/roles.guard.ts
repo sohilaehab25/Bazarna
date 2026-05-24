@@ -5,17 +5,11 @@ import { ROLES_KEY } from '../decorators/roles.decorator';
 export const rolesGuard = (allowedRoles: UserRole[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Authentication required',
-      });
+      return res.apiError('Authentication required', 401);
     }
 
     if (!allowedRoles.includes((req.user as any).role)) {
-      return res.status(403).json({
-        success: false,
-        message: 'Insufficient permissions',
-      });
+      return res.apiError('Insufficient permissions', 403);
     }
 
     next();

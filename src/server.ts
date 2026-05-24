@@ -14,6 +14,11 @@ const app = express();
 const angularApp = new AngularNodeAppEngine();
 
 /**
+ * Apply security headers for all requests.
+ */
+app.use(helmet());
+
+/**
  * Serve static files from /browser
  */
 app.use(

@@ -114,19 +114,11 @@ export class AuthService {
             return of(true);
         }
 
-        this.logAuthDebug('init start', {
-            hasAccessToken: !!token,
-            hasCsrfCookie: !!this.csrfToken(),
-        });
-
         const request$ = this.refreshAccessToken().pipe(
             map((newToken) => !!newToken),
             tap((isAuthenticated) => {
                 if (isAuthenticated) return;
                 if (this.shouldLogoutAfterRefreshFailure()) {
-                    this.logAuthDebug('init logout after refresh failure', {
-                        status: this.refreshErrorStatus(),
-                    });
                     this.logout();
                     return;
                 }
@@ -135,7 +127,6 @@ export class AuthService {
             finalize(() => {
                 this.authInitialized.set(true);
                 this.initInFlight = null;
-                this.logAuthDebug('init complete', { isLoggedIn: this.isLoggedIn() });
             }),
             shareReplay(1)
         );
@@ -153,7 +144,6 @@ export class AuthService {
         this.accessToken.set(data.accessToken);
         this.syncCsrfTokenFromCookie();
         this.currentUser.set(normalizedUser);
-        this.logAuthDebug('session set', { userId: normalizedUser.id });
     }
 
     refreshAccessToken(): Observable<string | null> {
@@ -162,8 +152,6 @@ export class AuthService {
         this.refreshErrorStatus.set(null);
 
         this.syncCsrfTokenFromCookie();
-
-        this.logAuthDebug('refresh start', { hasCsrfCookie: !!this.csrfToken() });
 
         const request$ = this.http
             .post<AuthResponse>(`${this.apiUrl}/auth/refresh`, {}, {
@@ -176,13 +164,11 @@ export class AuthService {
                     if (data) {
                         this.refreshErrorStatus.set(null);
                         this.setSession(data);
-                        this.logAuthDebug('refresh success', { userId: data.user?.id ?? data.user?._id });
                     }
                 }),
                 map((data) => data?.accessToken ?? null),
                 catchError((error: HttpErrorResponse) => {
                     this.refreshErrorStatus.set(error.status ?? 0);
-                    this.logAuthDebug('refresh failed', { status: error.status ?? 0 });
                     return of(null);
                 }),
                 finalize(() => {
@@ -219,26 +205,11 @@ export class AuthService {
         this.currentUser.set(null);
         this.csrfToken.set(null);
         this.refreshErrorStatus.set(null);
-        this.logAuthDebug('session cleared');
     }
 
     shouldLogoutAfterRefreshFailure(): boolean {
         const status = this.refreshErrorStatus();
         return status === 401 || status === 403;
-    }
-
-    private isDebugEnabled(): boolean {
-        if (!isPlatformBrowser(this.platformId)) return false;
-        return window.localStorage.getItem(this.debugStorageKey) === 'true';
-    }
-
-    private logAuthDebug(message: string, details?: Record<string, unknown>): void {
-        if (!this.isDebugEnabled()) return;
-        if (details) {
-            console.debug(`[auth] ${message}`, details);
-            return;
-        }
-        console.debug(`[auth] ${message}`);
     }
 
     private syncCsrfTokenFromCookie(): void {

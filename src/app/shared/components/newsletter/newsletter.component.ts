@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardComponent } from '../card/card.component';
@@ -7,10 +7,10 @@ import { InputComponent } from '../input/input.component';
 
 @Component({
   selector: 'app-newsletter',
-  standalone: true,
   imports: [CommonModule, CardComponent, ButtonComponent, InputComponent],
   templateUrl: './newsletter.component.html',
-  styleUrls: ['./newsletter.component.scss']
+  styleUrls: ['./newsletter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NewsletterComponent {
   subscribe(email: string) {

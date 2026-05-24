@@ -5,12 +5,25 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
+import rateLimit from 'express-rate-limit';
 import { connectDatabase } from './config/database';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import { responseInterceptor } from './shared/interceptors/response.interceptor';
 import { jwtStrategy } from './shared/strategies/jwt.strategy';
 import { UserRepository } from './repositories/UserRepository';
 import routes from './routes';
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { success: false, message: 'Too many requests, please try again later.' },
+    skipSuccessfulRequests: false,
+});
+
+// Strip Authorization header from access logs to prevent token leakage
+const morganFormat = ':remote-addr - [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"';
 
 export const createApp = () => {
     const app = express();
@@ -33,15 +46,25 @@ export const createApp = () => {
         })
     );
 
+    const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:4200')
+        .split(',')
+        .map((o) => o.trim());
+
     app.use(cors({
-        origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
     }));
 
-    // Logging
-    app.use(morgan('combined'));
+    // Logging — custom format omits Authorization header
+    app.use(morgan(morganFormat));
 
     // Body parsing
     app.use(express.json({ limit: '10mb' }));
@@ -50,6 +73,9 @@ export const createApp = () => {
 
     // Response interceptor
     app.use(responseInterceptor);
+
+    // Rate limiting on auth endpoints
+    app.use('/api/auth', authLimiter);
 
     // Routes
     app.use('/api', routes);

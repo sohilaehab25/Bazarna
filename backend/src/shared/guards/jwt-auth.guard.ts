@@ -13,17 +13,11 @@ declare global {
 export const jwtAuthGuard = (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate('jwt', { session: false }, (err: any, user: User) => {
     if (err) {
-      return res.status(401).json({
-        success: false,
-        message: 'Authentication failed',
-      });
+      return res.apiError('Authentication failed', 401);
     }
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: 'Invalid token',
-      });
+      return res.apiError('Invalid token', 401);
     }
 
     req.user = user;

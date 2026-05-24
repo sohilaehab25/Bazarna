@@ -45,7 +45,7 @@ export class CartService {
     }
 
     private initStockUpdates() {
-        this.socketService.onEvent('product-stock-updated').subscribe((data: { productId: string, newStock: number }) => {
+        this.socketService.onEvent<{ productId: string; newStock: number }>('product-stock-updated').subscribe((data) => {
             this.productsService.updateStock(data.productId, data.newStock);
         
             this.cartItems.update(items => items.map(item => {
@@ -185,7 +185,7 @@ export class CartService {
 
     private restoreCartFromStorage() {
         if (!isPlatformBrowser(this.platformId)) return;
-        const raw = sessionStorage.getItem(this.storageKey);
+        const raw = localStorage.getItem(this.storageKey);
         if (!raw) return;
 
         try {
@@ -194,17 +194,17 @@ export class CartService {
                 this.cartItems.set(items);
             }
         } catch {
-            sessionStorage.removeItem(this.storageKey);
+            localStorage.removeItem(this.storageKey);
         }
     }
 
     private persistCart() {
         if (!isPlatformBrowser(this.platformId)) return;
-        sessionStorage.setItem(this.storageKey, JSON.stringify(this.cartItems()));
+        localStorage.setItem(this.storageKey, JSON.stringify(this.cartItems()));
     }
 
     private clearStoredCart() {
         if (!isPlatformBrowser(this.platformId)) return;
-        sessionStorage.removeItem(this.storageKey);
+        localStorage.removeItem(this.storageKey);
     }
 }

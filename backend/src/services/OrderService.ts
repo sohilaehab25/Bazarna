@@ -29,6 +29,7 @@ export class OrderService {
 
     // Atomic stock deduction for all items
     const session = await ProductModel.startSession();
+    const updatedProducts: Array<{ id: string; stock: number }> = [];
     try {
       session.startTransaction();
 
@@ -42,6 +43,8 @@ export class OrderService {
         if (!product) {
           throw new Error(`Product ${item.productId} is out of stock or insufficient quantity`);
         }
+
+        updatedProducts.push({ id: product._id.toString(), stock: product.stock });
       }
 
       const orderData: Partial<Order> = {
@@ -62,12 +65,9 @@ export class OrderService {
 
       await session.commitTransaction();
 
-      // Emit real-time stock updates after successful transaction
-      for (const item of cart.items) {
-        const product = await ProductModel.findById(item.productId);
-        if (product) {
-          emitStockUpdate(product._id.toString(), product.stock);
-        }
+      // Emit real-time stock updates — reuse products already returned from findOneAndUpdate
+      for (const updated of updatedProducts) {
+        emitStockUpdate(updated.id, updated.stock);
       }
 
       return order;

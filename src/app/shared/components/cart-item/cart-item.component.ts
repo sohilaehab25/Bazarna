@@ -1,4 +1,4 @@
-import { Component, input, output, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '../button/button.component';
 import { CartItem } from '../../../../app.type';
@@ -6,10 +6,10 @@ import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-cart-item',
-  standalone: true,
   imports: [CommonModule],
   templateUrl: './cart-item.component.html',
-  styleUrls: ['./cart-item.component.scss']
+  styleUrls: ['./cart-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CartItemComponent {
     item = input.required<CartItem>();

@@ -1,7 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-    import { ButtonComponent } from '../button/button.component';
 import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -10,10 +9,10 @@ import { BazaarIconComponent } from '../bazaar-icon/bazaar-icon.component';
 
 @Component({
     selector: 'app-navbar',
-    standalone: true,
     imports: [CommonModule, RouterLink, RouterLinkActive, BazaarIconComponent],
     templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss']
+    styleUrls: ['./header.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
     private authService = inject(AuthService);

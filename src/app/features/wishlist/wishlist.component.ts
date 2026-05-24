@@ -1,4 +1,4 @@
-import { Component, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CardComponent } from '../../shared/components/card/card.component';
@@ -9,10 +9,10 @@ import { CartService } from '../../shared/services/cart.service';
 
 @Component({
   selector: 'app-wishlist',
-  standalone: true,
   imports: [CommonModule, RouterLink, CardComponent, ButtonComponent],
   templateUrl: './wishlist.component.html',
-  styleUrls: ['./wishlist.component.scss']
+  styleUrls: ['./wishlist.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WishlistComponent {
   private wishlistService = inject(WishlistService);

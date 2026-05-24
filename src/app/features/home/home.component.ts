@@ -8,7 +8,6 @@ import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-home',
-  standalone: true,
   imports: [
     CommonModule,
     RouterLink,

@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
@@ -10,10 +10,10 @@ import { Product } from '../../../app.type';
 
 @Component({
   selector: 'app-products',
-  standalone: true,
   imports: [CommonModule, ProductCardComponent, ModalComponent],
   templateUrl: './products.component.html',
-  styleUrls: ['./products.component.scss']
+  styleUrls: ['./products.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductsComponent {
   private productsService = inject(ProductsService);
