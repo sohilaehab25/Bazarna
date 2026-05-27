@@ -1,0 +1,57 @@
+<section class="admin-categories-page">
+  <header class="admin-categories-page__header">
+    <div>
+      <h2>Category Management</h2>
+      <p>Manage product categories.</p>
+    </div>
+    <button type="button" class="admin-categories-page__add-btn" (click)="openCreateForm()">
+      + Add Category
+    </button>
+  </header>
+
+  <app-admin-smart-table
+    [columns]="columns"
+    [rows]="tableRows()"
+    [loading]="loading()"
+    [error]="error()"
+    emptyMessage="No categories found."
+    rowIdKey="_id"
+    [sortKey]="store.query().sortBy"
+    [sortDirection]="store.query().sortOrder"
+    (sortChange)="onSortChange($event)"
+    (rowClick)="openEditForm($event)"
+  />
+
+  <app-admin-table-pagination
+    [page]="pagination().page"
+    [pageSize]="pagination().pageSize"
+    [totalItems]="pagination().totalItems"
+    [totalPages]="pagination().totalPages"
+    [disabled]="loading()"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  />
+
+  @if (showDeleteConfirm(); as cat) {
+    <div class="admin-categories-page__overlay" (click)="cancelDelete()">
+      <div class="admin-categories-page__confirm" role="alertdialog" (click)="$event.stopPropagation()">
+        <h3>Delete Category</h3>
+        <p>Are you sure you want to delete <strong>{{ cat.name }}</strong>?</p>
+        <div class="admin-categories-page__confirm-actions">
+          <button type="button" class="btn btn--secondary" (click)="cancelDelete()">Cancel</button>
+          <button type="button" class="btn btn--danger" (click)="confirmDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (showForm()) {
+    <app-admin-category-form
+      [category]="editingCategory()"
+      [saving]="store.saving()"
+      [error]="store.saveError()"
+      (save)="onSaveCategory($event)"
+      (cancel)="closeForm()"
+    />
+  }
+</section>

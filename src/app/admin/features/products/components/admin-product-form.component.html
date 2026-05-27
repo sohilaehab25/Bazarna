@@ -1,0 +1,123 @@
+<div class="product-form-overlay" (click)="onCancel()" (keydown.escape)="onCancel()">
+    <div
+        class="product-form"
+        role="dialog"
+        aria-labelledby="product-form-title"
+        (click)="$event.stopPropagation()"
+    >
+        <header class="product-form__header">
+            <h2 id="product-form-title">{{ isEdit() ? 'Edit Product' : 'Add Product' }}</h2>
+            <button class="product-form__close" aria-label="Close" (click)="onCancel()">&times;</button>
+        </header>
+
+        @if (error()) {
+            <div class="product-form__error" role="alert">{{ error() }}</div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="product-form__body">
+            <div class="product-form__grid">
+                <!-- Name -->
+                <div class="product-form__field product-form__field--full">
+                    <label for="pf-name">Name *</label>
+                    <input id="pf-name" formControlName="name" type="text" />
+                    @if (hasError('name')) {
+                        <span class="product-form__field-error">Name is required (min 2 characters)</span>
+                    }
+                </div>
+
+                <!-- Description -->
+                <div class="product-form__field product-form__field--full">
+                    <label for="pf-desc">Description *</label>
+                    <textarea id="pf-desc" formControlName="description" rows="3"></textarea>
+                    @if (hasError('description')) {
+                        <span class="product-form__field-error">Description is required (min 10 characters)</span>
+                    }
+                </div>
+
+                <!-- Price -->
+                <div class="product-form__field">
+                    <label for="pf-price">Price *</label>
+                    <input id="pf-price" formControlName="price" type="number" min="0.01" step="0.01" />
+                    @if (hasError('price')) {
+                        <span class="product-form__field-error">Price must be greater than 0</span>
+                    }
+                </div>
+
+                <!-- Category -->
+                <div class="product-form__field">
+                    <label for="pf-category">Category *</label>
+                    <select id="pf-category" formControlName="categoryId">
+                        <option value="">Select category</option>
+                        @for (cat of categories(); track cat._id) {
+                            <option [value]="cat._id">{{ cat.name }}</option>
+                        }
+                    </select>
+                    @if (hasError('categoryId')) {
+                        <span class="product-form__field-error">Category is required</span>
+                    }
+                </div>
+
+                <!-- Image URL -->
+                <div class="product-form__field product-form__field--full">
+                    <label for="pf-image">Image URL *</label>
+                    <input id="pf-image" formControlName="imageUrl" type="url" />
+                    @if (hasError('imageUrl')) {
+                        <span class="product-form__field-error">A valid image URL is required</span>
+                    }
+                </div>
+
+                <!-- Stock -->
+                <div class="product-form__field">
+                    <label for="pf-stock">Stock *</label>
+                    <input id="pf-stock" formControlName="stock" type="number" min="0" />
+                    @if (hasError('stock')) {
+                        <span class="product-form__field-error">Stock must be 0 or more</span>
+                    }
+                </div>
+
+                <!-- Low Stock Threshold -->
+                <div class="product-form__field">
+                    <label for="pf-threshold">Low Stock Threshold</label>
+                    <input id="pf-threshold" formControlName="lowStockThreshold" type="number" min="0" />
+                </div>
+
+                <!-- Status -->
+                <div class="product-form__field">
+                    <label for="pf-status">Status</label>
+                    <select id="pf-status" formControlName="status">
+                        @for (opt of statusOptions; track opt.value) {
+                            <option [value]="opt.value">{{ opt.label }}</option>
+                        }
+                    </select>
+                </div>
+
+                <!-- Tags -->
+                <div class="product-form__field">
+                    <label for="pf-tags">Tags (comma separated)</label>
+                    <input id="pf-tags" formControlName="tags" type="text" placeholder="tag1, tag2" />
+                </div>
+
+                <!-- SEO Title -->
+                <div class="product-form__field product-form__field--full">
+                    <label for="pf-seo-title">SEO Title</label>
+                    <input id="pf-seo-title" formControlName="seoTitle" type="text" />
+                </div>
+
+                <!-- SEO Description -->
+                <div class="product-form__field product-form__field--full">
+                    <label for="pf-seo-desc">SEO Description</label>
+                    <textarea id="pf-seo-desc" formControlName="seoDescription" rows="2"></textarea>
+                </div>
+            </div>
+
+            <footer class="product-form__footer">
+                <button type="button" class="btn btn--secondary" (click)="onCancel()" [disabled]="saving()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn btn--primary" [disabled]="saving()">
+                    {{ saving() ? 'Saving...' : isEdit() ? 'Update' : 'Create' }}
+                </button>
+            </footer>
+        </form>
+    </div>
+</div>

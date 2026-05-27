@@ -1,0 +1,34 @@
+<div class="admin-notifications">
+  <button
+    type="button"
+    class="admin-notifications__trigger"
+    (click)="toggleMenu()"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="isOpen()"
+    aria-label="Open notifications"
+  >
+    Alerts
+    @if (unreadCount() > 0) {
+      <span class="admin-notifications__count">{{ unreadCount() }}</span>
+    }
+  </button>
+
+  @if (isOpen()) {
+    <section class="admin-notifications__panel" role="menu" aria-label="Notifications">
+      <header class="admin-notifications__panel-header">
+        <strong>Notifications</strong>
+        <button type="button" (click)="markAllAsRead()">Mark all read</button>
+      </header>
+
+      <ul class="admin-notifications__list">
+        @for (notification of notifications(); track notification.id) {
+          <li class="admin-notifications__item" [class.admin-notifications__item--read]="notification.read">
+            <p class="admin-notifications__title">{{ notification.title }}</p>
+            <p class="admin-notifications__message">{{ notification.message }}</p>
+            <small>{{ notification.createdAt }}</small>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</div>

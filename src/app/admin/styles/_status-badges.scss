@@ -1,0 +1,12 @@
+/// Shared order status badge color mixins.
+/// Used by both the smart-table and the order-actions component.
+
+@mixin status-badge-colors($prefix) {
+  #{$prefix}--pending    { background: color-mix(in srgb, var(--admin-color-warning) 18%, transparent); color: var(--admin-color-warning); }
+  #{$prefix}--paid       { background: color-mix(in srgb, #16a34a 18%, transparent); color: #16a34a; }
+  #{$prefix}--processing { background: color-mix(in srgb, var(--admin-color-accent) 25%, transparent); color: var(--admin-color-accent); }
+  #{$prefix}--shipped    { background: color-mix(in srgb, #8b5cf6 18%, transparent); color: #8b5cf6; }
+  #{$prefix}--delivered  { background: color-mix(in srgb, var(--admin-color-success) 18%, transparent); color: var(--admin-color-success); }
+  #{$prefix}--cancelled  { background: color-mix(in srgb, var(--admin-color-danger) 15%, transparent); color: var(--admin-color-danger); }
+  #{$prefix}--refunded   { background: color-mix(in srgb, #d97706 18%, transparent); color: #d97706; }
+}

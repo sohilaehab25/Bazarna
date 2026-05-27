@@ -1,0 +1,20 @@
+<div class="admin-shell admin-theme">
+  <app-admin-sidebar class="admin-shell__sidebar" (navigate)="handleNavigation()"></app-admin-sidebar>
+
+  <button
+    type="button"
+    class="admin-shell__overlay"
+    [class.admin-shell__overlay--visible]="layout.mobileSidebarOpen()"
+    (click)="layout.closeMobileSidebar()"
+    aria-label="Close sidebar"
+  ></button>
+
+  <div class="admin-shell__main">
+    <app-admin-topbar></app-admin-topbar>
+
+    <main class="admin-shell__content">
+      <app-admin-breadcrumbs></app-admin-breadcrumbs>
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

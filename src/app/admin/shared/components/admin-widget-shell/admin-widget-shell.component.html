@@ -1,0 +1,30 @@
+<section class="admin-widget-shell" aria-live="polite">
+  <header class="admin-widget-shell__header">
+    <h2>{{ title() }}</h2>
+    @if (subtitle()) {
+      <p>{{ subtitle() }}</p>
+    }
+  </header>
+
+  @if (loading()) {
+    <div class="admin-widget-shell__skeleton" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  } @else if (error()) {
+    <div class="admin-widget-shell__state admin-widget-shell__state--error" role="alert">
+      <strong>Unable to load widget.</strong>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (empty()) {
+    <div class="admin-widget-shell__state admin-widget-shell__state--empty">
+      <strong>Nothing to show yet.</strong>
+      <p>{{ emptyMessage() }}</p>
+    </div>
+  } @else {
+    <div class="admin-widget-shell__content">
+      <ng-content></ng-content>
+    </div>
+  }
+</section>

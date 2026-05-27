@@ -1,0 +1,19 @@
+@if (!isBrowser) {
+  <div class="admin-revenue-chart__placeholder">
+    Revenue chart will render after hydration.
+  </div>
+} @else if (points().length === 0) {
+  <div class="admin-revenue-chart__placeholder">No revenue data yet.</div>
+} @else {
+  <div class="admin-revenue-chart" role="img" aria-label="Revenue trend chart">
+    @for (point of points(); track point.label) {
+      <div class="admin-revenue-chart__column">
+        <span class="admin-revenue-chart__value">{{ formatCurrency(point.value) }}</span>
+        <div class="admin-revenue-chart__bar-wrap">
+          <div class="admin-revenue-chart__bar" [style.height]="getBarHeight(point.value)"></div>
+        </div>
+        <span class="admin-revenue-chart__label">{{ point.label }}</span>
+      </div>
+    }
+  </div>
+}

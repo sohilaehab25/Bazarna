@@ -1,0 +1,33 @@
+<section class="admin-order-timeline" aria-label="Order timeline">
+  <div class="admin-order-timeline__header">
+    <h3 class="admin-order-timeline__title">Timeline</h3>
+  </div>
+
+  <ol class="admin-order-timeline__list" aria-label="Order history">
+    @for (event of events(); track event.id; let last = $last) {
+      <li
+        class="admin-order-timeline__event"
+        [class.admin-order-timeline__event--created]="event.type === 'created'"
+        [class.admin-order-timeline__event--status]="event.type === 'status_change'"
+        [class.admin-order-timeline__event--note]="event.type === 'note'"
+        [class.admin-order-timeline__event--last]="last"
+      >
+        <div class="admin-order-timeline__dot" aria-hidden="true"></div>
+        <div class="admin-order-timeline__content">
+          <p class="admin-order-timeline__label">{{ event.label }}</p>
+          @if (event.description) {
+            <p class="admin-order-timeline__description">{{ event.description }}</p>
+          }
+          <time
+            class="admin-order-timeline__time"
+            [dateTime]="event.timestamp"
+          >{{ formatTimestamp(event.timestamp) }}</time>
+        </div>
+      </li>
+    }
+
+    @if (events().length === 0) {
+      <li class="admin-order-timeline__empty">No timeline events yet.</li>
+    }
+  </ol>
+</section>

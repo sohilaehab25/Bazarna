@@ -1,0 +1,12 @@
+<form class="admin-search" (submit)="submitSearch($event)">
+  <label class="admin-search__label" for="admin-global-search">Search</label>
+  <input
+    id="admin-global-search"
+    class="admin-search__input"
+    type="search"
+    [value]="query()"
+    (input)="onInput($event)"
+    placeholder="Search products, orders, users..."
+    autocomplete="off"
+  />
+</form>

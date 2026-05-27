@@ -1,0 +1,90 @@
+<article class="admin-order-detail" aria-label="Order detail">
+
+  <!-- Header -->
+  <header class="admin-order-detail__header">
+    <button
+      type="button"
+      class="admin-order-detail__back-btn"
+      (click)="goBack()"
+      aria-label="Back to orders"
+    >
+      ← Back
+    </button>
+    @if (detail()) {
+      <h2 class="admin-order-detail__heading">
+        Order <span class="admin-order-detail__id">{{ shortId() }}</span>
+      </h2>
+    } @else if (!loading()) {
+      <h2 class="admin-order-detail__heading">Order Detail</h2>
+    }
+  </header>
+
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="admin-order-detail__loading" role="status" aria-live="polite">
+      <span class="admin-order-detail__spinner" aria-hidden="true"></span>
+      <span>Loading order…</span>
+    </div>
+  }
+
+  <!-- Error state -->
+  @if (error()) {
+    <div class="admin-order-detail__error" role="alert">
+      <p>{{ error() }}</p>
+      <button type="button" class="admin-order-detail__back-btn" (click)="goBack()">
+        Return to orders
+      </button>
+    </div>
+  }
+
+  <!-- Main layout (loaded) -->
+  @if (detail(); as order) {
+    <div class="admin-order-detail__layout">
+
+      <!-- LEFT: main content -->
+      <div class="admin-order-detail__main">
+        <app-admin-order-items
+          [items]="order.items"
+          [totalPrice]="order.totalPrice"
+        />
+
+        <app-admin-order-timeline [events]="timeline()" />
+
+        <app-admin-order-notes
+          [notes]="notes()"
+          [submitting]="noteSubmitting()"
+          [error]="noteError()"
+          (addNote)="onAddNote($event)"
+        />
+      </div>
+
+      <!-- RIGHT: sidebar -->
+      <aside class="admin-order-detail__sidebar" aria-label="Order summary">
+        <app-admin-order-actions
+          [currentStatus]="order.status"
+          [availableTransitions]="availableTransitions()"
+          [isTerminal]="isTerminal()"
+          [loading]="actionLoading()"
+          [error]="actionError()"
+          (transitionRequest)="onTransitionRequest($event)"
+        />
+
+        <app-admin-order-info-card
+          title="Customer"
+          [fields]="customerFields()"
+        />
+
+        <app-admin-order-info-card
+          title="Payment"
+          [fields]="paymentFields()"
+        />
+
+        <app-admin-order-info-card
+          title="Order info"
+          [fields]="orderMetaFields()"
+        />
+      </aside>
+    </div>
+  }
+
+</article>

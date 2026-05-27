@@ -16,5 +16,6 @@ export const routes: Routes = [
   { path: 'login', loadComponent: () => import('./features/login/login.component').then(m => m.LoginComponent) },
   { path: 'confirm-signup', loadComponent: () => import('./features/confirm-signup/confirm-signup.component').then(m => m.ConfirmSignupComponent) },
   { path: 'auth/verify-email', loadComponent: () => import('./features/verify-email/verify-email.component').then(m => m.VerifyEmailComponent) },
+  { path: 'admin', loadChildren: () => import('./admin/admin.routes').then(m => m.adminRoutes) },
   { path: '**', redirectTo: '' }
 ];

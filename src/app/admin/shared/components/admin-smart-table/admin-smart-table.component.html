@@ -1,0 +1,95 @@
+@if (loading()) {
+  <div class="admin-smart-table__skeleton" aria-hidden="true">
+    @for (row of [1, 2, 3, 4, 5]; track row) {
+      <span></span>
+    }
+  </div>
+} @else if (error()) {
+  <div class="admin-smart-table__error" role="alert">{{ error() }}</div>
+} @else if (rows().length === 0) {
+  <div class="admin-smart-table__empty">{{ emptyMessage() }}</div>
+} @else {
+  <div class="admin-smart-table__scroll">
+    <table class="admin-smart-table">
+      <thead>
+        <tr>
+          @if (selectable()) {
+            <th class="admin-smart-table__selection-cell" scope="col">
+              <input
+                type="checkbox"
+                [checked]="areAllVisibleRowsSelected()"
+                (change)="onToggleAllRows($event)"
+                aria-label="Select all rows"
+              />
+            </th>
+          }
+
+          @for (column of columns(); track column.key) {
+            @let columnAlignment = getColumnAlignment(column);
+            @let sortState = getSortState(column);
+            <th
+              [style.width]="column.width || null"
+              [class.admin-smart-table__header--sortable]="column.sortable"
+              [class.admin-smart-table__header--right]="columnAlignment === 'right'"
+              [class.admin-smart-table__header--center]="columnAlignment === 'center'"
+              [attr.aria-sort]="sortState"
+            >
+              <button
+                type="button"
+                class="admin-smart-table__header-button"
+                [disabled]="!column.sortable"
+                (click)="requestSort(column)"
+              >
+                <span>{{ column.header }}</span>
+                @if (column.sortable) {
+                  <span class="admin-smart-table__sort-indicator" aria-hidden="true">
+                    @if (sortState === 'ascending') {
+                      ^
+                    } @else if (sortState === 'descending') {
+                      v
+                    } @else {
+                      <>
+                    }
+                  </span>
+                }
+              </button>
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track getRowTrackKey(row, $index)) {
+          <tr class="admin-smart-table__row" (click)="onRowClick(row)">
+            @if (selectable()) {
+              <td class="admin-smart-table__selection-cell">
+                <input
+                  type="checkbox"
+                  [checked]="isRowSelected(row)"
+                  (click)="$event.stopPropagation()"
+                  (change)="onToggleRow($event, row)"
+                  [attr.aria-label]="'Select row ' + ($index + 1)"
+                />
+              </td>
+            }
+
+            @for (column of columns(); track column.key) {
+              @let columnAlignment = getColumnAlignment(column);
+              <td
+                [class.admin-smart-table__cell--right]="columnAlignment === 'right'"
+                [class.admin-smart-table__cell--center]="columnAlignment === 'center'"
+              >
+                @if (column.type === 'badge') {
+                  <span class="admin-smart-table__badge" [class]="getBadgeClass(row, column)">
+                    {{ formatCell(row, column) }}
+                  </span>
+                } @else {
+                  {{ formatCell(row, column) }}
+                }
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

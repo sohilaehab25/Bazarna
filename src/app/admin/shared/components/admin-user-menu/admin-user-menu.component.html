@@ -1,0 +1,26 @@
+<div class="admin-user-menu">
+  <button
+    type="button"
+    class="admin-user-menu__trigger"
+    (click)="toggleMenu()"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="isOpen()"
+    aria-label="Open user menu"
+  >
+    <span class="admin-user-menu__avatar">{{ getInitials(currentUser()?.name) }}</span>
+    <span class="admin-user-menu__name">{{ currentUser()?.name || 'Admin' }}</span>
+  </button>
+
+  @if (isOpen()) {
+    <section class="admin-user-menu__panel" role="menu" aria-label="User menu">
+      <div class="admin-user-menu__panel-copy">
+        <strong>{{ currentUser()?.name || 'Admin User' }}</strong>
+        <small>{{ currentUser()?.email || 'admin@bazarna.com' }}</small>
+      </div>
+
+      <a routerLink="/profile" class="admin-user-menu__item" (click)="closeMenu()">Storefront Profile</a>
+      <a routerLink="/" class="admin-user-menu__item" (click)="closeMenu()">Back to Store</a>
+      <button type="button" class="admin-user-menu__item" (click)="logout()">Logout</button>
+    </section>
+  }
+</div>

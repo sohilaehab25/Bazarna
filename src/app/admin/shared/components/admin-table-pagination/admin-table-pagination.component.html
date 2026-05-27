@@ -1,0 +1,33 @@
+<div class="admin-table-pagination" [class.admin-table-pagination--disabled]="disabled()">
+  <div class="admin-table-pagination__meta">
+    <span>{{ rangeLabel() }}</span>
+    <label>
+      <span>Rows</span>
+      <select [value]="pageSize()" (change)="onPageSizeChange($event)" [disabled]="disabled()">
+        @for (option of pageSizeOptions(); track option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      </select>
+    </label>
+  </div>
+
+  <div class="admin-table-pagination__actions">
+    <button
+      type="button"
+      (click)="onPrevious()"
+      [disabled]="disabled() || page() <= 1"
+      aria-label="Previous page"
+    >
+      Previous
+    </button>
+    <span>Page {{ page() }} / {{ totalPages() }}</span>
+    <button
+      type="button"
+      (click)="onNext()"
+      [disabled]="disabled() || page() >= totalPages()"
+      aria-label="Next page"
+    >
+      Next
+    </button>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<nav class="admin-breadcrumbs" aria-label="Breadcrumb">
+  <ol class="admin-breadcrumbs__list">
+    <li class="admin-breadcrumbs__item">
+      <a routerLink="/admin/dashboard" class="admin-breadcrumbs__link">Admin</a>
+    </li>
+
+    @for (breadcrumb of breadcrumbs(); track breadcrumb.url) {
+      <li class="admin-breadcrumbs__item">
+        <span class="admin-breadcrumbs__separator" aria-hidden="true">/</span>
+        @if ($last) {
+          <span class="admin-breadcrumbs__current">{{ breadcrumb.label }}</span>
+        } @else {
+          <a [routerLink]="breadcrumb.url" class="admin-breadcrumbs__link">{{ breadcrumb.label }}</a>
+        }
+      </li>
+    }
+  </ol>
+</nav>

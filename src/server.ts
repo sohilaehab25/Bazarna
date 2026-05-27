@@ -9,6 +9,10 @@ import helmet from 'helmet';
 import { join } from 'node:path';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
+const cspConnectSrc = (process.env['CSP_CONNECT_SRC'] || 'http://localhost:3009,ws://localhost:3009')
+  .split(',')
+  .map((entry) => entry.trim())
+  .filter((entry) => entry.length > 0);
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
@@ -16,7 +20,15 @@ const angularApp = new AngularNodeAppEngine();
 /**
  * Apply security headers for all requests.
  */
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        connectSrc: ["'self'", ...cspConnectSrc],
+      },
+    },
+  }),
+);
 
 /**
  * Serve static files from /browser

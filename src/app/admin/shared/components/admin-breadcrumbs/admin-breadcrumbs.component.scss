@@ -1,0 +1,35 @@
+.admin-breadcrumbs {
+  margin-bottom: 1rem;
+}
+
+.admin-breadcrumbs__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.admin-breadcrumbs__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--admin-color-text-muted);
+}
+
+.admin-breadcrumbs__link {
+  color: var(--admin-color-accent);
+  text-decoration: none;
+}
+
+.admin-breadcrumbs__link:hover,
+.admin-breadcrumbs__link:focus-visible {
+  text-decoration: underline;
+}
+
+.admin-breadcrumbs__current {
+  color: var(--admin-color-text);
+  font-weight: 600;
+}

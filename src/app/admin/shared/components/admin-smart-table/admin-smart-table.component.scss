@@ -1,0 +1,193 @@
+.admin-smart-table__scroll {
+  overflow-x: auto;
+}
+
+.admin-smart-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-smart-table th,
+.admin-smart-table td {
+  text-align: left;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--admin-color-border);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.admin-smart-table th {
+  color: var(--admin-color-text-muted);
+  font-weight: 600;
+}
+
+.admin-smart-table__selection-cell {
+  width: 2.2rem;
+  text-align: center;
+}
+
+.admin-smart-table__selection-cell input {
+  cursor: pointer;
+}
+
+.admin-smart-table__header-button {
+  width: 100%;
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.35rem;
+  font: inherit;
+  text-align: inherit;
+}
+
+.admin-smart-table__header-button:disabled {
+  cursor: default;
+}
+
+.admin-smart-table__header--sortable .admin-smart-table__header-button:not(:disabled) {
+  cursor: pointer;
+}
+
+.admin-smart-table__sort-indicator {
+  color: var(--admin-color-text-muted);
+  font-size: 0.75rem;
+}
+
+.admin-smart-table__header--right,
+.admin-smart-table__cell--right {
+  text-align: right;
+}
+
+.admin-smart-table__header--center,
+.admin-smart-table__cell--center {
+  text-align: center;
+}
+
+.admin-smart-table__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+}
+
+.admin-smart-table__badge--active,
+.admin-smart-table__badge--in {
+  background: color-mix(in srgb, var(--admin-color-success) 16%, white);
+  color: var(--admin-color-success);
+}
+
+.admin-smart-table__badge--draft,
+.admin-smart-table__badge--low {
+  background: color-mix(in srgb, var(--admin-color-warning) 17%, white);
+  color: var(--admin-color-warning);
+}
+
+.admin-smart-table__badge--archived,
+.admin-smart-table__badge--out {
+  background: color-mix(in srgb, var(--admin-color-danger) 12%, white);
+  color: var(--admin-color-danger);
+}
+
+.admin-smart-table__badge--neutral {
+  background: color-mix(in srgb, var(--admin-color-text-muted) 15%, white);
+  color: var(--admin-color-text-muted);
+}
+
+// Order status badges — all 7 workflow states
+.admin-smart-table__badge--pending {
+  background: color-mix(in srgb, var(--admin-color-warning) 17%, white);
+  color: var(--admin-color-warning);
+}
+
+.admin-smart-table__badge--paid {
+  background: color-mix(in srgb, #16a34a 15%, white);
+  color: #16a34a;
+}
+
+.admin-smart-table__badge--processing {
+  background: color-mix(in srgb, var(--admin-color-accent) 18%, white);
+  color: var(--admin-color-accent);
+}
+
+// Legacy alias — same as processing
+.admin-smart-table__badge--preparing {
+  background: color-mix(in srgb, var(--admin-color-accent) 13%, white);
+  color: var(--admin-color-accent);
+}
+
+.admin-smart-table__badge--shipped {
+  background: color-mix(in srgb, #8b5cf6 16%, white);
+  color: #8b5cf6;
+}
+
+.admin-smart-table__badge--delivered {
+  background: color-mix(in srgb, var(--admin-color-success) 16%, white);
+  color: var(--admin-color-success);
+}
+
+.admin-smart-table__badge--cancelled {
+  background: color-mix(in srgb, var(--admin-color-danger) 14%, white);
+  color: var(--admin-color-danger);
+}
+
+.admin-smart-table__badge--refunded {
+  background: color-mix(in srgb, #d97706 14%, white);
+  color: #d97706;
+}
+
+// Payment method badges
+.admin-smart-table__badge--cash {
+  background: color-mix(in srgb, #b06a00 14%, white);
+  color: #b06a00;
+}
+
+.admin-smart-table__badge--visa {
+  background: color-mix(in srgb, var(--admin-color-accent) 13%, white);
+  color: var(--admin-color-accent);
+}
+
+.admin-smart-table__empty {
+  border: 1px dashed var(--admin-color-border);
+  border-radius: 12px;
+  padding: 1rem;
+  color: var(--admin-color-text-muted);
+  text-align: center;
+}
+
+.admin-smart-table__error {
+  border: 1px solid color-mix(in srgb, var(--admin-color-danger) 35%, #d8e1f2);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--admin-color-danger) 10%, white);
+  color: var(--admin-color-danger);
+  padding: 0.75rem;
+}
+
+.admin-smart-table__skeleton {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.admin-smart-table__skeleton span {
+  height: 2rem;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #eef2fa 25%, #f7f9ff 50%, #eef2fa 75%);
+  background-size: 200% 100%;
+  animation: admin-smart-table-skeleton 1.2s linear infinite;
+}
+
+@keyframes admin-smart-table-skeleton {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}

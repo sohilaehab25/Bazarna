@@ -1,0 +1,52 @@
+@use '../styles/admin-theme';
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.admin-shell {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  min-height: 100vh;
+  background: linear-gradient(140deg, var(--admin-color-bg), #eef3ff);
+  color: var(--admin-color-text);
+}
+
+.admin-shell__main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-shell__content {
+  flex: 1;
+  padding: 1.5rem;
+}
+
+.admin-shell__overlay {
+  display: none;
+  border: none;
+  background: rgba(16, 33, 63, 0.35);
+}
+
+@media (max-width: 1024px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-shell__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    cursor: pointer;
+  }
+
+  .admin-shell__overlay--visible {
+    display: block;
+  }
+
+  .admin-shell__content {
+    padding: 1rem;
+  }
+}

@@ -1,0 +1,19 @@
+.admin-unauthorized {
+  border: 1px solid color-mix(in srgb, var(--admin-color-danger) 35%, #d8e1f2);
+  border-radius: var(--admin-radius-lg);
+  background: color-mix(in srgb, var(--admin-color-danger) 8%, white);
+  padding: 1rem;
+}
+
+.admin-unauthorized h2 {
+  margin: 0;
+  color: var(--admin-color-danger);
+}
+
+.admin-unauthorized p {
+  margin: 0.45rem 0 0.9rem;
+}
+
+.admin-unauthorized a {
+  color: var(--admin-color-accent);
+}
