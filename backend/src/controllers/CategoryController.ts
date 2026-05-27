@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { CategoryService } from '../services/CategoryService';
 import { CreateCategoryDTO, UpdateCategoryDTO } from '../dtos/CategoryDTOs';
 import { validateDTO } from '../utils/validation';
+import { AdminCategoryListQuery, AdminCategorySortBy, AdminCategorySortOrder } from '../repositories/CategoryRepository';
+import { Category } from '../models/Category';
 
 const categoryService = new CategoryService();
 
@@ -10,8 +12,39 @@ export class CategoryController {
     try {
       const categories = await categoryService.getAllCategories();
       res.apiSuccess('Categories retrieved successfully', categories);
-    } catch (error: any) {
-      res.apiError(error.message, 500);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to fetch categories';
+      res.apiError(message, 500);
+    }
+  }
+
+  async getAdminCategories(req: Request, res: Response) {
+    try {
+      const query: AdminCategoryListQuery = {
+        page: Math.max(1, parseInt(req.query.page as string) || 1),
+        pageSize: Math.min(100, Math.max(1, parseInt(req.query.pageSize as string) || 12)),
+        search: (req.query.search as string) || undefined,
+        featured: req.query.featured === 'true' ? true : req.query.featured === 'false' ? false : undefined,
+        sortBy: this.parseSortBy(req.query.sortBy),
+        sortOrder: this.parseSortOrder(req.query.sortOrder),
+      };
+
+      const result = await categoryService.getAdminCategories(query);
+      const productCounts = await categoryService.getProductCounts();
+
+      // Attach product counts to items
+      const itemsWithCounts = result.items.map((item) => ({
+        ...item.toObject(),
+        productCount: productCounts.get(item._id.toString()) ?? 0,
+      }));
+
+      res.apiSuccess('Admin categories retrieved successfully', {
+        items: itemsWithCounts,
+        pagination: result.pagination,
+      });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to fetch categories';
+      res.apiError(message, 500);
     }
   }
 
@@ -23,8 +56,9 @@ export class CategoryController {
       }
 
       res.apiSuccess('Category retrieved successfully', category);
-    } catch (error: any) {
-      res.apiError(error.message, 500);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to fetch category';
+      res.apiError(message, 500);
     }
   }
 
@@ -33,10 +67,19 @@ export class CategoryController {
       const createData: CreateCategoryDTO = req.body;
       await validateDTO(createData, CreateCategoryDTO);
 
-      const category = await categoryService.createCategory(createData);
+      const categoryData: Partial<Category> = {
+        name: createData.name,
+        description: createData.description,
+        slug: createData.slug,
+        imageUrl: createData.imageUrl ?? '',
+        featured: createData.featured ?? false,
+      };
+
+      const category = await categoryService.createCategory(categoryData);
       res.apiSuccess('Category created successfully', category, 201);
-    } catch (error: any) {
-      res.apiError(error.message, 400);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to create category';
+      res.apiError(message, 400);
     }
   }
 
@@ -51,8 +94,9 @@ export class CategoryController {
       }
 
       res.apiSuccess('Category updated successfully', category);
-    } catch (error: any) {
-      res.apiError(error.message, 400);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to update category';
+      res.apiError(message, 400);
     }
   }
 
@@ -64,8 +108,22 @@ export class CategoryController {
       }
 
       res.apiSuccess('Category deleted successfully');
-    } catch (error: any) {
-      res.apiError(error.message, 500);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Failed to delete category';
+      res.apiError(message, 500);
     }
+  }
+
+  private parseSortBy(value: unknown): AdminCategorySortBy {
+    const allowed: AdminCategorySortBy[] = ['name', 'createdAt', 'updatedAt'];
+    if (typeof value === 'string' && allowed.includes(value as AdminCategorySortBy)) {
+      return value as AdminCategorySortBy;
+    }
+    return 'name';
+  }
+
+  private parseSortOrder(value: unknown): AdminCategorySortOrder {
+    if (value === 'asc' || value === 'desc') return value;
+    return 'asc';
   }
 }

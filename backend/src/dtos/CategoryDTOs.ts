@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MinLength, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, MinLength, IsOptional, IsBoolean, IsUrl } from 'class-validator';
 
 export class CreateCategoryDTO {
   @IsString()
@@ -10,6 +10,18 @@ export class CreateCategoryDTO {
   @IsNotEmpty()
   @MinLength(10)
   description: string;
+
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  featured?: boolean;
 }
 
 export class UpdateCategoryDTO {
@@ -24,4 +36,16 @@ export class UpdateCategoryDTO {
   @IsNotEmpty()
   @MinLength(10)
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  featured?: boolean;
 }
