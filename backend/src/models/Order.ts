@@ -25,6 +25,7 @@ export interface IOrderItem {
 }
 
 export interface Order extends Document {
+  orderNumber: number;
   userId?: mongoose.Types.ObjectId;
   items: IOrderItem[];
   totalPrice: number;
@@ -78,6 +79,10 @@ const OrderCustomerSchema: Schema = new Schema({
 }, { _id: false });
 
 const OrderSchema: Schema = new Schema({
+  orderNumber: {
+    type: Number,
+    unique: true,
+  },
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
