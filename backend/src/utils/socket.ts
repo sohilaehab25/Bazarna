@@ -1,21 +1,27 @@
 import { Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
+import { logger } from './logger';
 
 let io: Server;
 
 export const initSocket = (httpServer: HttpServer) => {
+  const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:4200')
+    .split(',')
+    .map((o) => o.trim());
+
   io = new Server(httpServer, {
     cors: {
-      origin: '*', // Adjust this in production
+      origin: allowedOrigins,
       methods: ['GET', 'POST'],
+      credentials: true,
     },
   });
 
   io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
+    logger.info('socket_connected', { socketId: socket.id });
 
     socket.on('disconnect', () => {
-      console.log('User disconnected:', socket.id);
+      logger.info('socket_disconnected', { socketId: socket.id });
     });
   });
 

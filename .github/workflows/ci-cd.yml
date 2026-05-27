@@ -1,0 +1,255 @@
+# ============================================================
+# .github/workflows/ci-cd.yml
+# Pipeline: lint → test → build → push images → deploy
+# Rollback: automatic re-deploy of previous image tag on failure
+# ============================================================
+name: CI / CD
+
+on:
+  push:
+    branches: [master, main, staging]
+  pull_request:
+    branches: [master, main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true          # cancel stale runs on force-push
+
+env:
+  REGISTRY:       ghcr.io
+  IMAGE_FRONTEND: ghcr.io/${{ github.repository }}/frontend
+  IMAGE_BACKEND:  ghcr.io/${{ github.repository }}/backend
+  NODE_VERSION:   "20"
+
+jobs:
+  # ────────────────────────────────────────────────────────────
+  # 1. LINT
+  # ────────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Lint backend
+        working-directory: backend
+        run: |
+          npm ci
+          npm run lint
+
+  # ────────────────────────────────────────────────────────────
+  # 2. TEST
+  # ────────────────────────────────────────────────────────────
+  test:
+    name: Test
+    needs: lint
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo:7
+        ports: ["27017:27017"]
+        options: >-
+          --health-cmd "mongosh --eval \"db.adminCommand('ping')\""
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Run frontend tests (Vitest)
+        run: npx vitest run --reporter=verbose
+
+      - name: Install backend deps
+        working-directory: backend
+        run: npm ci
+
+      - name: Run backend tests (Jest)
+        working-directory: backend
+        env:
+          NODE_ENV: test
+          MONGODB_URI: mongodb://localhost:27017/bazarna_test
+          JWT_SECRET: test_secret
+          JWT_REFRESH_SECRET: test_refresh_secret
+        run: npm test -- --forceExit --coverage
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: backend/coverage/
+
+  # ────────────────────────────────────────────────────────────
+  # 3. BUILD & PUSH Docker images
+  # ────────────────────────────────────────────────────────────
+  build:
+    name: Build & Push
+    needs: test
+    runs-on: ubuntu-latest
+    # Only push on pushes to master/main/staging — not on PRs
+    if: github.event_name == 'push'
+    outputs:
+      image_tag: ${{ steps.meta.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ${{ env.IMAGE_FRONTEND }}
+            ${{ env.IMAGE_BACKEND }}
+          tags: |
+            type=sha,prefix=sha-,format=short
+            type=ref,event=branch
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' }}
+
+      - name: Build & push frontend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          target: production
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha,scope=frontend
+          cache-to:   type=gha,scope=frontend,mode=max
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Build & push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: backend/Dockerfile
+          target: production
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha,scope=backend
+          cache-to:   type=gha,scope=backend,mode=max
+          labels: ${{ steps.meta.outputs.labels }}
+
+  # ────────────────────────────────────────────────────────────
+  # 4. DEPLOY  (production — master/main only)
+  # ────────────────────────────────────────────────────────────
+  deploy-prod:
+    name: Deploy → Production
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false     # never cancel an in-flight deploy
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host:     ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key:      ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd /srv/bazarna
+
+            # Pull new images
+            echo "${{ secrets.GITHUB_TOKEN }}" | \
+              docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            export IMAGE_TAG=${{ needs.build.outputs.image_tag }}
+
+            # Save previous tag for rollback
+            PREV_TAG=$(cat .current_tag 2>/dev/null || echo "")
+            echo "$IMAGE_TAG" > .current_tag
+
+            # Rolling update — replace containers one-by-one so there's no downtime
+            docker compose \
+              -f docker-compose.yml \
+              -f docker-compose.prod.yml \
+              pull
+
+            docker compose \
+              -f docker-compose.yml \
+              -f docker-compose.prod.yml \
+              up -d --no-deps --scale api=2 api frontend
+
+            # Wait for health probes
+            for i in $(seq 1 12); do
+              STATUS=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3001/health)
+              if [ "$STATUS" = "200" ]; then
+                echo "API healthy after ${i}x5s"
+                break
+              fi
+              echo "Waiting for API health ($i)..."
+              sleep 5
+            done
+
+            # Fail-fast: trigger rollback if health still bad
+            curl -sf http://localhost:3001/health/ready || {
+              echo "Health check failed — rolling back to $PREV_TAG"
+              sed -i "s/$IMAGE_TAG/$PREV_TAG/g" docker-compose.prod.yml
+              docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+              echo "$PREV_TAG" > .current_tag
+              exit 1
+            }
+
+            docker image prune -f
+
+  # ────────────────────────────────────────────────────────────
+  # 4b. DEPLOY (staging — staging branch)
+  # ────────────────────────────────────────────────────────────
+  deploy-staging:
+    name: Deploy → Staging
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    if: github.ref == 'refs/heads/staging'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via SSH (staging)
+        uses: appleboy/ssh-action@v1
+        with:
+          host:     ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key:      ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd /srv/bazarna-staging
+            echo "${{ secrets.GITHUB_TOKEN }}" | \
+              docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+            docker image prune -f

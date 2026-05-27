@@ -9,9 +9,11 @@ import rateLimit from 'express-rate-limit';
 import { connectDatabase } from './config/database';
 import { errorHandler, notFoundHandler } from './middlewares/errorHandler';
 import { responseInterceptor } from './shared/interceptors/response.interceptor';
+import { requestLogger } from './middlewares/requestLogger';
 import { jwtStrategy } from './shared/strategies/jwt.strategy';
 import { UserRepository } from './repositories/UserRepository';
 import routes from './routes';
+import healthRoutes from './routes/health.routes';
 
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -63,8 +65,13 @@ export const createApp = () => {
         allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
     }));
 
-    // Logging — custom format omits Authorization header
-    app.use(morgan(morganFormat));
+    // Structured request logging with requestId + userId correlation
+    app.use(requestLogger);
+
+    // Legacy Morgan access log (dev only — requestLogger covers prod)
+    if (process.env.NODE_ENV !== 'production') {
+      app.use(morgan(morganFormat));
+    }
 
     // Body parsing
     app.use(express.json({ limit: '10mb' }));
@@ -73,6 +80,9 @@ export const createApp = () => {
 
     // Response interceptor
     app.use(responseInterceptor);
+
+    // Health & readiness probes (no auth, no rate-limiting)
+    app.use('/health', healthRoutes);
 
     // Rate limiting on auth endpoints
     app.use('/api/auth', authLimiter);

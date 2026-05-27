@@ -1,0 +1,40 @@
+# =============================================================
+# docker-compose.dev.yml  —  local development overrides
+# Usage:  docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+# =============================================================
+name: bazarna-dev
+
+services:
+
+  mongo:
+    ports:
+      - "27017:27017"   # expose for local Compass / MongoSH access
+
+  api:
+    build:
+      target: ts-builder          # stop at compile stage; no prod stripping
+    command: ["npx", "ts-node-dev", "--respawn", "--transpile-only", "src/server.ts"]
+    volumes:
+      - ./backend/src:/app/src:ro # live-reload source mount (read-only)
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    ports:
+      - "3001:3001"               # direct access for debugging
+
+  frontend:
+    build:
+      target: builder             # skip prod stripping, keep devDependencies
+    command: ["npx", "ng", "serve", "--host", "0.0.0.0", "--poll", "2000"]
+    volumes:
+      - ./src:/app/src:ro
+    environment:
+      NODE_ENV: development
+    ports:
+      - "4200:4200"
+
+  nginx:
+    volumes:
+      - ./infra/nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80"                 # non-privileged port in dev

@@ -36,7 +36,11 @@ export class AuthService {
   private userRepository = new UserRepository();
   private refreshTokenRepository = new RefreshTokenRepository();
   private emailService = new EmailService();
-  private jwtSecret = process.env.JWT_SECRET;
+  private jwtSecret: string = (() => {
+    const secret = process.env.JWT_SECRET;
+    if (!secret) throw new Error('JWT_SECRET environment variable is not set');
+    return secret;
+  })();
   private accessTokenExpiry = process.env.ACCESS_TOKEN_TTL || '15m';
   private refreshTokenTtlMs = this.resolveRefreshTokenTtlMs();
 

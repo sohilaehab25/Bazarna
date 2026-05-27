@@ -1,0 +1,13 @@
+# Root-level .dockerignore (frontend)
+node_modules
+dist
+.git
+.gitignore
+*.md
+.angular
+coverage
+**/*.spec.ts
+**/*.test.ts
+.env
+.env.*
+!.env.example

@@ -5,13 +5,19 @@ export const errorHandler = (
   error: any,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
-  logger.error('Unhandled error', { method: req.method, path: req.path, status: error.statusCode || 500 });
-
   const statusCode = error.statusCode || 500;
-  const message = error.message || 'Internal Server Error';
 
+  logger.error('unhandled_error', {
+    method:     req.method,
+    path:       req.path,
+    statusCode,
+    message:    error.message,
+    stack:      process.env.NODE_ENV !== 'production' ? error.stack : undefined,
+  });
+
+  const message = error.message || 'Internal Server Error';
   res.apiError(message, statusCode, process.env.NODE_ENV === 'development' ? error.stack : undefined);
 };
 
