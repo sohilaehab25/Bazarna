@@ -21,16 +21,15 @@
             <p>You haven't placed any orders yet. Start shopping! 🛍️</p>
         </app-card>
         } @else {
-        @for (order of orders(); track order._id; let orderIndex = $index) {
+        @for (order of orders(); track order._id) {
         <app-card>
             <div class="order">
                 <div class="order-header">
-                    <h3>Order #{{ orderIndex + 1 }}</h3>
+                    <h3>Order #{{ order.orderNumber ?? '—' }}</h3>
                     <span class="order-status order-status--{{ order.status }}">
                         {{ order.status | titlecase }}
                     </span>
                 </div>
-                <p class="order-id">Order ID: {{ order._id }}</p>
                 <p class="order-date">{{ order.createdAt | date:'medium' }}</p>
                 <p class="order-total">{{ order.totalPrice }} EGP</p>
                 <p class="order-items">{{ order.items.length }} item(s)</p>
