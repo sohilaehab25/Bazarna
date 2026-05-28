@@ -34,3 +34,46 @@ export const emitStockUpdate = (productId: string, newStock: number) => {
     io.emit('product-stock-updated', { productId, newStock });
   }
 };
+
+// ---------------------------------------------------------------------------
+// Order status real-time push
+// ---------------------------------------------------------------------------
+
+export interface OrderStatusUpdatePayload {
+  orderId: string;
+  fromStatus: string;
+  toStatus: string;
+  performedBy: string;
+  reason?: string;
+  timestamp: Date;
+}
+
+/**
+ * Broadcasts an order status change to all connected clients.
+ * Front-end sockets should listen for 'order:status-changed' to update
+ * live order views without a manual refresh.
+ */
+export const emitOrderStatusUpdate = (payload: OrderStatusUpdatePayload): void => {
+  if (io) {
+    io.emit('order:status-changed', payload);
+  }
+};
+
+export interface InventoryUpdatePayload {
+  availableStock: number;
+  reservedStock: number;
+  totalStock: number;
+  status: string;
+}
+
+export const emitInventoryUpdate = (productId: string, data: InventoryUpdatePayload) => {
+  if (io) {
+    io.emit('inventory-updated', { productId, ...data });
+  }
+};
+
+export const emitLowStockAlert = (productId: string, currentStock: number, threshold: number) => {
+  if (io) {
+    io.emit('low-stock-alert', { productId, currentStock, threshold });
+  }
+};

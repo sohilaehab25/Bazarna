@@ -75,11 +75,11 @@
                                     </div>
                                 </label>
 
-                                <label class="radio-label radio-label--disabled">
-                                    <input type="radio" disabled aria-disabled="true">
+                                <label class="radio-label">
+                                    <input type="radio" formControlName="paymentMethod" value="paymob">
                                     <div class="radio-content">
-                                        <span class="radio-title">Instapay</span>
-                                        <span class="radio-desc">Currently unavailable.</span>
+                                        <span class="radio-title">Pay Online (Card)</span>
+                                        <span class="radio-desc">Secure payment via Visa, Mastercard, or Meeza.</span>
                                     </div>
                                 </label>
                             </div>
@@ -88,12 +88,25 @@
                             }
                         </app-card>
 
+                        @if (paymentError()) {
+                            <div class="payment-error" role="alert">
+                                <span class="payment-error__icon">⚠️</span>
+                                <span class="payment-error__message">{{ paymentError() }}</span>
+                            </div>
+                        }
+
                         <div class="checkout-actions">
                             <app-button variant="secondary" routerLink="/cart" type="button">
                                 Back to Cart
                             </app-button>
-                            <app-button type="submit" [disabled]="checkoutForm.invalid">
-                                Place Order 🎉
+                            <app-button type="submit" [disabled]="checkoutForm.invalid || isProcessing()">
+                                @if (isProcessing()) {
+                                    Processing...
+                                } @else if (checkoutForm.get('paymentMethod')?.value === 'paymob') {
+                                    Pay Online 💳
+                                } @else {
+                                    Place Order 🎉
+                                }
                             </app-button>
                         </div>
                     </form>

@@ -285,3 +285,24 @@
       }
   }
 }
+
+.payment-error {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
+    background-color: #fff5f5;
+    border: 1px solid #fed7d7;
+    border-radius: var(--radius-md);
+    color: #c53030;
+
+    &__icon {
+        flex-shrink: 0;
+        font-size: var(--font-size-lg);
+    }
+
+    &__message {
+        font-size: var(--font-size-sm);
+        line-height: 1.4;
+    }
+}
