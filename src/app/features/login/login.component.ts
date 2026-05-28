@@ -58,8 +58,10 @@ export class LoginComponent implements OnInit {
 
         if (this.isLoginMode()) {
             this.authService.login(email!, password!).subscribe({
-                next: () => {
-                    this.router.navigate(['/menu']);
+                next: (response) => {
+                    const userRole = response.data?.user?.role;
+                    const isAdmin = typeof userRole === 'string' && userRole.toLowerCase() === 'admin';
+                    void this.router.navigateByUrl(isAdmin ? '/admin/dashboard' : '/menu');
                 },
                 error: (error) => {
                     this.errorMessage.set(error.error?.message || 'Login failed. Please try again.');
