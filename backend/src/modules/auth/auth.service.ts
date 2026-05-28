@@ -36,7 +36,7 @@ export class AuthService {
   private userRepository = new UserRepository();
   private refreshTokenRepository = new RefreshTokenRepository();
   private emailService = new EmailService();
-  private jwtSecret = process.env.JWT_SECRET;
+  private jwtSecret = process.env.JWT_SECRET!;
   private accessTokenExpiry = process.env.ACCESS_TOKEN_TTL || '15m';
   private refreshTokenTtlMs = this.resolveRefreshTokenTtlMs();
 
