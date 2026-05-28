@@ -55,6 +55,7 @@ export interface IStatusHistoryEntry {
 }
 
 export interface Order extends Document {
+  orderNumber: number;
   userId?: mongoose.Types.ObjectId;
   items: IOrderItem[];
   totalPrice: number;
@@ -142,6 +143,10 @@ const StatusHistoryEntrySchema: Schema = new Schema({
 });
 
 const OrderSchema: Schema = new Schema({
+  orderNumber: {
+    type: Number,
+    unique: true,
+  },
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
