@@ -91,6 +91,7 @@ export interface items {
 
 export interface Order {
     _id: string;
+    orderNumber?: number;
     items: items[];
     totalPrice: number;
     status: 'pending' | 'paid' | 'processing' | 'preparing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
