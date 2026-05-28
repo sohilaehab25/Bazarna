@@ -9,6 +9,7 @@ const router = Router();
 const categoryController = new CategoryController();
 
 router.get('/', categoryController.getAllCategories.bind(categoryController));
+router.get('/admin', jwtAuthGuard, rolesGuard([UserRole.ADMIN]), categoryController.getAdminCategories.bind(categoryController));
 router.get('/:id', validateObjectId(), categoryController.getCategory.bind(categoryController));
 router.post('/', jwtAuthGuard, rolesGuard([UserRole.ADMIN]), categoryController.createCategory.bind(categoryController));
 router.put('/:id', jwtAuthGuard, rolesGuard([UserRole.ADMIN]), validateObjectId(), categoryController.updateCategory.bind(categoryController));

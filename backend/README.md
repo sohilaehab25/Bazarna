@@ -111,10 +111,12 @@ backend/
 
 ### Products
 - `GET /api/products` - Get all products
+- `GET /api/products/admin` - Admin products table data with server-side filters, sorting, and pagination (Admin only)
 - `GET /api/products/:id` - Get product by ID
 - `POST /api/products` - Create product (Admin only)
 - `PUT /api/products/:id` - Update product
 - `DELETE /api/products/:id` - Delete product
+- `PATCH /api/products/bulk` - Run bulk status/delete actions (Admin only)
 
 ### Categories
 - `GET /api/categories` - Get all categories
@@ -140,9 +142,30 @@ backend/
 
 - `npm run dev` - Start development server with hot reload
 - `npm run build` - Build for production
+- `npm run seed` - Create or update an admin user for local testing
 - `npm start` - Start production server
 - `npm test` - Run tests
 - `npm run lint` - Run ESLint
+
+### Seed Admin User
+
+Run this from the `backend` folder:
+
+```bash
+npm run seed
+```
+
+Optional environment variables:
+
+```env
+SEED_ADMIN_NAME=Bazarna Admin
+SEED_ADMIN_EMAIL=admin@bazarna.local
+SEED_ADMIN_PASSWORD=Admin@12345
+```
+
+If a user with the same email already exists, the script upgrades it to an admin account and refreshes the password.
+
+The script runs directly from `backend/scripts/seed-admin.js`, so it does not depend on a full TypeScript build.
 
 ### Code Style
 

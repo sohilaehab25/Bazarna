@@ -91,16 +91,17 @@ export interface items {
 
 export interface Order {
     _id: string;
+    orderNumber?: number;
     items: items[];
     totalPrice: number;
-    status: 'pending' | 'preparing' | 'delivered';
-    paymentMethod: 'cash' | 'visa';
+    status: 'pending' | 'paid' | 'processing' | 'preparing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
+    paymentMethod: 'cash' | 'visa' | 'paymob';
     createdAt: Date;
     customer?: customerInfo;
 }
 
 export interface GuestCheckoutPayload {
     items: items[];
-    paymentMethod: 'cash' | 'visa';
+    paymentMethod: 'cash' | 'visa' | 'paymob';
     customer: customerInfo;
 }

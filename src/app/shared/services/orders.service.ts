@@ -30,7 +30,7 @@ export class OrdersService {
     });
   }
 
-  checkout(paymentMethod: 'cash' | 'visa'): Observable<ApiResponse<Order>> {
+  checkout(paymentMethod: 'cash' | 'visa' | 'paymob'): Observable<ApiResponse<Order>> {
     return this.http.post<ApiResponse<Order>>(`${this.apiUrl}/checkout`, { paymentMethod }).pipe(
       tap(res => {
         if (res.success) {

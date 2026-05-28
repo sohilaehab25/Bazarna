@@ -1,8 +1,45 @@
 import { OrderRepository } from '../repositories/OrderRepository';
 import { Order, OrderStatus } from '../models/Order';
+import { UserRole } from '../models/User';
 import ProductModel from '../models/Product';
 import { CartRepository } from '../repositories/CartRepository';
 import { emitStockUpdate } from '../utils/socket';
+import { validateTransition } from '../workflow/order-workflow.engine';
+import { OrderNotificationService } from '../workflow/order-notifications.service';
+
+// ---------------------------------------------------------------------------
+// Paginated query types (exported for use in controller)
+// ---------------------------------------------------------------------------
+
+export interface OrdersPaginatedQuery {
+  page: number;
+  pageSize: number;
+  status: string;
+  paymentMethod: string;
+  sortBy: string;
+  sortOrder: string;
+  search: string;
+  dateFrom?: string;
+  dateTo?: string;
+  minRevenue?: number;
+  maxRevenue?: number;
+}
+
+export interface OrdersPaginationMeta {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface OrdersPaginatedResult {
+  items: Order[];
+  pagination: OrdersPaginationMeta;
+}
+
+
 
 type GuestOrderItem = {
   productId: string;
@@ -20,6 +57,7 @@ type GuestCustomer = {
 export class OrderService {
   private orderRepository = new OrderRepository();
   private cartRepository = new CartRepository();
+  private notificationService = new OrderNotificationService();
 
   async checkout(userId: string, paymentMethod: any): Promise<Order> {
     const cart = await this.cartRepository.findByUserId(userId);
@@ -153,11 +191,88 @@ export class OrderService {
     return await this.orderRepository.findAll();
   }
 
-  async updateOrderStatus(id: string, status: OrderStatus): Promise<Order | null> {
-    return await this.orderRepository.update(id, { status });
+  async getOrdersPaginated(query: OrdersPaginatedQuery): Promise<OrdersPaginatedResult> {
+    const { items, total } = await this.orderRepository.findPaginated({
+      page: query.page,
+      pageSize: query.pageSize,
+      status: query.status,
+      paymentMethod: query.paymentMethod,
+      sortBy: query.sortBy,
+      sortOrder: query.sortOrder,
+      search: query.search,
+      dateFrom: query.dateFrom,
+      dateTo: query.dateTo,
+      minRevenue: query.minRevenue,
+      maxRevenue: query.maxRevenue,
+    });
+
+    const totalPages = Math.max(1, Math.ceil(total / query.pageSize));
+
+    return {
+      items,
+      pagination: {
+        page: query.page,
+        pageSize: query.pageSize,
+        totalItems: total,
+        totalPages,
+        hasPreviousPage: query.page > 1,
+        hasNextPage: query.page < totalPages,
+      },
+    };
+  }
+
+  async updateOrderStatus(
+    id: string,
+    newStatus: OrderStatus,
+    actor: { performedBy: string; performedByRole: string; reason?: string },
+  ): Promise<Order | null> {
+    // 1. Fetch current order to read its status
+    const current = await this.orderRepository.findById(id);
+    if (!current) return null;
+
+    // 2. Workflow validation — throws descriptive error on invalid transition
+    validateTransition(current.status, newStatus, actor.performedByRole as UserRole);
+
+    // 3. Atomic status update + immutable audit entry
+    const updated = await this.orderRepository.updateStatusWithHistory(id, newStatus, {
+      fromStatus:      current.status,
+      toStatus:        newStatus,
+      performedBy:     actor.performedBy,
+      performedByRole: actor.performedByRole,
+      reason:          actor.reason,
+      timestamp:       new Date(),
+    });
+
+    // 4. Notification dispatch (includes real-time Socket.IO broadcast)
+    //    Fully non-blocking — errors are logged internally, never propagated.
+    if (updated) {
+      this.notificationService.dispatch(
+        {
+          orderId:     id,
+          fromStatus:  current.status,
+          toStatus:    newStatus,
+          performedBy: actor.performedBy,
+          reason:      actor.reason,
+          timestamp:   new Date(),
+        },
+        updated,
+      ).catch((err: unknown) =>
+        console.error('[OrderService] Notification dispatch failed:', err),
+      );
+    }
+
+    return updated;
   }
 
   async deleteOrder(id: string): Promise<boolean> {
     return await this.orderRepository.delete(id);
+  }
+
+  async addNote(orderId: string, body: string, author: string): Promise<Order | null> {
+    const sanitizedBody = body.trim().replace(/<[^>]*>/g, '');
+    if (!sanitizedBody) {
+      throw new Error('Note body is required');
+    }
+    return await this.orderRepository.addNote(orderId, { author, body: sanitizedBody });
   }
 }
