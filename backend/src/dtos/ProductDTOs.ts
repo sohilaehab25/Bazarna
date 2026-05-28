@@ -1,4 +1,25 @@
-import { IsString, IsNotEmpty, IsNumber, IsPositive, IsMongoId, MinLength, IsOptional, IsUrl, Min } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsEnum,
+  IsMongoId,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  IsUrl,
+  Min,
+  MinLength,
+} from 'class-validator';
+import { ProductStatus } from '../models/Product';
+
+export enum ProductBulkAction {
+  ACTIVATE = 'activate',
+  MARK_DRAFT = 'mark-draft',
+  ARCHIVE = 'archive',
+  DELETE = 'delete',
+}
 
 export class CreateProductDTO {
   @IsString()
@@ -26,6 +47,28 @@ export class CreateProductDTO {
   @IsNumber()
   @Min(0)
   stock: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  lowStockThreshold?: number;
+
+  @IsOptional()
+  @IsEnum(ProductStatus)
+  status?: ProductStatus;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @IsOptional()
+  @IsString()
+  seoTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  seoDescription?: string;
 }
 
 export class UpdateProductDTO {
@@ -60,4 +103,36 @@ export class UpdateProductDTO {
   @IsNumber()
   @Min(0)
   stock?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  lowStockThreshold?: number;
+
+  @IsOptional()
+  @IsEnum(ProductStatus)
+  status?: ProductStatus;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
+
+  @IsOptional()
+  @IsString()
+  seoTitle?: string;
+
+  @IsOptional()
+  @IsString()
+  seoDescription?: string;
+}
+
+export class BulkProductActionDTO {
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsMongoId({ each: true })
+  productIds: string[];
+
+  @IsEnum(ProductBulkAction)
+  action: ProductBulkAction;
 }

@@ -9,6 +9,8 @@ const router = Router();
 const productController = new ProductController();
 
 router.get('/', productController.getAllProducts.bind(productController));
+router.get('/admin', jwtAuthGuard, rolesGuard([UserRole.ADMIN]), productController.getAdminProducts.bind(productController));
+router.patch('/bulk', jwtAuthGuard, rolesGuard([UserRole.ADMIN]), productController.bulkAction.bind(productController));
 router.get('/:id', validateObjectId(), productController.getProduct.bind(productController));
 router.post('/', jwtAuthGuard, rolesGuard([UserRole.ADMIN]), productController.createProduct.bind(productController));
 router.put('/:id', jwtAuthGuard, validateObjectId(), productController.updateProduct.bind(productController));
