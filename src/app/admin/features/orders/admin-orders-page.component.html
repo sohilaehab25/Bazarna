@@ -1,0 +1,136 @@
+<section class="admin-orders-page">
+  <header class="admin-orders-page__header">
+    <div>
+      <h2>Order Management</h2>
+      <p>
+        @if (pagination().totalItems > 0) {
+          {{ pagination().totalItems }} order(s) found
+        } @else {
+          Server-side orders table with advanced filtering, sorting, and pagination.
+        }
+      </p>
+    </div>
+
+    @if (hasActiveFilters()) {
+      <button type="button" class="admin-orders-page__reset-btn" (click)="clearFilters()">
+        Reset Filters
+      </button>
+    }
+    </header>
+  <section class="admin-orders-page__filters" aria-label="Order filters">
+    <label>
+      <span>Search</span>
+      <input
+        type="search"
+        [value]="searchValue()"
+        (input)="onSearchInput($event)"
+        placeholder="Customer name or email"
+        autocomplete="off"
+      />
+    </label>
+
+    <label>
+      <span>Status</span>
+      <select [value]="query().status" (change)="onStatusChange($event)">
+        @for (option of statusOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span>Payment</span>
+      <select [value]="query().paymentMethod" (change)="onPaymentMethodChange($event)">
+        @for (option of paymentOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span>Date from</span>
+      <input
+        type="date"
+        [value]="query().dateFrom"
+        (change)="onDateFromChange($event)"
+      />
+    </label>
+
+    <label>
+      <span>Date to</span>
+      <input
+        type="date"
+        [value]="query().dateTo"
+        (change)="onDateToChange($event)"
+      />
+    </label>
+
+    <label>
+      <span>Min total ($)</span>
+      <input
+        type="number"
+        [value]="minRevenueValue()"
+        (input)="onMinRevenueInput($event)"
+        placeholder="0"
+        min="0"
+        autocomplete="off"
+      />
+    </label>
+
+    <label>
+      <span>Max total ($)</span>
+      <input
+        type="number"
+        [value]="maxRevenueValue()"
+        (input)="onMaxRevenueInput($event)"
+        placeholder="Any"
+        min="0"
+        autocomplete="off"
+      />
+    </label>
+  </section>
+
+  <section class="admin-orders-page__bulk" aria-label="Bulk actions">
+    <p>
+      Selected: <strong>{{ selectedCount() }}</strong> order(s)
+    </p>
+
+    <div class="admin-orders-page__bulk-actions">
+      <button
+        type="button"
+        [disabled]="selectedCount() === 0"
+        title="Export - available in a future release"
+        aria-label="Export selected orders (coming soon)"
+      >
+        Export Selected
+      </button>
+    </div>
+  </section>
+
+  <app-admin-smart-table
+    [columns]="columns"
+    [rows]="tableRows()"
+    [loading]="loading()"
+    [error]="error()"
+    emptyMessage="No orders matched your criteria."
+    [selectable]="true"
+    [selectedRowIds]="selectedIds()"
+    rowIdKey="_id"
+    [sortKey]="query().sortBy"
+    [sortDirection]="query().sortOrder"
+    (sortChange)="onSortChange($event)"
+    (selectedRowIdsChange)="onSelectionChange($event)"
+        (rowClick)="onRowClick($event)"
+      ></app-admin-smart-table>
+
+  <app-admin-table-pagination
+    [page]="pagination().page"
+    [pageSize]="pagination().pageSize"
+    [totalItems]="pagination().totalItems"
+    [totalPages]="pagination().totalPages"
+    [disabled]="loading()"
+    [pageSizeOptions]="pageSizeOptions"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  ></app-admin-table-pagination>
+</section>

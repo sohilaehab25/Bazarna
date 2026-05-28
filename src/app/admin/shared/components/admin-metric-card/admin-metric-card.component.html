@@ -1,0 +1,15 @@
+<article class="admin-metric-card" [class]="'admin-metric-card admin-metric-card--' + tone()">
+  <p class="admin-metric-card__label">{{ label() }}</p>
+
+  @if (loading()) {
+    <div class="admin-metric-card__skeleton" aria-hidden="true"></div>
+  } @else if (error()) {
+    <p class="admin-metric-card__error">{{ error() }}</p>
+  } @else {
+    <p class="admin-metric-card__value">{{ value() }}</p>
+  }
+
+  @if (hint()) {
+    <p class="admin-metric-card__hint">{{ hint() }}</p>
+  }
+</article>

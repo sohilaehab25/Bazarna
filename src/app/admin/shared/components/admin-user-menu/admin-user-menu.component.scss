@@ -1,0 +1,78 @@
+.admin-user-menu {
+  position: relative;
+}
+
+.admin-user-menu__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--admin-color-border);
+  border-radius: 999px;
+  padding: 0.35rem 0.55rem;
+  background: #fff;
+  color: var(--admin-color-text);
+  cursor: pointer;
+}
+
+.admin-user-menu__avatar {
+  width: 1.9rem;
+  height: 1.9rem;
+  display: grid;
+  place-content: center;
+  border-radius: 999px;
+  background: var(--admin-color-accent);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.admin-user-menu__name {
+  font-weight: 600;
+}
+
+.admin-user-menu__panel {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: min(90vw, 260px);
+  border: 1px solid var(--admin-color-border);
+  border-radius: var(--admin-radius-md);
+  background: #fff;
+  box-shadow: var(--admin-shadow-md);
+  padding: 0.75rem;
+  display: grid;
+  gap: 0.3rem;
+  z-index: 50;
+}
+
+.admin-user-menu__panel-copy {
+  display: grid;
+  gap: 0.2rem;
+  margin-bottom: 0.35rem;
+}
+
+.admin-user-menu__panel-copy small {
+  color: var(--admin-color-text-muted);
+}
+
+.admin-user-menu__item {
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem;
+  text-align: left;
+  background: transparent;
+  color: var(--admin-color-text);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.admin-user-menu__item:hover,
+.admin-user-menu__item:focus-visible {
+  background: var(--admin-color-accent-soft);
+}
+
+@media (max-width: 760px) {
+  .admin-user-menu__name {
+    display: none;
+  }
+}

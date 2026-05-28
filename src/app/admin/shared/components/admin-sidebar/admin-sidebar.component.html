@@ -1,0 +1,44 @@
+<aside
+  class="admin-sidebar"
+  [class.admin-sidebar--collapsed]="layout.sidebarCollapsed()"
+  [class.admin-sidebar--mobile-open]="layout.mobileSidebarOpen()"
+>
+  <div class="admin-sidebar__header">
+    <a routerLink="/admin/dashboard" class="admin-sidebar__brand" (click)="onItemSelected()">
+      <span class="admin-sidebar__brand-mark">BZ</span>
+      @if (!layout.sidebarCollapsed()) {
+        <div class="admin-sidebar__brand-copy">
+          <strong>Bazarna Admin</strong>
+          <small>Operations Console</small>
+        </div>
+      }
+    </a>
+
+    <button
+      type="button"
+      class="admin-sidebar__collapse-btn"
+      (click)="toggleSidebar()"
+      [attr.aria-label]="layout.sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+    >
+      {{ layout.sidebarCollapsed() ? '>' : '<' }}
+    </button>
+  </div>
+
+  <nav class="admin-sidebar__nav" aria-label="Admin navigation">
+    @for (item of menuItems(); track item.id) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="admin-sidebar__link--active"
+        [routerLinkActiveOptions]="{ exact: item.route === '/admin/dashboard' }"
+        class="admin-sidebar__link"
+        [attr.title]="layout.sidebarCollapsed() ? item.description : null"
+        (click)="onItemSelected()"
+      >
+        <span class="admin-sidebar__icon" aria-hidden="true">{{ item.iconText }}</span>
+        @if (!layout.sidebarCollapsed()) {
+          <span class="admin-sidebar__label">{{ item.label }}</span>
+        }
+      </a>
+    }
+  </nav>
+</aside>

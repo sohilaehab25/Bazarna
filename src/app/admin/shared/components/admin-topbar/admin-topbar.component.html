@@ -1,0 +1,23 @@
+<header class="admin-topbar">
+  <div class="admin-topbar__left">
+    <button
+      type="button"
+      class="admin-topbar__menu-btn"
+      (click)="layout.toggleMobileSidebar()"
+      aria-label="Toggle sidebar"
+    >
+      Menu
+    </button>
+
+    <div class="admin-topbar__title-group">
+      <p class="admin-topbar__eyebrow">Administration</p>
+      <h1 class="admin-topbar__title">Bazarna Control Center</h1>
+    </div>
+  </div>
+
+  <div class="admin-topbar__right">
+    <app-admin-search></app-admin-search>
+    <app-admin-notifications></app-admin-notifications>
+    <app-admin-user-menu></app-admin-user-menu>
+  </div>
+</header>

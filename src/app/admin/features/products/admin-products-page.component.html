@@ -1,0 +1,145 @@
+<section class="admin-products-page">
+  <header class="admin-products-page__header">
+    <div>
+      <h2>Product Management</h2>
+      <p>Manage your product catalog — create, edit, and manage stock.</p>
+    </div>
+
+    <div class="admin-products-page__header-actions">
+      @if (hasActiveFilters()) {
+        <button type="button" class="admin-products-page__reset-btn" (click)="clearFilters()">
+          Reset Filters
+        </button>
+      }
+      <button type="button" class="admin-products-page__add-btn" (click)="openCreateForm()">
+        + Add Product
+      </button>
+    </div>
+  </header>
+
+  <section class="admin-products-page__filters" aria-label="Product filters">
+    <label>
+      <span>Search</span>
+      <input
+        type="search"
+        [value]="searchValue()"
+        (input)="onSearchInput($event)"
+        placeholder="Search by product name or description"
+        autocomplete="off"
+      />
+    </label>
+
+    <label>
+      <span>Category</span>
+      <select
+        [value]="query().categoryId ?? ''"
+        (change)="onCategoryChange($event)"
+        [disabled]="categoriesLoading()"
+      >
+        <option value="">All categories</option>
+        @for (category of categories(); track category._id) {
+          <option [value]="category._id">{{ category.name }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span>Status</span>
+      <select [value]="query().status" (change)="onStatusChange($event)">
+        @for (option of statusOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      <span>Stock</span>
+      <select [value]="query().stockState" (change)="onStockStateChange($event)">
+        @for (option of stockStateOptions; track option.value) {
+          <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+    </label>
+  </section>
+
+  <section class="admin-products-page__bulk" aria-label="Bulk actions">
+    <p>
+      Selected:
+      <strong>{{ selectedCount() }}</strong>
+      item(s)
+    </p>
+
+    <div class="admin-products-page__bulk-actions">
+      @for (bulkAction of bulkActions; track bulkAction.action) {
+        <button
+          type="button"
+          [class.admin-products-page__bulk-delete]="bulkAction.variant === 'danger'"
+          (click)="onBulkAction(bulkAction.action)"
+          [disabled]="selectedCount() === 0 || bulkLoading()"
+        >
+          {{ bulkAction.label }}
+        </button>
+      }
+    </div>
+  </section>
+
+  @if (bulkSuccess()) {
+    <p class="admin-products-page__flash admin-products-page__flash--success">{{ bulkSuccess() }}</p>
+  }
+
+  @if (bulkError()) {
+    <p class="admin-products-page__flash admin-products-page__flash--error">{{ bulkError() }}</p>
+  }
+
+  <app-admin-smart-table
+    [columns]="columns"
+    [rows]="tableRows()"
+    [loading]="loading()"
+    [error]="error()"
+    emptyMessage="No products matched your criteria."
+    [selectable]="true"
+    [selectedRowIds]="selectedIds()"
+    rowIdKey="_id"
+    [sortKey]="query().sortBy"
+    [sortDirection]="query().sortOrder"
+    (sortChange)="onSortChange($event)"
+    (selectedRowIdsChange)="onSelectionChange($event)"
+    (rowClick)="openEditForm($event)"
+  />
+
+  <app-admin-table-pagination
+    [page]="pagination().page"
+    [pageSize]="pagination().pageSize"
+    [totalItems]="pagination().totalItems"
+    [totalPages]="pagination().totalPages"
+    [disabled]="loading()"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  />
+
+  <!-- Delete Confirmation -->
+  @if (showDeleteConfirm()) {
+    <div class="admin-products-page__overlay" (click)="cancelDelete()">
+      <div class="admin-products-page__confirm" role="alertdialog" aria-labelledby="delete-title" (click)="$event.stopPropagation()">
+        <h3 id="delete-title">Delete Product</h3>
+        <p>Are you sure you want to delete <strong>{{ showDeleteConfirm()!.name }}</strong>? This action cannot be undone.</p>
+        <div class="admin-products-page__confirm-actions">
+          <button type="button" class="btn btn--secondary" (click)="cancelDelete()">Cancel</button>
+          <button type="button" class="btn btn--danger" (click)="confirmDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Product Form Dialog -->
+  @if (showForm()) {
+    <app-admin-product-form
+      [product]="editingProduct()"
+      [categories]="categories()"
+      [saving]="store.saving()"
+      [error]="store.saveError()"
+      (save)="onSaveProduct($event)"
+      (cancel)="closeForm()"
+    />
+  }
+</section>

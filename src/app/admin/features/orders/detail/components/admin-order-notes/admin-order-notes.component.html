@@ -1,0 +1,68 @@
+<section class="admin-order-notes" aria-label="Admin notes">
+  <div class="admin-order-notes__header">
+    <h3 class="admin-order-notes__title">Notes</h3>
+    <span class="admin-order-notes__count" aria-label="{{ notes().length }} notes">
+      {{ notes().length }}
+    </span>
+  </div>
+
+  <div class="admin-order-notes__body">
+    @if (notes().length > 0) {
+      <ul class="admin-order-notes__list" aria-label="Note list">
+        @for (note of notes(); track note._id) {
+          <li class="admin-order-notes__item">
+            <div class="admin-order-notes__item-header">
+              <span class="admin-order-notes__author">{{ note.author }}</span>
+              <time
+                class="admin-order-notes__date"
+                [dateTime]="note.createdAt"
+              >{{ formatDate(note.createdAt) }}</time>
+            </div>
+            <p class="admin-order-notes__body-text">{{ note.body }}</p>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="admin-order-notes__empty">No notes yet.</p>
+    }
+
+    <div class="admin-order-notes__form" role="form" aria-label="Add note">
+      <label class="admin-order-notes__form-label" for="order-note-textarea">
+        Add a note
+      </label>
+      <textarea
+        id="order-note-textarea"
+        class="admin-order-notes__textarea"
+        rows="3"
+        [attr.maxlength]="MAX_LENGTH"
+        [value]="noteBody()"
+        (input)="onNoteInput($event)"
+        placeholder="Write an internal note…"
+        [attr.aria-describedby]="error() ? 'note-error' : null"
+      ></textarea>
+
+      <div class="admin-order-notes__form-footer">
+        <span class="admin-order-notes__char-count" aria-live="polite">
+          {{ noteBody().length }} / {{ MAX_LENGTH }}
+        </span>
+        <button
+          type="button"
+          class="admin-order-notes__submit-btn"
+          [disabled]="noteBody().trim().length === 0 || submitting()"
+          (click)="onSubmit()"
+          [attr.aria-busy]="submitting()"
+        >
+          @if (submitting()) {
+            Saving…
+          } @else {
+            Add Note
+          }
+        </button>
+      </div>
+
+      @if (error()) {
+        <p id="note-error" class="admin-order-notes__error" role="alert">{{ error() }}</p>
+      }
+    </div>
+  </div>
+</section>

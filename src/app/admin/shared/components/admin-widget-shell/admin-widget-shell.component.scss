@@ -1,0 +1,68 @@
+.admin-widget-shell {
+  border: 1px solid var(--admin-color-border);
+  border-radius: var(--admin-radius-lg);
+  background: var(--admin-color-surface);
+  box-shadow: var(--admin-shadow-sm);
+  padding: 1rem;
+  min-height: 160px;
+}
+
+.admin-widget-shell__header h2 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--admin-color-text);
+}
+
+.admin-widget-shell__header p {
+  margin: 0.35rem 0 0;
+  color: var(--admin-color-text-muted);
+  font-size: 0.875rem;
+}
+
+.admin-widget-shell__content {
+  margin-top: 1rem;
+}
+
+.admin-widget-shell__state {
+  margin-top: 1rem;
+  border-radius: 12px;
+  padding: 0.85rem;
+}
+
+.admin-widget-shell__state p {
+  margin: 0.35rem 0 0;
+}
+
+.admin-widget-shell__state--error {
+  background: color-mix(in srgb, var(--admin-color-danger) 12%, white);
+  color: var(--admin-color-danger);
+}
+
+.admin-widget-shell__state--empty {
+  background: color-mix(in srgb, var(--admin-color-accent) 10%, white);
+  color: var(--admin-color-text);
+}
+
+.admin-widget-shell__skeleton {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.admin-widget-shell__skeleton span {
+  display: block;
+  height: 0.75rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #eef2fa 25%, #f7f9ff 50%, #eef2fa 75%);
+  background-size: 200% 100%;
+  animation: admin-skeleton 1.2s linear infinite;
+}
+
+@keyframes admin-skeleton {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}

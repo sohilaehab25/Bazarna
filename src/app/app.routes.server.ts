@@ -21,6 +21,8 @@ export const serverRoutes: ServerRoute[] = [
   { path: 'confirm-signup', renderMode: RenderMode.Client },
   // Query-param driven + sessionStorage → client-only
   { path: 'auth/verify-email', renderMode: RenderMode.Client },
+  { path: 'admin', renderMode: RenderMode.Client },
+  { path: 'admin/**', renderMode: RenderMode.Client },
 
   // Fallback
   { path: '**', renderMode: RenderMode.Server },

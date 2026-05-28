@@ -1,0 +1,154 @@
+<section class="inv-logs" aria-labelledby="inv-logs-heading">
+    <!-- Header -->
+    <header class="inv-logs__header">
+        <div class="inv-logs__title-row">
+            <h1 id="inv-logs-heading" class="inv-logs__title">Inventory Logs</h1>
+            <span class="inv-logs__count" aria-live="polite">
+                {{ store.totalItems() }} entries
+            </span>
+        </div>
+        <div class="inv-logs__view-toggle" role="tablist" aria-label="View mode">
+            <button
+                role="tab"
+                [attr.aria-selected]="store.viewMode() === 'table'"
+                [class.active]="store.viewMode() === 'table'"
+                (click)="onViewModeChange('table')"
+            >
+                Table
+            </button>
+            <button
+                role="tab"
+                [attr.aria-selected]="store.viewMode() === 'timeline'"
+                [class.active]="store.viewMode() === 'timeline'"
+                (click)="onViewModeChange('timeline')"
+            >
+                Timeline
+            </button>
+        </div>
+    </header>
+
+    <!-- Filters -->
+    <div class="inv-logs__filters" role="search" aria-label="Filter inventory logs">
+        <div class="inv-logs__filter-row">
+            <div class="inv-logs__filter-field">
+                <label for="filter-search">Search</label>
+                <input
+                    id="filter-search"
+                    type="text"
+                    placeholder="Search by reason..."
+                    #searchInput
+                    (keyup.enter)="onSearchSubmit(searchInput.value)"
+                />
+            </div>
+
+            <div class="inv-logs__filter-field">
+                <label for="filter-type">Type</label>
+                <select id="filter-type" #typeSelect (change)="onTypeChange(typeSelect.value)">
+                    @for (opt of logTypeOptions; track opt.value) {
+                        <option [value]="opt.value">{{ opt.label }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="inv-logs__filter-field">
+                <label for="filter-ref-type">Source</label>
+                <select id="filter-ref-type" #refTypeSelect (change)="onRefTypeChange(refTypeSelect.value)">
+                    @for (opt of refTypeOptions; track opt.value) {
+                        <option [value]="opt.value">{{ opt.label }}</option>
+                    }
+                </select>
+            </div>
+
+            <div class="inv-logs__filter-field">
+                <label for="filter-date-from">From</label>
+                <input
+                    id="filter-date-from"
+                    type="date"
+                    #dateFromInput
+                    (change)="onDateFromChange(dateFromInput.value)"
+                />
+            </div>
+
+            <div class="inv-logs__filter-field">
+                <label for="filter-date-to">To</label>
+                <input
+                    id="filter-date-to"
+                    type="date"
+                    #dateToInput
+                    (change)="onDateToChange(dateToInput.value)"
+                />
+            </div>
+
+            <div class="inv-logs__filter-actions">
+                <button
+                    class="btn btn--primary"
+                    (click)="onSearchSubmit(searchInput.value)"
+                    [disabled]="store.loading()"
+                >
+                    Apply
+                </button>
+                <button class="btn btn--secondary" (click)="onResetFilters()" [disabled]="store.loading()">
+                    Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if (store.error()) {
+        <div class="inv-logs__error" role="alert">
+            {{ store.error() }}
+        </div>
+    }
+
+    <!-- Table View -->
+    @if (store.viewMode() === 'table') {
+        <app-admin-widget-shell
+            title=""
+            [loading]="store.loading()"
+            [empty]="!store.loading() && tableRows().length === 0"
+            emptyMessage="No inventory logs match your filters."
+        >
+            <app-admin-smart-table
+                [columns]="columns"
+                [rows]="tableRows()"
+                [loading]="store.loading()"
+                emptyMessage="No inventory logs found."
+            />
+        </app-admin-widget-shell>
+
+        @if (store.pagination().totalPages > 1) {
+            <app-admin-table-pagination
+                [page]="store.pagination().page"
+                [pageSize]="store.pagination().pageSize"
+                [totalItems]="store.pagination().totalItems"
+                [totalPages]="store.pagination().totalPages"
+                [disabled]="store.loading()"
+                (pageChange)="onPageChange($event)"
+            />
+        }
+    }
+
+    <!-- Timeline View -->
+    @if (store.viewMode() === 'timeline') {
+        <div class="inv-logs__timeline" aria-label="Stock movement timeline">
+            @if (store.loading()) {
+                <div class="inv-logs__timeline-loading">Loading timeline...</div>
+            } @else if (timelineGroups().length === 0) {
+                <div class="inv-logs__timeline-empty">No log entries match your filters.</div>
+            } @else {
+                <app-admin-log-timeline [groups]="timelineGroups()" />
+
+                @if (store.pagination().totalPages > 1) {
+                    <app-admin-table-pagination
+                        [page]="store.pagination().page"
+                        [pageSize]="store.pagination().pageSize"
+                        [totalItems]="store.pagination().totalItems"
+                        [totalPages]="store.pagination().totalPages"
+                        [disabled]="store.loading()"
+                        (pageChange)="onPageChange($event)"
+                    />
+                }
+            }
+        </div>
+    }
+</section>

@@ -1,0 +1,172 @@
+<section class="inv-dashboard" aria-labelledby="inv-dashboard-heading">
+    <!-- Header -->
+    <header class="inv-dashboard__header">
+        <div class="inv-dashboard__title-row">
+            <h1 id="inv-dashboard-heading" class="inv-dashboard__title">Inventory Dashboard</h1>
+            <div class="inv-dashboard__controls">
+                <label for="period-select" class="visually-hidden">Select time period</label>
+                <select
+                    id="period-select"
+                    class="inv-dashboard__period-select"
+                    [value]="selectedPeriod()"
+                    (change)="onPeriodChange($event)"
+                >
+                    @for (option of periodOptions; track option.value) {
+                        <option [value]="option.value">{{ option.label }}</option>
+                    }
+                </select>
+                <button
+                    class="inv-dashboard__refresh-btn"
+                    (click)="onRefresh()"
+                    [disabled]="loading()"
+                    aria-label="Refresh dashboard"
+                >
+                    Refresh
+                </button>
+            </div>
+        </div>
+    </header>
+
+    @if (error()) {
+        <div class="inv-dashboard__error" role="alert">
+            <strong>Dashboard Error:</strong> {{ error() }}
+        </div>
+    }
+
+    <!-- KPI Metrics Row -->
+    <div class="inv-dashboard__metrics">
+        <app-admin-metric-card
+            label="Total Stock"
+            [value]="formatNumber(stats().totalStock)"
+            hint="Available + Reserved"
+            [loading]="loading()"
+        />
+        <app-admin-metric-card
+            label="Available"
+            [value]="formatNumber(stats().totalAvailable)"
+            [hint]="'Ready for sale'"
+            tone="success"
+            [loading]="loading()"
+        />
+        <app-admin-metric-card
+            label="Reserved"
+            [value]="formatNumber(stats().totalReserved)"
+            [hint]="reservedPercentage() + '% of total'"
+            tone="neutral"
+            [loading]="loading()"
+        />
+        <app-admin-metric-card
+            label="Low Stock"
+            [value]="formatNumber(stats().lowStockCount)"
+            hint="Below threshold"
+            tone="warning"
+            [loading]="loading()"
+        />
+        <app-admin-metric-card
+            label="Out of Stock"
+            [value]="formatNumber(stats().outOfStockCount)"
+            hint="Zero availability"
+            tone="danger"
+            [loading]="loading()"
+        />
+        <app-admin-metric-card
+            label="Health Score"
+            [value]="stockHealthPercentage() + '%'"
+            hint="Products in stock"
+            [tone]="stockHealthPercentage() >= 80 ? 'success' : stockHealthPercentage() >= 50 ? 'warning' : 'danger'"
+            [loading]="loading()"
+        />
+    </div>
+
+    <!-- Main Grid -->
+    <div class="inv-dashboard__grid">
+        <!-- Stock Distribution -->
+        <app-admin-widget-shell
+            title="Stock Distribution"
+            subtitle="Products by inventory status"
+            [loading]="loading()"
+            [empty]="stats().totalProducts === 0"
+        >
+            <app-admin-stock-distribution
+                [segments]="stockDistribution()"
+                ariaLabel="Stock distribution by status"
+            />
+        </app-admin-widget-shell>
+
+        <!-- Activity Breakdown -->
+        <app-admin-widget-shell
+            title="Activity Breakdown"
+            [subtitle]="'Last ' + days() + ' days'"
+            [loading]="loading()"
+            [empty]="activityBreakdown().length === 0"
+        >
+            <app-admin-activity-breakdown
+                [entries]="activityBreakdown()"
+                ariaLabel="Inventory activity breakdown"
+            />
+        </app-admin-widget-shell>
+
+        <!-- Stock Movement Timeline -->
+        <div class="inv-dashboard__full-width">
+            <app-admin-widget-shell
+                title="Stock Movement Timeline"
+                [subtitle]="'Daily movements over last ' + days() + ' days'"
+                [loading]="loading()"
+                [empty]="!hasTimeline()"
+                emptyMessage="No stock movements recorded in this period."
+            >
+                <app-admin-stock-timeline
+                    [data]="timelineChartData()"
+                    ariaLabel="Stock movement timeline chart"
+                />
+            </app-admin-widget-shell>
+        </div>
+
+        <!-- Low Stock Alerts -->
+        <div class="inv-dashboard__full-width">
+            <app-admin-widget-shell
+                title="Low Stock Alerts"
+                subtitle="Products requiring attention"
+                [loading]="loading()"
+                [empty]="!hasLowStock()"
+                emptyMessage="All products are adequately stocked."
+            >
+                <app-admin-smart-table
+                    [columns]="lowStockColumns"
+                    [rows]="lowStockRows()"
+                    emptyMessage="No low stock alerts"
+                />
+            </app-admin-widget-shell>
+        </div>
+
+        <!-- Top Selling Products -->
+        <app-admin-widget-shell
+            title="Top Selling Products"
+            [subtitle]="'By units sold, last ' + days() + ' days'"
+            [loading]="loading()"
+            [empty]="!hasTopSelling()"
+            emptyMessage="No sales data for this period."
+        >
+            <app-admin-smart-table
+                [columns]="topSellingColumns"
+                [rows]="topSellingRows()"
+                emptyMessage="No top sellers"
+            />
+        </app-admin-widget-shell>
+
+        <!-- Recent Movements -->
+        <app-admin-widget-shell
+            title="Recent Stock Movements"
+            subtitle="Latest inventory operations"
+            [loading]="loading()"
+            [empty]="!hasRecentMovements()"
+            emptyMessage="No recent movements."
+        >
+            <app-admin-smart-table
+                [columns]="recentMovementsColumns"
+                [rows]="recentMovementsRows()"
+                emptyMessage="No movements"
+            />
+        </app-admin-widget-shell>
+    </div>
+</section>

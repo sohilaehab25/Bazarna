@@ -1,0 +1,79 @@
+<div class="admin-order-actions__header">
+  <h3 class="admin-order-actions__title">Actions</h3>
+</div>
+
+<div class="admin-order-actions__body">
+  <!-- Current status -->
+  <div class="admin-order-actions__status-block">
+    <span class="admin-order-actions__status-label">Current status</span>
+    <span
+      class="admin-order-actions__badge"
+      [class]="'admin-order-actions__badge--' + statusModifier()"
+      [title]="statusDescription()"
+    >{{ statusLabel() }}</span>
+  </div>
+
+  <!-- Confirmation panel (destructive transitions) -->
+  @if (confirmingTransition(); as t) {
+    <div class="admin-order-actions__confirm" role="dialog" aria-modal="true" aria-label="Confirm action">
+      <p class="admin-order-actions__confirm-prompt">
+        {{ t.confirmPrompt }}
+      </p>
+      <label class="admin-order-actions__reason-label" for="transition-reason">
+        Reason <span class="admin-order-actions__reason-hint">(optional)</span>
+      </label>
+      <textarea
+        id="transition-reason"
+        class="admin-order-actions__reason-textarea"
+        rows="2"
+        maxlength="500"
+        [value]="reasonValue()"
+        (input)="onReasonInput($event)"
+        placeholder="Add a reason for the audit log…"
+      ></textarea>
+      <div class="admin-order-actions__confirm-btns">
+        <button
+          type="button"
+          class="admin-order-actions__confirm-ok"
+          [class]="'admin-order-actions__confirm-ok--' + t.variant"
+          [disabled]="loading()"
+          (click)="onConfirm()"
+        >Confirm</button>
+        <button
+          type="button"
+          class="admin-order-actions__confirm-cancel"
+          [disabled]="loading()"
+          (click)="onCancelConfirm()"
+        >Cancel</button>
+      </div>
+    </div>
+  }
+
+  <!-- Transition buttons -->
+  @if (!confirmingTransition()) {
+    @if (availableTransitions().length > 0) {
+      <div class="admin-order-actions__transitions" role="group" aria-label="Available transitions">
+        @for (transition of availableTransitions(); track transition.toStatus) {
+          <button
+            type="button"
+            class="admin-order-actions__transition-btn"
+            [class]="'admin-order-actions__transition-btn--' + transition.variant"
+            [disabled]="loading()"
+            [title]="transition.description"
+            (click)="onActionClick(transition)"
+          >
+            {{ transition.label }}
+          </button>
+        }
+      </div>
+    } @else if (isTerminal()) {
+      <p class="admin-order-actions__terminal-note">
+        This order is in a terminal state and requires no further action.
+      </p>
+    }
+  }
+
+  @if (error()) {
+    <p class="admin-order-actions__error" role="alert">{{ error() }}</p>
+  }
+</div>

@@ -1,0 +1,48 @@
+<div class="category-form__overlay" (click)="onCancel()">
+  <div class="category-form__dialog" role="dialog" aria-labelledby="category-form-title" (click)="$event.stopPropagation()">
+    <h2 id="category-form-title">{{ category() ? 'Edit Category' : 'Create Category' }}</h2>
+
+    @if (error()) {
+      <p class="category-form__error" role="alert">{{ error() }}</p>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="category-form__field">
+        <label for="cat-name">Name *</label>
+        <input id="cat-name" formControlName="name" />
+        @if (form.get('name')?.touched && form.get('name')?.hasError('required')) {
+          <small class="category-form__validation">Name is required</small>
+        }
+      </div>
+
+      <div class="category-form__field">
+        <label for="cat-description">Description</label>
+        <textarea id="cat-description" formControlName="description" rows="3"></textarea>
+      </div>
+
+      <div class="category-form__field">
+        <label for="cat-slug">Slug</label>
+        <input id="cat-slug" formControlName="slug" placeholder="auto-generated if empty" />
+      </div>
+
+      <div class="category-form__field">
+        <label for="cat-imageUrl">Image URL</label>
+        <input id="cat-imageUrl" formControlName="imageUrl" />
+      </div>
+
+      <div class="category-form__field category-form__field--checkbox">
+        <label>
+          <input type="checkbox" formControlName="featured" />
+          Featured
+        </label>
+      </div>
+
+      <div class="category-form__footer">
+        <button type="button" class="btn btn--secondary" (click)="onCancel()">Cancel</button>
+        <button type="submit" class="btn btn--primary" [disabled]="saving()">
+          {{ saving() ? 'Saving...' : (category() ? 'Update' : 'Create') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

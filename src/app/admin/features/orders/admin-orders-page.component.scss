@@ -1,0 +1,161 @@
+.admin-orders-page {
+  border: 1px solid var(--admin-color-border);
+  border-radius: var(--admin-radius-lg);
+  background: var(--admin-color-surface);
+  box-shadow: var(--admin-shadow-sm);
+  padding: 1rem;
+}
+
+// ---------------------------------------------------------------------------
+// Header
+// ---------------------------------------------------------------------------
+
+.admin-orders-page__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.admin-orders-page__header h2 {
+  margin: 0;
+}
+
+.admin-orders-page__header p {
+  margin: 0.45rem 0 0;
+  color: var(--admin-color-text-muted);
+  font-size: 0.88rem;
+}
+
+.admin-orders-page__reset-btn {
+  border: 1px solid var(--admin-color-border);
+  border-radius: 10px;
+  padding: 0.45rem 0.65rem;
+  background: #fff;
+  color: var(--admin-color-text);
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.85rem;
+
+  &:hover {
+    background: var(--admin-color-surface-alt);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Filters grid
+// ---------------------------------------------------------------------------
+
+.admin-orders-page__filters {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.admin-orders-page__filters label {
+  display: grid;
+  gap: 0.32rem;
+}
+
+.admin-orders-page__filters span {
+  font-size: 0.8rem;
+  color: var(--admin-color-text-muted);
+}
+
+.admin-orders-page__filters input,
+.admin-orders-page__filters select {
+  width: 100%;
+  border: 1px solid var(--admin-color-border);
+  border-radius: 10px;
+  padding: 0.55rem 0.65rem;
+  background: #fff;
+  color: var(--admin-color-text);
+  font-size: 0.9rem;
+
+  &:focus {
+    outline: 2px solid var(--admin-color-accent);
+    outline-offset: 1px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Bulk actions bar
+// ---------------------------------------------------------------------------
+
+.admin-orders-page__bulk {
+  margin-top: 0.85rem;
+  padding: 0.65rem;
+  border: 1px solid var(--admin-color-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--admin-color-accent) 5%, white);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-orders-page__bulk p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.admin-orders-page__bulk-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.admin-orders-page__bulk-actions button {
+  border: 1px solid var(--admin-color-border);
+  border-radius: 10px;
+  padding: 0.35rem 0.65rem;
+  background: #fff;
+  color: var(--admin-color-text);
+  cursor: pointer;
+  font-size: 0.85rem;
+
+  &:hover:not(:disabled) {
+    background: var(--admin-color-surface-alt);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Table spacing
+// ---------------------------------------------------------------------------
+
+:host app-admin-smart-table {
+  margin-top: 0.9rem;
+  display: block;
+}
+
+// ---------------------------------------------------------------------------
+// Responsive breakpoints
+// ---------------------------------------------------------------------------
+
+@media (max-width: 1200px) {
+  .admin-orders-page__filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .admin-orders-page {
+    padding: 0.75rem;
+  }
+
+  .admin-orders-page__header {
+    flex-direction: column;
+  }
+
+  .admin-orders-page__filters {
+    grid-template-columns: 1fr;
+  }
+}

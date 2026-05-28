@@ -1,0 +1,32 @@
+.admin-dashboard {
+  display: grid;
+  gap: 1rem;
+}
+
+.admin-dashboard__header h2 {
+  margin: 0;
+  color: var(--admin-color-text);
+}
+
+.admin-dashboard__header p {
+  margin: 0.45rem 0 0;
+  color: var(--admin-color-text-muted);
+}
+
+.admin-dashboard__metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 0.75rem;
+}
+
+.admin-dashboard__widgets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 1200px) {
+  .admin-dashboard__widgets {
+    grid-template-columns: 1fr;
+  }
+}

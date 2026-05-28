@@ -1,0 +1,105 @@
+@if (loading()) {
+    <div class="product-detail__loading">Loading product details...</div>
+} @else if (error()) {
+    <div class="product-detail__error" role="alert">
+        {{ error() }}
+        <button (click)="goBack()">Back to Products</button>
+    </div>
+} @else if (product(); as p) {
+    <section class="product-detail" aria-labelledby="product-detail-title">
+        <header class="product-detail__header">
+            <button class="product-detail__back" (click)="goBack()" aria-label="Back to products">&larr; Back</button>
+            <div class="product-detail__actions">
+                <button class="btn btn--primary" (click)="goEdit()">Edit</button>
+                <button class="btn btn--danger" (click)="requestDelete()">Delete</button>
+            </div>
+        </header>
+
+        <div class="product-detail__content">
+            <!-- Image -->
+            <div class="product-detail__image-card">
+                <img [src]="p.imageUrl" [alt]="p.name" loading="lazy" />
+            </div>
+
+            <!-- Info -->
+            <div class="product-detail__info">
+                <h1 id="product-detail-title">{{ p.name }}</h1>
+
+                <div class="product-detail__badges">
+                    <span class="badge" [class]="'badge--' + (p.status ?? 'active')">
+                        {{ p.status ?? 'active' | titlecase }}
+                    </span>
+                    <span class="badge" [class]="computeStockHealthClass(p.stock, p.lowStockThreshold ?? 10)">
+                        {{ computeStockHealthLabel(p.stock, p.lowStockThreshold ?? 10) }}
+                    </span>
+                </div>
+
+                <p class="product-detail__description">{{ p.description }}</p>
+
+                <div class="product-detail__grid">
+                    <div class="product-detail__item">
+                        <span class="product-detail__label">Price</span>
+                        <span class="product-detail__value">${{ p.price }}</span>
+                    </div>
+                    <div class="product-detail__item">
+                        <span class="product-detail__label">Stock</span>
+                        <span class="product-detail__value">{{ p.stock }} units</span>
+                    </div>
+                    <div class="product-detail__item">
+                        <span class="product-detail__label">Low Stock Threshold</span>
+                        <span class="product-detail__value">{{ p.lowStockThreshold ?? 10 }}</span>
+                    </div>
+                    <div class="product-detail__item">
+                        <span class="product-detail__label">Category</span>
+                        <span class="product-detail__value">{{ p.categoryId?.name ?? 'Uncategorized' }}</span>
+                    </div>
+                    <div class="product-detail__item">
+                        <span class="product-detail__label">Created</span>
+                        <span class="product-detail__value">{{ p.createdAt }}</span>
+                    </div>
+                    <div class="product-detail__item">
+                        <span class="product-detail__label">Updated</span>
+                        <span class="product-detail__value">{{ p.updatedAt }}</span>
+                    </div>
+                </div>
+
+                @if (p.tags && p.tags.length > 0) {
+                    <div class="product-detail__tags">
+                        <span class="product-detail__label">Tags</span>
+                        <div class="product-detail__tag-list">
+                            @for (tag of p.tags; track tag) {
+                                <span class="product-detail__tag">{{ tag }}</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @if (p.seoTitle || p.seoDescription) {
+                    <div class="product-detail__seo">
+                        <span class="product-detail__label">SEO</span>
+                        @if (p.seoTitle) {
+                            <p><strong>Title:</strong> {{ p.seoTitle }}</p>
+                        }
+                        @if (p.seoDescription) {
+                            <p><strong>Description:</strong> {{ p.seoDescription }}</p>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Delete confirm -->
+        @if (showDeleteConfirm()) {
+            <div class="product-detail__overlay" (click)="cancelDelete()">
+                <div class="product-detail__confirm" role="alertdialog" (click)="$event.stopPropagation()">
+                    <h3>Delete Product</h3>
+                    <p>Are you sure you want to delete <strong>{{ p.name }}</strong>?</p>
+                    <div class="product-detail__confirm-actions">
+                        <button class="btn btn--secondary" (click)="cancelDelete()">Cancel</button>
+                        <button class="btn btn--danger" (click)="confirmDelete()">Delete</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </section>
+}

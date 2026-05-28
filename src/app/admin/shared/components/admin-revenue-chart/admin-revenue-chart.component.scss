@@ -1,0 +1,49 @@
+.admin-revenue-chart {
+  min-height: 220px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(52px, 1fr));
+  gap: 0.65rem;
+  align-items: end;
+}
+
+.admin-revenue-chart__column {
+  display: grid;
+  gap: 0.3rem;
+  justify-items: center;
+}
+
+.admin-revenue-chart__bar-wrap {
+  width: 100%;
+  min-height: 145px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--admin-color-accent) 10%, white);
+  display: flex;
+  align-items: flex-end;
+}
+
+.admin-revenue-chart__bar {
+  width: 100%;
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--admin-color-accent), #4da3ff);
+}
+
+.admin-revenue-chart__value {
+  font-size: 0.7rem;
+  color: var(--admin-color-text-muted);
+}
+
+.admin-revenue-chart__label {
+  font-size: 0.75rem;
+  color: var(--admin-color-text);
+}
+
+.admin-revenue-chart__placeholder {
+  min-height: 220px;
+  border: 1px dashed var(--admin-color-border);
+  border-radius: 12px;
+  display: grid;
+  place-content: center;
+  color: var(--admin-color-text-muted);
+  text-align: center;
+  padding: 0.75rem;
+}

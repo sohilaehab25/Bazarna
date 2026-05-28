@@ -1,0 +1,318 @@
+<section class="admin-inventory" aria-labelledby="inventory-heading">
+    <!-- Header -->
+    <header class="admin-inventory__header">
+        <div class="admin-inventory__title-row">
+            <h1 id="inventory-heading" class="admin-inventory__title">Inventory Management</h1>
+            <button
+                class="admin-inventory__sync-btn"
+                (click)="onSyncFromProducts()"
+                [disabled]="mutationLoading()"
+                aria-label="Sync inventory from products"
+            >
+                Sync from Products
+            </button>
+        </div>
+
+        <!-- Feedback Messages -->
+        @if (mutationSuccess()) {
+            <div class="admin-inventory__alert admin-inventory__alert--success" role="alert">
+                <span>{{ mutationSuccess() }}</span>
+                <button (click)="dismissSuccess()" aria-label="Dismiss success message">&times;</button>
+            </div>
+        }
+        @if (mutationError()) {
+            <div class="admin-inventory__alert admin-inventory__alert--error" role="alert">
+                <span>{{ mutationError() }}</span>
+                <button (click)="dismissError()" aria-label="Dismiss error message">&times;</button>
+            </div>
+        }
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="admin-inventory__stats" role="region" aria-label="Inventory statistics">
+        <div class="admin-inventory__stat-card">
+            <span class="admin-inventory__stat-label">Total Products</span>
+            <span class="admin-inventory__stat-value">{{ stats().totalProducts }}</span>
+        </div>
+        <div class="admin-inventory__stat-card">
+            <span class="admin-inventory__stat-label">Available Stock</span>
+            <span class="admin-inventory__stat-value">{{ stats().totalAvailable }}</span>
+        </div>
+        <div class="admin-inventory__stat-card">
+            <span class="admin-inventory__stat-label">Reserved Stock</span>
+            <span class="admin-inventory__stat-value admin-inventory__stat-value--info">{{ stats().totalReserved }}</span>
+        </div>
+        <div class="admin-inventory__stat-card">
+            <span class="admin-inventory__stat-label">Low Stock</span>
+            <span class="admin-inventory__stat-value admin-inventory__stat-value--warning">{{ stats().lowStockCount }}</span>
+        </div>
+        <div class="admin-inventory__stat-card">
+            <span class="admin-inventory__stat-label">Out of Stock</span>
+            <span class="admin-inventory__stat-value admin-inventory__stat-value--danger">{{ stats().outOfStockCount }}</span>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <nav class="admin-inventory__tabs" role="tablist" aria-label="Inventory sections">
+        <button
+            role="tab"
+            [attr.aria-selected]="activeTab() === 'overview'"
+            [class.admin-inventory__tab--active]="activeTab() === 'overview'"
+            class="admin-inventory__tab"
+            (click)="switchTab('overview')"
+        >
+            Overview
+        </button>
+        <button
+            role="tab"
+            [attr.aria-selected]="activeTab() === 'logs'"
+            [class.admin-inventory__tab--active]="activeTab() === 'logs'"
+            class="admin-inventory__tab"
+            (click)="switchTab('logs')"
+        >
+            Activity Logs
+        </button>
+    </nav>
+
+    <!-- Overview Tab -->
+    @if (activeTab() === 'overview') {
+        <div role="tabpanel" aria-label="Inventory overview">
+            <!-- Filters -->
+            <div class="admin-inventory__filters">
+                <div class="admin-inventory__search">
+                    <label for="inventory-search" class="visually-hidden">Search products</label>
+                    <input
+                        id="inventory-search"
+                        type="text"
+                        class="admin-inventory__search-input"
+                        placeholder="Search by product name..."
+                        [value]="searchValue()"
+                        (input)="onSearchInput($event)"
+                    />
+                </div>
+
+                <div class="admin-inventory__filter-group">
+                    <label for="inventory-status" class="visually-hidden">Filter by status</label>
+                    <select
+                        id="inventory-status"
+                        class="admin-inventory__select"
+                        [value]="query().status"
+                        (change)="onStatusChange($event)"
+                    >
+                        @for (option of statusOptions; track option.value) {
+                            <option [value]="option.value">{{ option.label }}</option>
+                        }
+                    </select>
+                </div>
+
+                @if (hasActiveFilters()) {
+                    <button
+                        class="admin-inventory__reset-btn"
+                        (click)="onResetFilters()"
+                        aria-label="Reset all filters"
+                    >
+                        Reset Filters
+                    </button>
+                }
+            </div>
+
+            <!-- Low Stock Alerts -->
+            @if (lowStockCount() > 0) {
+                <div class="admin-inventory__low-stock-banner" role="alert">
+                    <span class="admin-inventory__low-stock-icon" aria-hidden="true">⚠</span>
+                    <span><strong>{{ lowStockCount() }}</strong> products are below their low stock threshold</span>
+                </div>
+            }
+
+            <!-- Table -->
+            <app-admin-smart-table
+                [columns]="columns"
+                [rows]="tableRows()"
+                [loading]="loading()"
+                [error]="error()"
+                emptyMessage="No inventory records found."
+                [sortKey]="query().sortBy"
+                [sortDirection]="query().sortOrder"
+                (sortChange)="onSortChange($event)"
+                (rowClick)="onRowClick($event)"
+            />
+
+            <!-- Pagination -->
+            @if (pagination().totalPages > 1) {
+                <app-admin-table-pagination
+                    [page]="pagination().page"
+                    [totalPages]="pagination().totalPages"
+                    [totalItems]="pagination().totalItems"
+                    [pageSize]="pagination().pageSize"
+                    (pageChange)="onPageChange($event)"
+                    (pageSizeChange)="onPageSizeChange($event)"
+                />
+            }
+        </div>
+    }
+
+    <!-- Logs Tab -->
+    @if (activeTab() === 'logs') {
+        <div role="tabpanel" aria-label="Activity logs">
+            <div class="admin-inventory__logs-filters">
+                <label for="log-type-filter" class="visually-hidden">Filter logs by type</label>
+                <select
+                    id="log-type-filter"
+                    class="admin-inventory__select"
+                    (change)="onLogTypeChange($event)"
+                >
+                    @for (option of logTypeOptions; track option.value) {
+                        <option [value]="option.value">{{ option.label }}</option>
+                    }
+                </select>
+            </div>
+
+            @if (logsLoading()) {
+                <div class="admin-inventory__loading" aria-live="polite">Loading logs...</div>
+            } @else if (logs().length === 0) {
+                <div class="admin-inventory__empty">No activity logs found.</div>
+            } @else {
+                <div class="admin-inventory__logs-table" role="table" aria-label="Inventory activity logs">
+                    <div class="admin-inventory__logs-header" role="row">
+                        <span role="columnheader">Date</span>
+                        <span role="columnheader">Product</span>
+                        <span role="columnheader">Type</span>
+                        <span role="columnheader">Qty</span>
+                        <span role="columnheader">Available</span>
+                        <span role="columnheader">Reason</span>
+                    </div>
+                    @for (log of logs(); track log._id) {
+                        <div class="admin-inventory__logs-row" role="row">
+                            <span role="cell">{{ log.createdAt | date: 'short' }}</span>
+                            <span role="cell">{{ log.productId?.name ?? 'Unknown' }}</span>
+                            <span role="cell" class="admin-inventory__log-type" [attr.data-type]="log.type">
+                                {{ log.type }}
+                            </span>
+                            <span role="cell" [class.positive]="log.quantity > 0" [class.negative]="log.quantity < 0">
+                                {{ log.quantity > 0 ? '+' : '' }}{{ log.quantity }}
+                            </span>
+                            <span role="cell">{{ log.previousAvailable }} → {{ log.newAvailable }}</span>
+                            <span role="cell" class="admin-inventory__log-reason">{{ log.reason }}</span>
+                        </div>
+                    }
+                </div>
+
+                @if (logsPagination().totalPages > 1) {
+                    <app-admin-table-pagination
+                        [page]="logsPagination().page"
+                        [totalPages]="logsPagination().totalPages"
+                        [totalItems]="logsPagination().totalItems"
+                        [pageSize]="logsPagination().pageSize"
+                        (pageChange)="onLogsPageChange($event)"
+                    />
+                }
+            }
+        </div>
+    }
+
+    <!-- Restock Modal -->
+    @if (showRestockModal()) {
+        <div class="admin-inventory__modal-backdrop" (click)="closeRestockModal()">
+            <div
+                class="admin-inventory__modal"
+                role="dialog"
+                aria-labelledby="restock-title"
+                aria-modal="true"
+                (click)="$event.stopPropagation()"
+            >
+                <h2 id="restock-title" class="admin-inventory__modal-title">Restock Product</h2>
+                <p class="admin-inventory__modal-subtitle">{{ restockProductName() }}</p>
+
+                <div class="admin-inventory__modal-field">
+                    <label for="restock-qty">Quantity to add</label>
+                    <input
+                        id="restock-qty"
+                        type="number"
+                        min="1"
+                        class="admin-inventory__modal-input"
+                        [ngModel]="restockQuantity()"
+                        (ngModelChange)="restockQuantity.set($event)"
+                    />
+                </div>
+
+                <div class="admin-inventory__modal-field">
+                    <label for="restock-reason">Reason</label>
+                    <input
+                        id="restock-reason"
+                        type="text"
+                        class="admin-inventory__modal-input"
+                        placeholder="e.g. Supplier delivery"
+                        [ngModel]="restockReason()"
+                        (ngModelChange)="restockReason.set($event)"
+                    />
+                </div>
+
+                <div class="admin-inventory__modal-actions">
+                    <button class="admin-inventory__modal-btn admin-inventory__modal-btn--cancel" (click)="closeRestockModal()">
+                        Cancel
+                    </button>
+                    <button
+                        class="admin-inventory__modal-btn admin-inventory__modal-btn--confirm"
+                        [disabled]="restockQuantity() <= 0 || !restockReason().trim()"
+                        (click)="confirmRestock()"
+                    >
+                        Restock
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Adjust Modal -->
+    @if (showAdjustModal()) {
+        <div class="admin-inventory__modal-backdrop" (click)="closeAdjustModal()">
+            <div
+                class="admin-inventory__modal"
+                role="dialog"
+                aria-labelledby="adjust-title"
+                aria-modal="true"
+                (click)="$event.stopPropagation()"
+            >
+                <h2 id="adjust-title" class="admin-inventory__modal-title">Adjust Stock</h2>
+                <p class="admin-inventory__modal-subtitle">{{ adjustProductName() }}</p>
+
+                <div class="admin-inventory__modal-field">
+                    <label for="adjust-stock">New available stock</label>
+                    <input
+                        id="adjust-stock"
+                        type="number"
+                        min="0"
+                        class="admin-inventory__modal-input"
+                        [ngModel]="adjustNewStock()"
+                        (ngModelChange)="adjustNewStock.set($event)"
+                    />
+                </div>
+
+                <div class="admin-inventory__modal-field">
+                    <label for="adjust-reason">Reason</label>
+                    <input
+                        id="adjust-reason"
+                        type="text"
+                        class="admin-inventory__modal-input"
+                        placeholder="e.g. Physical count correction"
+                        [ngModel]="adjustReason()"
+                        (ngModelChange)="adjustReason.set($event)"
+                    />
+                </div>
+
+                <div class="admin-inventory__modal-actions">
+                    <button class="admin-inventory__modal-btn admin-inventory__modal-btn--cancel" (click)="closeAdjustModal()">
+                        Cancel
+                    </button>
+                    <button
+                        class="admin-inventory__modal-btn admin-inventory__modal-btn--confirm"
+                        [disabled]="adjustNewStock() < 0 || !adjustReason().trim()"
+                        (click)="confirmAdjust()"
+                    >
+                        Adjust
+                    </button>
+                </div>
+            </div>
+        </div>
+    }
+</section>

@@ -1,0 +1,101 @@
+.admin-order-timeline {
+  border: 1px solid var(--admin-color-border);
+  border-radius: var(--admin-radius-md);
+  background: var(--admin-color-surface);
+  overflow: hidden;
+}
+
+.admin-order-timeline__header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--admin-color-border);
+}
+
+.admin-order-timeline__title {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--admin-color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.admin-order-timeline__list {
+  list-style: none;
+  margin: 0;
+  padding: 1.25rem 1rem;
+  display: grid;
+  gap: 0;
+}
+
+.admin-order-timeline__event {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 0.75rem;
+  position: relative;
+  padding-bottom: 1.25rem;
+
+  &:not(.admin-order-timeline__event--last)::before {
+    content: '';
+    position: absolute;
+    left: 11px;
+    top: 20px;
+    bottom: 0;
+    width: 2px;
+    background: var(--admin-color-border);
+  }
+}
+
+.admin-order-timeline__dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--admin-color-border);
+  background: var(--admin-color-surface);
+  flex-shrink: 0;
+  z-index: 1;
+
+  .admin-order-timeline__event--created & {
+    background: var(--admin-color-accent);
+    border-color: var(--admin-color-accent);
+  }
+
+  .admin-order-timeline__event--status & {
+    background: var(--admin-color-success);
+    border-color: var(--admin-color-success);
+  }
+
+  .admin-order-timeline__event--note & {
+    background: var(--admin-color-warning);
+    border-color: var(--admin-color-warning);
+  }
+}
+
+.admin-order-timeline__content {
+  padding-top: 2px;
+}
+
+.admin-order-timeline__label {
+  margin: 0 0 0.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--admin-color-text);
+}
+
+.admin-order-timeline__description {
+  margin: 0 0 0.2rem;
+  font-size: 0.8rem;
+  color: var(--admin-color-text-muted);
+  word-break: break-word;
+}
+
+.admin-order-timeline__time {
+  font-size: 0.75rem;
+  color: var(--admin-color-text-muted);
+}
+
+.admin-order-timeline__empty {
+  font-size: 0.85rem;
+  color: var(--admin-color-text-muted);
+  padding: 0.5rem 0;
+  list-style: none;
+}

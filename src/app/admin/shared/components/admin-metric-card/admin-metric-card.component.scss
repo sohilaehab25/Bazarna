@@ -1,0 +1,61 @@
+.admin-metric-card {
+  border: 1px solid var(--admin-color-border);
+  border-radius: var(--admin-radius-md);
+  background: #fff;
+  padding: 1rem;
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-metric-card__label {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--admin-color-text-muted);
+}
+
+.admin-metric-card__value {
+  margin: 0.4rem 0 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--admin-color-text);
+}
+
+.admin-metric-card__hint {
+  margin: 0.35rem 0 0;
+  color: var(--admin-color-text-muted);
+  font-size: 0.8rem;
+}
+
+.admin-metric-card__error {
+  margin: 0.4rem 0 0;
+  color: var(--admin-color-danger);
+}
+
+.admin-metric-card__skeleton {
+  margin-top: 0.5rem;
+  height: 1.6rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #eef2fa 25%, #f7f9ff 50%, #eef2fa 75%);
+  background-size: 200% 100%;
+  animation: admin-metric-skeleton 1.2s linear infinite;
+}
+
+.admin-metric-card--success {
+  border-color: color-mix(in srgb, var(--admin-color-success) 45%, #d8e1f2);
+}
+
+.admin-metric-card--warning {
+  border-color: color-mix(in srgb, var(--admin-color-warning) 45%, #d8e1f2);
+}
+
+.admin-metric-card--danger {
+  border-color: color-mix(in srgb, var(--admin-color-danger) 45%, #d8e1f2);
+}
+
+@keyframes admin-metric-skeleton {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}

@@ -1,0 +1,108 @@
+<section class="admin-dashboard">
+  <header class="admin-dashboard__header">
+    <h2>Executive Dashboard</h2>
+    <p>Operational KPIs with reusable analytics widgets, smart tables, and resilient UI states.</p>
+  </header>
+
+  <section class="admin-dashboard__metrics" aria-label="Dashboard metrics">
+    <app-admin-metric-card
+      label="Total Revenue"
+      [value]="formatCurrency(kpis().totalRevenue)"
+      [loading]="ordersLoading()"
+      [error]="ordersError()"
+      hint="Calculated from all orders"
+      tone="success"
+    ></app-admin-metric-card>
+
+    <app-admin-metric-card
+      label="Total Orders"
+      [value]="'' + kpis().totalOrders"
+      [loading]="ordersLoading()"
+      [error]="ordersError()"
+      hint="All order records"
+    ></app-admin-metric-card>
+
+    <app-admin-metric-card
+      label="Total Users"
+      [value]="'' + kpis().totalUsers"
+      [loading]="usersLoading()"
+      [error]="usersError()"
+      hint="Requires /api/users endpoint"
+    ></app-admin-metric-card>
+
+    <app-admin-metric-card
+      label="Total Products"
+      [value]="'' + kpis().totalProducts"
+      [loading]="productsLoading()"
+      [error]="productsError()"
+      hint="Live catalog count"
+    ></app-admin-metric-card>
+
+    <app-admin-metric-card
+      label="Pending Orders"
+      [value]="'' + kpis().pendingOrders"
+      [loading]="ordersLoading()"
+      [error]="ordersError()"
+      hint="Needs fulfillment attention"
+      tone="warning"
+    ></app-admin-metric-card>
+  </section>
+
+  <section class="admin-dashboard__widgets" aria-label="Dashboard analytics widgets">
+    <app-admin-widget-shell
+      title="Revenue Trend"
+      subtitle="Last 7 days"
+      [loading]="ordersLoading()"
+      [error]="chartError()"
+      [empty]="revenueEmpty()"
+      emptyMessage="No revenue events captured yet."
+    >
+      <app-admin-revenue-chart [points]="revenueSeries()"></app-admin-revenue-chart>
+    </app-admin-widget-shell>
+
+    <app-admin-widget-shell
+      title="Latest Orders"
+      subtitle="Most recent customer transactions"
+      [loading]="ordersLoading()"
+      [error]="ordersError()"
+      [empty]="latestOrdersEmpty()"
+      emptyMessage="No orders yet."
+    >
+      <app-admin-smart-table
+        [columns]="latestOrdersColumns"
+        [rows]="latestOrderRows()"
+        emptyMessage="No latest orders to display."
+      ></app-admin-smart-table>
+    </app-admin-widget-shell>
+
+    <app-admin-widget-shell
+      title="Low Stock Alerts"
+      subtitle="Products at or below threshold"
+      [loading]="productsLoading()"
+      [error]="productsError()"
+      [empty]="lowStockEmpty()"
+      emptyMessage="Inventory levels are healthy."
+    >
+      <app-admin-smart-table
+        [columns]="lowStockColumns"
+        [rows]="lowStockRows()"
+        emptyMessage="No low stock items."
+      ></app-admin-smart-table>
+    </app-admin-widget-shell>
+
+    <app-admin-widget-shell
+      title="Top Selling Products"
+      subtitle="Ranked by sold units"
+      [loading]="ordersLoading() || productsLoading()"
+      [error]="topSellingError()"
+      [empty]="topSellingEmpty()"
+      emptyMessage="Sales data is not available yet."
+    >
+      <app-admin-smart-table
+        [columns]="topSellingColumns"
+        [rows]="topSellingRows()"
+        emptyMessage="No top-selling products yet."
+      ></app-admin-smart-table>
+    </app-admin-widget-shell>
+  </section>
+</section>
