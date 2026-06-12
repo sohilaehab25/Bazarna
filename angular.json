@@ -49,13 +49,9 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "8kB",
-                  "maximumError": "16kB"
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
                 }
-              ],
-              "allowedCommonJsDependencies": [
-                "debug",
-                "xmlhttprequest-ssl"
               ],
               "outputHashing": "all"
             },
